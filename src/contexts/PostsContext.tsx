@@ -11,6 +11,7 @@ import {
   fetchPostDetails,
   fetchPostDetails2,
   fetchAccountState,
+  fetchCommunityList,
 } from '~/providers/steem/dsteemApi';
 import {renderPostBody} from '~/utils/render-helpers';
 import firestore from '@react-native-firebase/firestore';
@@ -237,27 +238,31 @@ const PostsProvider = ({children}: Props) => {
     // const _tagList = await fetchTagList();
     // const _tags = _tagList.map((tag) => tag.tag);
 
-    //// fetch trending tags
-    const accountState = await fetchAccountState('playsteemit');
+    // fetch communities
+    const communityList = await fetchCommunityList(username);
 
-    if (!accountState) {
-      console.log('[getTagList] account state is null');
-      setToastMessage(intl.formatMessage({id: 'fetch_error'}));
-      return null;
-    }
-    const _tags = accountState.tag_idx.trending;
-    let tagList = _tags.slice(1, _tags.length - 1);
-    if (username) {
-      tagList = ['Feed', 'All', ..._tags.slice(1, _tags.length - 1)];
-    } else {
-      tagList = ['All', ..._tags.slice(1, _tags.length - 1)];
-    }
+    const tagList = [[username, ...INIT_FRIENDS_TAG], ...communityList];
+
     // dispatch action
     dispatch({
       type: PostsActionTypes.SET_TAG_LIST,
       payload: tagList,
     });
     return tagList;
+
+    // const _tags = accountState.tag_idx.trending;
+    // let tagList = _tags.slice(1, _tags.length - 1);
+    // if (username) {
+    //   tagList = ['Feed', 'All', ..._tags.slice(1, _tags.length - 1)];
+    // } else {
+    //   tagList = ['All', ..._tags.slice(1, _tags.length - 1)];
+    // }
+    // // dispatch action
+    // dispatch({
+    //   type: PostsActionTypes.SET_TAG_LIST,
+    //   payload: tagList,
+    // });
+    // return tagList;
   };
 
   //// append a tag

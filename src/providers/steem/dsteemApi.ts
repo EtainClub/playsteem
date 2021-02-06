@@ -751,14 +751,14 @@ export const isFollowing = async (username: string, author: string) => {
 
 //// blurt tags
 export const fetchTagList = async () => {
-  const {data} = await axios.get(BLURT_TAG_ENDPOINT, {timeout: 5000});
+  const {data} = await axios.get(TAG_ENDPOINT, {timeout: 5000});
   console.log('[fetchTagList] data', data);
   return data;
 };
 
 //// blurt price
 export const fetchPrice = async () => {
-  const {data} = await axios.get(BLURT_PRICE_ENDPOINT, {
+  const {data} = await axios.get(PRICE_ENDPOINT, {
     timeout: 5000,
   });
   if (data) return data;
