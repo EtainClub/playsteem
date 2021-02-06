@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "564761999857",
+    "project_id": "playsteem-39cde",
+    "storage_bucket": "playsteem-39cde.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:564761999857:android:58a397fda84c1d45e1ac50",
+        "android_client_info": {
+          "package_name": "club.etain.playsteem"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "564761999857-7kv41tudslls3c3c73un06jeigrtka6h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "club.etain.playsteem",
+            "certificate_hash": "3097c5b39eb81a45605aae133fc072f38043962c"
+          }
+        },
+        {
+          "client_id": "564761999857-bc83a39hq5clb1sdpnodoj3fho2odesh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "club.etain.playsteem",
+            "certificate_hash": "861d43f0d28ac3d82c52f4ac8f0a6bf14ce44b73"
+          }
+        },
+        {
+          "client_id": "564761999857-63bjmaaq6p1hqtjqckia3pp48tll3fs0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWLm6CVMXYBgewWjLzvtvPL6xnr-EYobQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "564761999857-63bjmaaq6p1hqtjqckia3pp48tll3fs0.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "564761999857-ose6d8tpc03vriijhsr8m2dok20vd66s.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "club.etain.playsteem"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
