@@ -832,11 +832,11 @@ export const fetchCommunityList = async (username: string): Promise<any[]> => {
     if (communities) {
       return communities;
     } else {
-      return null;
+      return [];
     }
   } catch (error) {
     console.log('failed to fetch community list', error);
-    return null;
+    return [];
   }
 };
 
