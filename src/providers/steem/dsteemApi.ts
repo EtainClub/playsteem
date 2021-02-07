@@ -437,41 +437,77 @@ export interface BlockchainGlobalProps {
 //// global props
 let globalProps: BlockchainGlobalProps = null;
 
-// fetch global properties
+// fetch global propperties
 export const fetchGlobalProps = async (): Promise<BlockchainGlobalProps> => {
-  // const globalDynamic = await getDynamicGlobalProperties();
-  // console.log('[fetchGlobalProps] globalDynamic', globalDynamic);
-  const rewardFund = await getRewardFund();
-  console.log('[fetchGlobalProps] rewardFund', rewardFund);
-  const chainProperties = await getChainProperties();
-  console.log('[fetchGlobalProps] chainProperties', chainProperties);
-  // const  feedHistory = await getFeedHistory();
-  //    console.log('[fetchGlobalProps] feedHistory', feedHistory);
+  let globalDynamic;
+  let feedHistory;
+  let rewardFund;
 
-  // const steemPerMVests =
-  //   (parseToken(globalDynamic.total_vesting_fund_steem as string) /
-  //     parseToken(globalDynamic.total_vesting_shares as string)) *
-  //   1e6;
-  // const sbdPrintRate = globalDynamic.sbd_print_rate;
-  //  const base = parseToken(feedHistory.current_median_history.base);
-  //  const quote = parseToken(feedHistory.current_median_history.quote);
+  try {
+    globalDynamic = await getDynamicGlobalProperties();
+    feedHistory = await getFeedHistory();
+    rewardFund = await getRewardFund();
+  } catch (error) {
+    console.log('failed to fetch steem global properties', error);
+    return null;
+  }
+
+  const steemPerMVests =
+    (parseToken(globalDynamic.total_vesting_fund_steem as string) /
+      parseToken(globalDynamic.total_vesting_shares as string)) *
+    1e6;
+  const sbdPrintRate = globalDynamic.sbd_print_rate;
+  const base = parseToken(feedHistory.current_median_history.base);
+  const quote = parseToken(feedHistory.current_median_history.quote);
   const fundRecentClaims = rewardFund.recent_claims;
   const fundRewardBalance = parseToken(rewardFund.reward_balance);
-
-  // update the globalProps
-  globalProps = {
-    steemPerMVests: 1,
-    base: 1,
-    quote: 1,
+  return {
+    steemPerMVests,
+    base,
+    quote,
     fundRecentClaims,
     fundRewardBalance,
-    sbdPrintRate: 1,
-    dynamicProps: {},
-    chainProps: chainProperties,
+    sbdPrintRate,
+    dynamicProps: globalDynamic,
+    chainProps: {},
   };
-
-  return globalProps;
 };
+
+// // fetch global properties
+// export const fetchGlobalProps = async (): Promise<BlockchainGlobalProps> => {
+//   // const globalDynamic = await getDynamicGlobalProperties();
+//   // console.log('[fetchGlobalProps] globalDynamic', globalDynamic);
+//   const rewardFund = await getRewardFund();
+//   console.log('[fetchGlobalProps] rewardFund', rewardFund);
+//   const chainProperties = await getChainProperties();
+//   console.log('[fetchGlobalProps] chainProperties', chainProperties);
+//   // const  feedHistory = await getFeedHistory();
+//   //    console.log('[fetchGlobalProps] feedHistory', feedHistory);
+
+//   // const steemPerMVests =
+//   //   (parseToken(globalDynamic.total_vesting_fund_steem as string) /
+//   //     parseToken(globalDynamic.total_vesting_shares as string)) *
+//   //   1e6;
+//   // const sbdPrintRate = globalDynamic.sbd_print_rate;
+//   //  const base = parseToken(feedHistory.current_median_history.base);
+//   //  const quote = parseToken(feedHistory.current_median_history.quote);
+//   const fundRecentClaims = rewardFund.recent_claims;
+//   const fundRewardBalance = parseToken(rewardFund.reward_balance);
+
+//   // update the globalProps
+//   globalProps = {
+//     steemPerMVests: 1,
+//     base: 1,
+//     quote: 1,
+//     fundRecentClaims,
+//     fundRewardBalance,
+//     sbdPrintRate: 1,
+//     dynamicProps: {},
+//     chainProps: chainProperties,
+//   };
+
+//   return globalProps;
+// };
 
 //// get latest block
 export const fetchLatestBlock = async () => {
@@ -549,6 +585,27 @@ export const fetchAccountState = async (username: string) => {
     return null;
   }
 };
+
+// fetch user profile
+export const fetchProfile = async (author: string) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const profile = await client.call('bridge', 'get_profile', {
+        account: author,
+      });
+      if (profile) {
+        resolve(profile);
+      } else {
+        // TODO: handle null when fetching get_profile
+        //        const _profile = await fetchUserProfile(author);
+        //        console.log('[dSteem|fetchProfile] using standard. profile', _profile);
+        resolve(null);
+      }
+    } catch (error) {
+      console.log('failed to fetch profile', error);
+      reject(error);
+    }
+  });
 
 //// fetch user state
 export const fetchUserProfile = async (username: string) => {

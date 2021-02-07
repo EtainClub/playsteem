@@ -325,7 +325,10 @@ const PostsProvider = ({children}: Props) => {
             '[PostsContext|fetchPosts] tagIndex is wrong',
             tagIndex,
           );
-          return null;
+          return {
+            fetchedPosts: [],
+            fetchedAll: true,
+          };
         }
         break;
       case PostsTypes.AUTHOR:
@@ -348,8 +351,14 @@ const PostsProvider = ({children}: Props) => {
       _posts = result;
     } else {
       //      setToastMessage(intl.formatMessage({id: 'fetch_error'}));
-      return [];
+      return {
+        fetchedPosts: [],
+        fetchedAll: true,
+      };
     }
+
+    // TODO need to check if the fetched posts is fewer than limit + 1 -> nothing to fetch more
+    const fetchedAll = _posts.length < limit + 1 ? true : false;
 
     let posts;
     // set start post ref
@@ -390,7 +399,10 @@ const PostsProvider = ({children}: Props) => {
         },
       },
     });
-    return posts;
+    return {
+      fetchedPosts: posts,
+      fetchedAll,
+    };
   };
 
   //// set post index
@@ -529,18 +541,6 @@ const PostsProvider = ({children}: Props) => {
     //// update post states
     // new post state
     console.log('posts state, posttype', postsState[postsType]);
-    const postState = postsState[postsType].posts[postIndex].state;
-    // update payout
-    postState.payout = (
-      parseFloat(postState.payout) +
-      (voteAmount * votingWeight) / 100
-    ).toFixed(2);
-    // update vote count
-    postState.vote_count += 1;
-    // update voters
-    postState.voters = [`${username} (${voteAmount})`, ...postState.voters];
-    // update voted flag
-    postState.voted = true;
     //// dispatch action
     // handle voting on comment
     if (isComment) {
@@ -559,6 +559,19 @@ const PostsProvider = ({children}: Props) => {
       //   },
       // });
     } else {
+      const postState = postsState[postsType].posts[postIndex].state;
+      // update payout
+      postState.payout = (
+        parseFloat(postState.payout) +
+        (voteAmount * votingWeight) / 100
+      ).toFixed(2);
+      // update vote count
+      postState.vote_count += 1;
+      // update voters
+      postState.voters = [`${username} (${voteAmount})`, ...postState.voters];
+      // update voted flag
+      postState.voted = true;
+
       dispatch({
         type: PostsActionTypes.UPVOTE,
         payload: {

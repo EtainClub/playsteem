@@ -374,7 +374,7 @@ export interface PostsContextType {
     noFollowings?: boolean,
     appending?: boolean,
     author?: string,
-  ) => Promise<PostData[]>;
+  ) => Promise<{fetchedPosts: PostData[]; fetchedAll: boolean}>;
   // set posts type
   setPostsType: (postsType: PostsTypes) => void;
   // clear posts

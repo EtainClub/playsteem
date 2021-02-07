@@ -2,7 +2,11 @@ import {Platform} from 'react-native';
 import {get, has} from 'lodash';
 import isEmpty from 'lodash/isEmpty';
 import forEach from 'lodash/forEach';
-import {getActiveVotes, calculateReputation} from '~/providers/steem/dsteemApi';
+import {
+  getActiveVotes,
+  calculateReputation,
+  fetchProfile,
+} from '~/providers/steem/dsteemApi';
 import {Discussion} from '@hiveio/dhive';
 import {renderPostBody, postBodySummary} from './render-helpers';
 import {getResizedAvatar, getResizedImage} from './image';
@@ -111,6 +115,8 @@ export const parsePost = async (
     postData.json_metadata = '{}';
   }
 
+  const _profile = await fetchProfile(postData.state.post_ref.author);
+
   const profile = {
     post_count: post.post_count,
     metadata: {
@@ -137,7 +143,7 @@ export const parsePost = async (
   postData.state.voters!.sort((a, b) => b.rshares - a.rshares);
 
   postData.state.vote_count = activeVotes.length;
-  postData.state.reputation = get(profile, 'reputation');
+  postData.state.reputation = get(_profile, 'reputation');
 
   postData.state.avatar = getResizedAvatar(post.author, imageServer);
   postData.state.voters!.sort((a, b) => b.rshares - a.rshares);
@@ -201,16 +207,9 @@ const parseActiveVotes = (
       value.reputation = calculateReputation(value.reputation);
       value.percent /= 100;
       value.is_down_vote = Math.sign(value.percent) < 0;
-      value.avatar = getResizedAvatar(value.voter);
-      postData.state.voters[index] = `${value.voter} (${value.value})`;
+      value.avatar = getResizedAvatar(value.voter, IMAGE_SERVER);
+      postData.state.voters[index] = `${value.voter} ($${value.value})`;
     });
-    // limit the number of items
-    if (postData.state.voters.length > 20) {
-      postData.state.voters = postData.state.voters.slice(0, 20);
-      postData.state.voters[20] = `and ${
-        postData.state.voters.length - 20
-      } more`;
-    }
   }
 
   return postData.state.voters;

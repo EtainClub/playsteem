@@ -107,6 +107,8 @@ const Feed = (props: Props): JSX.Element => {
     // clear posts if not appending
     // loading for appening will be handled by load more
     if (!appending) {
+      // clear posts state too
+      setPosts(null);
       await clearPosts(postsType);
       setReloading(true);
     }
@@ -116,7 +118,7 @@ const Feed = (props: Props): JSX.Element => {
     let filterIndex = postsState.filterIndex;
     let noFollowings = userState.followings.length === 0 ? true : false;
     console.log('[Feed] username, noFollowings ?', username, noFollowings);
-    const _posts = await fetchPosts(
+    const {fetchedPosts, fetchedAll} = await fetchPosts(
       postsType,
       tagIndex,
       filterIndex,
@@ -124,13 +126,12 @@ const Feed = (props: Props): JSX.Element => {
       noFollowings,
       appending,
     );
-    // TODO: if nothing fetched, how can update this state when fetching new?
-    if (!_posts || _posts.length < NUM_FETCH_POSTS) {
+    if (!fetchedPosts || fetchedAll) {
       setFetchedAll(true);
     } else {
       setFetchedAll(false);
     }
-    setPosts(_posts);
+    setPosts(fetchedPosts);
     if (!appending) {
       setReloading(false);
     }

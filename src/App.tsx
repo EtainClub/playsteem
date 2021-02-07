@@ -41,7 +41,8 @@ const App = () => {
   //
   useEffect(() => {
     // check update
-    _codePushSync();
+    // @test
+    //    _codePushSync();
     // get locale
     _getLocale();
   }, []);

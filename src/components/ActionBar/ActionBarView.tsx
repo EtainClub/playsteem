@@ -56,6 +56,16 @@ const ActionBarView = (props: Props): JSX.Element => {
   // language
   const intl = useIntl();
 
+  const _limitVoters = () => {
+    let voters = postState.voters;
+    // // limit the number of items
+    if (postState.voters.length > 20) {
+      voters = postState.voters.slice(0, 20);
+      voters[20] = `and ${postState.voters.length - 20} more`;
+    }
+    return voters;
+  };
+
   //// render voting modal
   const _renderVotingModal = () => {
     // return if voting finishes
@@ -69,7 +79,7 @@ const ActionBarView = (props: Props): JSX.Element => {
         onBackdropPress={props.handleCancelVotingModal}>
         <Block card center style={styles.votingContainer}>
           <Text color={argonTheme.COLORS.ERROR}>
-            {props.votingWeight} % ({props.votingDollar} B)
+            {props.votingWeight} % (${props.votingDollar})
           </Text>
 
           <Slider
@@ -110,7 +120,7 @@ const ActionBarView = (props: Props): JSX.Element => {
             size={actionBarStyle.textSize}
             color={argonTheme.COLORS.ERROR}
             style={{paddingRight: 5}}>
-            {postState.payout} B
+            ${postState.payout}
           </Text>
           <Button
             onPress={props.handlePressVoteIcon}
@@ -130,7 +140,8 @@ const ActionBarView = (props: Props): JSX.Element => {
           />
         </Block>
         <ModalDropdown
-          options={postState.voters}
+          //          options={postState.voters}
+          options={_limitVoters()}
           renderRow={_renderVoterRow}
           dropdownStyle={{
             backgroundColor: argonTheme.COLORS.DEFAULT,
