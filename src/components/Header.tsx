@@ -272,10 +272,10 @@ const Header = (props: Props): JSX.Element => {
     const defaultCommunityText = '';
     const defaultCategoryText = '';
     const {tagList, filterList, tagIndex, filterIndex} = postsState;
-    let tagOptions = postsState.tagList;
+    let tagOptions: string[] = [];
     switch (title) {
       case 'Feed':
-        //        tagList.forEach((item) => tagOptions.push(item.tag));
+        postsState.tagList.forEach((item) => tagOptions.push(item[1]));
         return (
           <Block row space="between">
             <Block row space="around" style={{left: 100}}>
@@ -459,7 +459,7 @@ const styles = StyleSheet.create({
   dropdownStyle: {
     marginTop: 15,
     minWidth: 120,
-    width: 120,
+    width: 160,
     backgroundColor: argonTheme.COLORS.DEFAULT,
   },
   dropdownAvatarStyle: {

@@ -234,35 +234,16 @@ const PostsProvider = ({children}: Props) => {
   ////// action creators
   //// fetch tag list
   const getTagList = async (username?: string) => {
-    //// fetch default tags
-    // const _tagList = await fetchTagList();
-    // const _tags = _tagList.map((tag) => tag.tag);
-
     // fetch communities
     const communityList = await fetchCommunityList(username);
-
+    // build tag list from community tags
     const tagList = [[username, ...INIT_FRIENDS_TAG], ...communityList];
-
     // dispatch action
     dispatch({
       type: PostsActionTypes.SET_TAG_LIST,
       payload: tagList,
     });
     return tagList;
-
-    // const _tags = accountState.tag_idx.trending;
-    // let tagList = _tags.slice(1, _tags.length - 1);
-    // if (username) {
-    //   tagList = ['Feed', 'All', ..._tags.slice(1, _tags.length - 1)];
-    // } else {
-    //   tagList = ['All', ..._tags.slice(1, _tags.length - 1)];
-    // }
-    // // dispatch action
-    // dispatch({
-    //   type: PostsActionTypes.SET_TAG_LIST,
-    //   payload: tagList,
-    // });
-    // return tagList;
   };
 
   //// append a tag
@@ -333,12 +314,12 @@ const PostsProvider = ({children}: Props) => {
             tag = '';
             filter = 'trending';
           }
-        } else if (postsState.tagList[tagIndex] === 'All') {
+        } else if (postsState.tagList[tagIndex][1] === 'All') {
           tag = '';
           filter = postsState.filterList[filterIndex];
         } else if (tagIndex > 0) {
           filter = postsState.filterList[filterIndex];
-          tag = postsState.tagList[tagIndex];
+          tag = postsState.tagList[tagIndex][0];
         } else {
           console.error(
             '[PostsContext|fetchPosts] tagIndex is wrong',
