@@ -134,7 +134,8 @@
     "reply": " replied to your post",
     "mention": "mentioned you in this post",
     "transfer": "transferred {what} to you",
-    "reblog": "reblogged your post"
+    "reblog": "reblogged your post",
+    "vote": "voted ({what}) your posting."
   },
   "Posting": {
     "title": "Title",

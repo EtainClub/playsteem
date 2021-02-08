@@ -50,14 +50,30 @@ const NotificationScreen = (props: Props): JSX.Element => {
   //// render item
   const _renderItem = ({item, index}) => {
     const notiType = item.type;
+    //// parse message
+    const {msg} = item;
+    //
     let iconName = '';
     let iconFamily = '';
     let text = '';
+    // TODO: use regex to extract amount
+    // let amount_regex = /^\(?&\)/;
+    // console.log('amount', msg.match(amount_regex));
+    let amount = 0;
     let avatar = '';
-    let author = item.author;
-    let permlink = null;
+    let author = msg.split(' ')[0].split('@')[1];
+    let permlink = item.url.split('/')[1];
+    console.log('noti. author, permlink', author, permlink);
     switch (notiType) {
       // TODO: handle reblog
+      case 'vote':
+        iconName = 'chevron-up';
+        iconFamily = 'font-awesome';
+        author = author;
+        avatar = `${imageServer}/u/${author}/avatar`;
+        text = intl.formatMessage({id: 'Notifications.vote'}, {what: amount});
+        break;
+
       case 'reblog':
         iconName = 'repeat';
         iconFamily = 'material-community';
@@ -132,13 +148,7 @@ const NotificationScreen = (props: Props): JSX.Element => {
               <Text>{text}</Text>
             </Block>
           </Block>
-          <Block middle>
-            {
-              <Text>
-                {getTimeFromNow(moment.unix(item.timestamp)).split('ago')[0]}
-              </Text>
-            }
-          </Block>
+          <Block middle>{<Text>{getTimeFromNow(item.date)}</Text>}</Block>
         </Block>
       </TouchableWithoutFeedback>
     );

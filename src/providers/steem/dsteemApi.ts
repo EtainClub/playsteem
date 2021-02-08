@@ -1431,15 +1431,30 @@ export const broadcastProfileUpdate = async (
 //     return null;
 //   }
 // };
+
 export const fetchNotifications = async (username: string): Promise<any[]> => {
-  return new Promise((resolve, reject) => {
-    const notiClient = new NotiClient('wss://notifications.blurt.world');
-    notiClient.call('get_notifications', [username], (err, result) => {
-      if (err) reject(err);
-      resolve(result);
+  try {
+    const notifications = await client.call('bridge', 'account_notifications', {
+      account: username,
+      limit: 50,
     });
-  });
+    console.log('fetchNotifications', notifications);
+    return notifications;
+  } catch (error) {
+    console.log('faield to fetch notifications');
+    return null;
+  }
 };
+
+// export const fetchNotifications = async (username: string): Promise<any[]> => {
+//   return new Promise((resolve, reject) => {
+//     const notiClient = new NotiClient('wss://notifications.blurt.world');
+//     notiClient.call('get_notifications', [username], (err, result) => {
+//       if (err) reject(err);
+//       resolve(result);
+//     });
+//   });
+// };
 
 //////////// wallet
 //// fetch wallet data
