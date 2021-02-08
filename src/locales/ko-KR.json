@@ -1,5 +1,5 @@
 {
-  "title": "렛츠 블러트",
+  "title": "플레이 스팀",
   "feed": "피드",
   "search": "검색",
   "post": "포스트",
@@ -14,7 +14,7 @@
   "and": "그리고",
   "cancel": "취소",
   "confirm": "확인",
-  "intro-msg": "모바일 기기에서 렛츠 블러트",
+  "intro-msg": "모바일 기기에서 플레이 스팀",
   "intro-button": "시작하기",
   "account": "계정",
   "voting-weight": "보팅 가중치",
@@ -54,9 +54,9 @@
     "push_body": "상세 내용을 보시겠습니까?"
   },
   "Welcome": {
-    "msg1": "블러트에 오신걸 환영합니다.",
-    "msg2": "모바일에서 더욱 쉽고, 안전하게 블러트 하세요",
-    "msg3": "렛츠 블러트!",
+    "msg1": "스팀에 오신걸 환영합니다.",
+    "msg2": "모바일에서 더욱 쉽고, 안전하게 스팀 하세요",
+    "msg3": "플레이 스팀!",
     "button": "시작하기",
     "not_loggedin": "로그인 하지 않았습니다."
   },
@@ -91,13 +91,13 @@
     "copy_confirm": "복사됨",
     "finish_button": "끝내기",
     "welcome_header": "모든 게 완료되었습니다!",
-    "welcome_guide": "이제 생성한 계정과 암호로 렛츠 블러트 모바일 앱 및 다른 블러트 앱을 사용할 수 있습니다.",
-    "login_button": "렛츠 블러트!"
+    "welcome_guide": "이제 생성한 계정과 암호로 플레이 스팀 모바일 앱 및 다른 스팀 앱을 사용할 수 있습니다.",
+    "login_button": "플레이 스팀!"
   },
   "Login": {
     "header": "로그인",
-    "header_desc": "블러트 계정과 암호(가능하면 포스팅키)를 입력하세요.",
-    "button": "로그인",
+    "header_desc": "스팀 계정과 암호(가능하면 포스팅키)를 입력하세요.",
+    "button": "동의하고 로그인",
     "signup_guide": "계정 생성 하기",
     "login_error": "계정이름이나 암호가 유효하지 않습니다.",
     "msg_username": "존재하지 않는 계정이름입니다.",
@@ -190,8 +190,8 @@
     "unfavorite_ok": "관심저자 취소 되었습니다.",
     "unfavorite_error": "관심저자 취소가 실패되었습니다.",
     "postings": "포스팅",
-    "power": "블러트 파워",
-    "balance": "블러트",
+    "power": "스팀 파워",
+    "balance": "스팀",
     "vote_amount": "보팅 금액",
     "display_name": "표시 이름",
     "introduction": "계정 소개",
