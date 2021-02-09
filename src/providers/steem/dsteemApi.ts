@@ -609,75 +609,117 @@ export const fetchProfile = async (author: string) =>
 
 //// fetch user state
 export const fetchUserProfile = async (username: string) => {
+  const params = `@${username}`;
+  const accountState = await client.call('condenser_api', `get_state`, [
+    params,
+  ]);
+  console.log('[fetchUserProfile] accountState', accountState);
+
   try {
-    // get state
-    const params = `@${username}`;
-    const accountState = await client.call('condenser_api', `get_state`, [
-      params,
-    ]);
-    console.log('[fetchUserProfile] accountState', accountState);
-    if (!accountState) {
-      console.log('[fetchUserProfile] accountState is null', accountState);
+    const fetchedProfile = await client.call('bridge', 'get_profile', {
+      account: username,
+    });
+
+    console.log('[fetchUserProfile] profile data', fetchedProfile);
+    if (!fetchedProfile) {
+      console.log('[fetchUserProfile] accountState is null', fetchedProfile);
       return null;
     }
-    // get account
-    const account = get(accountState.accounts, username, '');
-    // destructure
-    const {
-      balance,
-      voting_power,
-      vesting_shares,
-      received_vesting_shares,
-      delegated_vesting_shares,
-    } = account;
-    const power =
-      parseInt(vesting_shares.split(' ')[0]) +
-      parseInt(received_vesting_shares.split(' ')[0]) -
-      parseInt(delegated_vesting_shares.split(' ')[0]);
 
-    // parse meta data
-    if (
-      has(account, 'posting_json_metadata') ||
-      has(account, 'json_metadata')
-    ) {
-      try {
-        account.about =
-          JSON.parse(get(account, 'json_metadata')) ||
-          JSON.parse(get(account, 'posting_json_metadata'));
-        console.log('[fetchUserProfile]', account.about);
-      } catch (error) {
-        console.log('failed to fetch profile metadata', error);
-        account.about = {};
-      }
-    }
-    account.avatar = getAvatar(get(account, 'about'));
-    account.nickname = getName(get(account, 'about'));
+    // profile: {
+    //   metadata: any;
+    //   name: string;
+    //   voteAmount: string;
+    //   votePower: string;
+    //   balance: string;
+    //   power: string;
+    //   sbd: string;
+    //   reputation: number;
+    //   stats: {
+    //     post_count: number;
+    //     following: number;
+    //     followers: number;
+    //     rank: number;
+    //   };
+    // }
 
-    // get followers/following count
-    const followCount = await fetchFollows(username);
-    console.log('[fetchUserProfile] follow count', followCount);
+    // // build profile data
+    // const profileData: ProfileData = {
+    //   profile: {
+    //     metadata: fetchedProfile.metadata.profile,
+    //     name: username,
+    //     voteAmount: estimateVoteAmount(username, globalProps),
+    //     votePower: String(voting_power),
+    //     balance: balance.split(' ')[0],
+    //     power: String(power),
+    //     stats: {
+    //       post_count: account.post_count,
+    //       following: followCount.following_count,
+    //       followers: followCount.follower_count,
+    //     },
+    //   },
+    //   blogRefs: account.blog,
+    //   blogs: accountState.content,
+    // };
 
-    // build profile data
-    const profileData: ProfileData = {
-      profile: {
-        metadata: account.about.profile
-          ? account.about.profile
-          : {name: '', cover_image: '', profile_image: ''},
-        name: username,
-        voteAmount: estimateVoteAmount(account, globalProps),
-        votePower: String(voting_power),
-        balance: balance.split(' ')[0],
-        power: String(power),
-        stats: {
-          post_count: account.post_count,
-          following: followCount.following_count,
-          followers: followCount.follower_count,
-        },
-      },
-      blogRefs: account.blog,
-      blogs: accountState.content,
-    };
-    return profileData;
+    // // get account
+    // const account = get(accountState.accounts, username, '');
+    // // destructure
+    // const {
+    //   balance,
+    //   voting_power,
+    //   vesting_shares,
+    //   received_vesting_shares,
+    //   delegated_vesting_shares,
+    // } = account;
+    // const power =
+    //   parseInt(vesting_shares.split(' ')[0]) +
+    //   parseInt(received_vesting_shares.split(' ')[0]) -
+    //   parseInt(delegated_vesting_shares.split(' ')[0]);
+
+    // // parse meta data
+    // if (
+    //   has(account, 'posting_json_metadata') ||
+    //   has(account, 'json_metadata')
+    // ) {
+    //   try {
+    //     account.about =
+    //       JSON.parse(get(account, 'json_metadata')) ||
+    //       JSON.parse(get(account, 'posting_json_metadata'));
+    //     console.log('[fetchUserProfile]', account.about);
+    //   } catch (error) {
+    //     console.log('failed to fetch profile metadata', error);
+    //     account.about = {};
+    //   }
+    // }
+    // account.avatar = getAvatar(get(account, 'about'));
+    // account.nickname = getName(get(account, 'about'));
+
+    // // get followers/following count
+    // const followCount = await fetchFollows(username);
+    // console.log('[fetchUserProfile] follow count', followCount);
+
+    // // build profile data
+    // const profileData: ProfileData = {
+    //   profile: {
+    //     metadata: account.about.profile
+    //       ? account.about.profile
+    //       : {name: '', cover_image: '', profile_image: ''},
+    //     name: username,
+    //     voteAmount: estimateVoteAmount(account, globalProps),
+    //     votePower: String(voting_power),
+    //     balance: balance.split(' ')[0],
+    //     power: String(power),
+    //     stats: {
+    //       post_count: account.post_count,
+    //       following: followCount.following_count,
+    //       followers: followCount.follower_count,
+    //     },
+    //   },
+    //   blogRefs: account.blog,
+    //   blogs: accountState.content,
+    // };
+    // return profileData;
   } catch (error) {
     console.log('Failed to fetch user profile data', error);
     return null;
@@ -1438,7 +1480,6 @@ export const fetchNotifications = async (username: string): Promise<any[]> => {
       account: username,
       limit: 50,
     });
-    console.log('fetchNotifications', notifications);
     return notifications;
   } catch (error) {
     console.log('faield to fetch notifications');

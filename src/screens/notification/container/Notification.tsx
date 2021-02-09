@@ -76,6 +76,11 @@ const Notification = (props: Props): JSX.Element => {
 
   //// handle press item
   const _handlePressItem = (author: string, permlink: string) => {
+    console.log(
+      '[notifications] _handlePressItem. author, permlink',
+      author,
+      permlink,
+    );
     // check if permlink exists
     if (permlink) {
       // set post ref

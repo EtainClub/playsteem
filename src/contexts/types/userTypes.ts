@@ -21,17 +21,28 @@ export enum UserActionTypes {
 // profile data type
 export interface ProfileData {
   profile: {
+    // about, cover_image, locations, name(display_name), profile_image, website
     metadata: any;
+    // account name
     name: string;
+    // vote amount
     voteAmount: string;
+    // vote power
     votePower: string;
-    balance: string; // blurt or steem
-    power: string; // blurt power or steem power
-    sbd?: string; // sbd
+    // liquid steem balance
+    balance: string;
+    // steem power
+    power: string;
+    // sbd balance
+    sbd: string;
+    // reputation
+    reputation: number;
+    // following, followers, rank, steem power
     stats: {
       post_count: number;
       following: number;
       followers: number;
+      rank: number;
     };
   };
   blogRefs?: string[];

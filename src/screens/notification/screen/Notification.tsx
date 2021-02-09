@@ -43,7 +43,7 @@ interface Props {
 }
 const NotificationScreen = (props: Props): JSX.Element => {
   console.log('[NotificationScreen] props', props);
-  const {imageServer} = props;
+  const {imageServer, username} = props;
   //// lanugage
   const intl = useIntl();
 
@@ -56,60 +56,49 @@ const NotificationScreen = (props: Props): JSX.Element => {
     let iconName = '';
     let iconFamily = '';
     let text = '';
-    // TODO: use regex to extract amount
-    // let amount_regex = /^\(?&\)/;
-    // console.log('amount', msg.match(amount_regex));
-    let amount = 0;
-    let avatar = '';
-    let author = msg.split(' ')[0].split('@')[1];
-    let permlink = item.url.split('/')[1];
-    console.log('noti. author, permlink', author, permlink);
+    let amount_regex = /\$\d+.\d+/;
+    const _match = msg.match(amount_regex);
+    let amount = null;
+    if (_match) {
+      amount = _match[0];
+    }
+    let actor = msg.split(' ')[0].split('@')[1];
+    const avatar = `${imageServer}/u/${actor}/avatar`;
+    const parsedUrl = item.url.split('/');
+    const author = parsedUrl[0].split('@')[1];
+    const permlink = parsedUrl[1];
     switch (notiType) {
-      // TODO: handle reblog
       case 'vote':
         iconName = 'chevron-up';
         iconFamily = 'font-awesome';
-        author = author;
-        avatar = `${imageServer}/u/${author}/avatar`;
         text = intl.formatMessage({id: 'Notifications.vote'}, {what: amount});
         break;
-
       case 'reblog':
         iconName = 'repeat';
         iconFamily = 'material-community';
-        author = author;
-        avatar = `${imageServer}/u/${author}/avatar`;
         text = intl.formatMessage({id: 'Notifications.reblog'});
         break;
       case 'follow':
         iconName = 'adduser';
         iconFamily = 'antdesign';
-        author = item.follower;
-        avatar = `${imageServer}/u/${author}/avatar`;
         text = intl.formatMessage({id: 'Notifications.follow'});
         break;
       case 'reply':
         iconName = 'message-reply-text';
         iconFamily = 'material-community';
-        avatar = `${imageServer}/u/${author}/avatar`;
         text = intl.formatMessage({id: 'Notifications.reply'});
-        permlink = item.permlink;
         break;
       case 'mention':
         iconName = 'at';
         iconFamily = 'font-awesome';
-        avatar = `${imageServer}/u/${author}/avatar`;
         text = intl.formatMessage({id: 'Notifications.mention'});
-        permlink = item.permlink;
         break;
       case 'transfer':
-        author = item.from;
         iconName = 'exchange';
         iconFamily = 'font-awesome';
-        avatar = `${imageServer}/u/${item.from}/avatar`;
         text = intl.formatMessage(
           {id: 'Notifications.transfer'},
-          {what: item.amount},
+          {what: amount},
         );
         break;
       default:
