@@ -398,14 +398,14 @@ export const parseToken = (strVal: string): number => {
   }
   return Number(parseFloat(strVal.split(' ')[0]));
 };
-export const vestToSteem = async (
-  vestingShares: string,
+export const vestToSteem = (
+  vestingShares: number,
   totalVestingShares: string,
   totalVestingFundSteem: string,
 ) =>
   (
     parseFloat(totalVestingFundSteem) *
-    (parseFloat(vestingShares) / parseFloat(totalVestingShares))
+    (vestingShares / parseFloat(totalVestingShares))
   ).toFixed(0);
 
 export const vestsToRshares = (
@@ -581,11 +581,11 @@ export const fetchUserProfile = async (username: string) => {
   try {
     // get profile
     const fetchedProfile = await fetchProfile(username);
-    console.log('[fetchUserProfile] fetched profile', fetchedProfile);
+    //    console.log('[fetchUserProfile] fetched profile', fetchedProfile);
 
     // get account
     const account = await getAccount(username);
-    console.log('get account. account', account);
+    //    console.log('get account. account', account);
 
     const profileData: ProfileData = {
       profile: {
@@ -606,99 +606,8 @@ export const fetchUserProfile = async (username: string) => {
       },
     };
 
-    console.log('fetchUserProfile. profileData', profileData);
-
+    //    console.log('fetchUserProfile. profileData', profileData);
     return profileData;
-
-    // // get account state
-    // const params = `@${username}`;
-    // const accountState = await client.call('condenser_api', `get_state`, [
-    //   params,
-    // ]);
-    // console.log('[fetchUserProfile] accountState', accountState);
-    // if (!accountState) {
-    //   console.log('[fetchUserProfile] accountState is null', accountState);
-    //   return null;
-    // }
-    // // get account
-    // const account = get(accountState.accounts, username, '');
-    // const {net_vesting_share} = account;
-
-    // // build profile data
-    // const profileData: ProfileData = {
-    //   profile: {
-    //     metadata: fetchedProfile.metadata.profile,
-    //     name: username,
-    //     voteAmount: estimateVoteAmount(account, globalProps),
-    //     votePower: '0' // String(voting_power),
-    //     balance: balance.split(' ')[0],
-    //     power: String(power),
-    //     stats: {
-    //       post_count: account.post_count,
-    //       following: followCount.following_count,
-    //       followers: followCount.follower_count,
-    //     },
-    //   },
-    //   blogRefs: account.blog,
-    //   blogs: accountState.content,
-    // };
-
-    // // destructure
-    // const {
-    //   balance,
-    //   voting_power,
-    //   vesting_shares,
-    //   received_vesting_shares,
-    //   delegated_vesting_shares,
-    // } = account;
-    // const power =
-    //   parseInt(vesting_shares.split(' ')[0]) +
-    //   parseInt(received_vesting_shares.split(' ')[0]) -
-    //   parseInt(delegated_vesting_shares.split(' ')[0]);
-
-    // // parse meta data
-    // if (
-    //   has(account, 'posting_json_metadata') ||
-    //   has(account, 'json_metadata')
-    // ) {
-    //   try {
-    //     account.about =
-    //       JSON.parse(get(account, 'json_metadata')) ||
-    //       JSON.parse(get(account, 'posting_json_metadata'));
-    //     console.log('[fetchUserProfile]', account.about);
-    //   } catch (error) {
-    //     console.log('failed to fetch profile metadata', error);
-    //     account.about = {};
-    //   }
-    // }
-    // account.avatar = getAvatar(get(account, 'about'));
-    // account.nickname = getName(get(account, 'about'));
-
-    // // get followers/following count
-    // const followCount = await fetchFollows(username);
-    // console.log('[fetchUserProfile] follow count', followCount);
-
-    // // build profile data
-    // const profileData: ProfileData = {
-    //   profile: {
-    //     metadata: account.about.profile
-    //       ? account.about.profile
-    //       : {name: '', cover_image: '', profile_image: ''},
-    //     name: username,
-    //     voteAmount: estimateVoteAmount(account, globalProps),
-    //     votePower: String(voting_power),
-    //     balance: balance.split(' ')[0],
-    //     power: String(power),
-    //     stats: {
-    //       post_count: account.post_count,
-    //       following: followCount.following_count,
-    //       followers: followCount.follower_count,
-    //     },
-    //   },
-    //   blogRefs: account.blog,
-    //   blogs: accountState.content,
-    // };
-    // return profileData;
   } catch (error) {
     console.log('Failed to fetch user profile data', error);
     return null;
@@ -834,7 +743,7 @@ export const fetchTagList = async () => {
   return data;
 };
 
-//// blurt price
+//// steem price
 export const fetchPrice = async () => {
   const {data} = await axios.get(PRICE_ENDPOINT, {
     timeout: 5000,
@@ -1489,27 +1398,40 @@ export const fetchWalletData = async (username: string) => {
     if (accountState) {
       const account = get(accountState.accounts, username, '');
       console.log('[fetchWalletData] account', account);
+      // destructuring
       const {
         balance,
         savings_balance,
+        sbd_balance,
+        savings_sbd_balance,
+        reward_steem_balance,
+        reward_sbd_balance,
         voting_power,
         vesting_shares,
         received_vesting_shares,
         delegated_vesting_shares,
-        reward_vesting_blurt,
-        reward_vesting_balance,
         transfer_history,
       } = account;
-      const power =
+      // get sum of shares
+      const sumShares =
         parseInt(vesting_shares.split(' ')[0]) +
         parseInt(received_vesting_shares.split(' ')[0]) -
         parseInt(delegated_vesting_shares.split(' ')[0]);
+      // convert the shares to steem
+      const power = vestToSteem(
+        sumShares,
+        globalProps.dynamicProps.total_vesting_shares,
+        globalProps.dynamicProps.total_vesting_fund_steem,
+      );
+      // build wallet data
       const walletData: WalletData = {
-        blurt: balance.split(' ')[0],
-        power: String(power),
-        savings: savings_balance.split(' ')[0],
-        rewardBlurt: reward_vesting_blurt.split(' ')[0],
-        rewardVests: reward_vesting_balance.split(' ')[0],
+        balance: balance.split(' ')[0],
+        balanceSBD: sbd_balance.split(' ')[0],
+        power: power,
+        savingsSteem: savings_balance.split(' ')[0],
+        savingsSBD: savings_sbd_balance.split(' ')[0],
+        rewardSteem: reward_steem_balance.split(' ')[0],
+        rewardSBD: reward_sbd_balance.split(' ')[0],
         voteAmount: '0',
         votePower: String(voting_power),
         transactions: transfer_history
@@ -1634,63 +1556,6 @@ export const getAvatar = (about) => {
   }
   return null;
 };
-
-/* 
-from blutjs ChainTypes.js
-
-ChainTypes.operations= {
-    vote: 0,
-    comment: 1,
-    transfer: 2,
-    transfer_to_vesting: 3,
-    withdraw_vesting: 4,
-    account_create: 5,
-    account_update: 6,
-    witness_update: 7,
-    account_witness_vote: 8,
-    account_witness_proxy: 9,
-    custom: 10,
-    delete_comment: 11,
-    custom_json: 12,
-    comment_options: 13,
-    set_withdraw_vesting_route: 14,
-    claim_account: 15,
-    create_claimed_account: 16,
-    request_account_recovery: 17,
-    recover_account: 18,
-    change_recovery_account: 19,
-    escrow_transfer: 20,
-    escrow_dispute: 21,
-    escrow_release: 22,
-    escrow_approve: 23,
-    transfer_to_savings: 24,
-    transfer_from_savings: 25,
-    cancel_transfer_from_savings: 26,
-    custom_binary: 27,
-    decline_voting_rights: 28,
-    reset_account: 29,
-    set_reset_account: 30,
-    claim_reward_balance: 31,
-    delegate_vesting_shares: 32,
-    witness_set_properties: 33,
-    create_proposal: 34,
-    update_proposal_votes: 35,
-    remove_proposal: 36,
-
-    author_reward: 37,  // new
-    curation_reward: 38, // new
-    comment_reward: 39, // new
-    fill_vesting_withdraw: 40, // new
-    shutdown_witness: 41, // new
-    fill_transfer_from_savings: 42, // new
-    hardfork: 43, // new
-    comment_payout_update: 44, // new
-    return_vesting_delegation: 45, // new
-    comment_benefactor_reward: 46, // new
-
-    account_update2: 47 // not exist in blurt?
-};
-*/
 
 /*
 

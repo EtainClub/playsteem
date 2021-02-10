@@ -90,7 +90,7 @@ const Wallet = (props: Props): JSX.Element => {
   }, [userState.price]);
 
   //// get wallet data
-  const _getWalletData = () => {
+  const _getWalletData = async () => {
     const {username} = authState.currentCredentials;
     // fetch user data
     getWalletData(username);
@@ -148,7 +148,7 @@ const Wallet = (props: Props): JSX.Element => {
     <TokenTransfer
       title={intl.formatMessage({id: 'Wallet.token_transfer_title'})}
       followings={followingList}
-      balance={walletData.blurt}
+      balance={walletData.balance}
       handleResult={_handleTransferResult}
     />
   ) : (

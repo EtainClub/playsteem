@@ -46,8 +46,6 @@ const ProfileView: React.FC<Props> = ({
   //// props
   const {profile} = props.profileData;
 
-  console.log('[ProfileView] profile data', profile);
-
   //// language
   const intl = useIntl();
   //// contexts

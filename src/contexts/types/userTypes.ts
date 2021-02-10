@@ -53,13 +53,25 @@ export interface ProfileData {
 
 //// wallet data
 export interface WalletData {
-  blurt: string;
+  // liquid steem
+  balance: string;
+  // sdb balance
+  balanceSBD: string;
+  // steem power
   power: string;
-  savings: string;
-  rewardBlurt: string;
-  rewardVests: string;
+  // steem savings
+  savingsSteem: string;
+  // sbd savings
+  savingsSBD: string;
+  // steem reward
+  rewardSteem: string;
+  // sbd reward
+  rewardSBD: string;
+  // vote amount
   voteAmount?: string;
+  // voting weight
   votePower?: string;
+  // transaction history
   transactions: any[];
 }
 

@@ -36,20 +36,25 @@ interface Props {
 const WalletStatsView = (props: Props): JSX.Element => {
   //// props
   let {
-    blurt,
+    balance,
+    balanceSBD,
     power,
-    savings,
-    rewardBlurt,
+    savingsSteem,
+    savingsSBD,
+    rewardSteem,
+    rewardSBD,
     transactions,
     votePower,
   } = props.walletData;
-  console.log('[WalletStatsView] props, walletdata', props.walletData);
-
-  blurt = putComma(parseFloat(blurt).toFixed(3));
+  balance = putComma(parseFloat(balance).toFixed(3));
+  balanceSBD = putComma(parseFloat(balanceSBD).toFixed(3));
   power = putComma(parseFloat(power).toFixed(3));
-  savings = putComma(savings);
-  const needToClaim = parseFloat(rewardBlurt) > 0 ? true : false;
-  rewardBlurt = putComma(rewardBlurt);
+  savingsSteem = putComma(savingsSteem);
+  savingsSBD = putComma(savingsSBD);
+  const needToClaim =
+    parseFloat(rewardSteem) > 0 || parseFloat(rewardSBD) > 0 ? true : false;
+  rewardSteem = putComma(rewardSteem);
+  rewardSBD = putComma(rewardSBD);
   //// language
   const intl = useIntl();
   const {setToastMessage} = useContext(UIContext);
@@ -112,7 +117,7 @@ const WalletStatsView = (props: Props): JSX.Element => {
             size={12}>
             {!hideOp &&
               intl.formatMessage({id: `Wallet.${get(item, 'textKey')}`})}{' '}
-            {value} BLURT
+            {value} STEEM
             {description}
           </Text>
         </Block>
@@ -157,12 +162,12 @@ const WalletStatsView = (props: Props): JSX.Element => {
           }}>
           {props.isUser ? (
             <Block row middle space="between">
-              <Text>BLURT</Text>
+              <Text>STEEM</Text>
               <Block row middle>
                 <DropdownModal
                   key={blurtIndex}
                   options={blurtOptions}
-                  defaultText={`${blurt} BLURT`}
+                  defaultText={`${balance} STEEM`}
                   dropdownButtonStyle={styles.dropdownButtonStyle}
                   selectedOptionIndex={-1}
                   rowTextStyle={styles.rowTextStyle}
@@ -175,17 +180,17 @@ const WalletStatsView = (props: Props): JSX.Element => {
             </Block>
           ) : (
             <Block row space="between">
-              <Text color={argonTheme.COLORS.FACEBOOK}>BLURT</Text>
-              <Text color={argonTheme.COLORS.ERROR}>{`${blurt} BLURT`}</Text>
+              <Text color={argonTheme.COLORS.FACEBOOK}>STEEM</Text>
+              <Text color={argonTheme.COLORS.ERROR}>{`${balance} STEEM`}</Text>
             </Block>
           )}
           {props.isUser ? (
             <Block row middle space="between">
-              <Text>BLURT POWER</Text>
+              <Text>STEEM POWER</Text>
               <Block row middle>
                 <DropdownModal
                   key={powerIndex}
-                  defaultText={`${power} BLURT`}
+                  defaultText={`${power} STEEM`}
                   dropdownButtonStyle={styles.dropdownButtonStyle}
                   selectedOptionIndex={-1}
                   rowTextStyle={styles.rowTextStyle}
@@ -199,41 +204,49 @@ const WalletStatsView = (props: Props): JSX.Element => {
             </Block>
           ) : (
             <Block row space="between">
-              <Text color={argonTheme.COLORS.FACEBOOK}>BLURT POWER</Text>
-              <Text color={argonTheme.COLORS.ERROR}>{`${power} BLURT`}</Text>
+              <Text color={argonTheme.COLORS.FACEBOOK}>STEEM POWER</Text>
+              <Text color={argonTheme.COLORS.ERROR}>{`${power} STEEM`}</Text>
             </Block>
           )}
           {props.isUser ? (
             <Block row middle space="between">
-              <Text>SAVINGS</Text>
+              <Text>STEEM DOLLARS</Text>
               <Block row middle>
                 <DropdownModal
-                  key={savingsIndex}
-                  options={savingsOptions}
-                  defaultText={`${savings} BLURT`}
+                  key={powerIndex}
+                  defaultText={`$${balanceSBD}`}
                   dropdownButtonStyle={styles.dropdownButtonStyle}
                   selectedOptionIndex={-1}
                   rowTextStyle={styles.rowTextStyle}
                   style={styles.dropdown}
                   dropdownStyle={styles.dropdownStyle}
                   textStyle={styles.dropdownText}
-                  onSelect={_onSelectSavingsOption}
+                  options={powerOptions}
+                  onSelect={_onSelectPowerOption}
                 />
               </Block>
             </Block>
           ) : (
             <Block row space="between">
-              <Text color={argonTheme.COLORS.FACEBOOK}>SAVINGS</Text>
-              <Text color={argonTheme.COLORS.ERROR}>{`${savings} BLURT`}</Text>
+              <Text color={argonTheme.COLORS.FACEBOOK}>STEEM DOLLARS</Text>
+              <Text color={argonTheme.COLORS.ERROR}>{`$${balanceSBD}`}</Text>
             </Block>
           )}
+
           <Block row space="between">
             <Text>{intl.formatMessage({id: 'voting_power'})}</Text>
             <Text>{parseInt(votePower) / 100}%</Text>
           </Block>
+
           {props.isUser && (
             <Block row space="between">
-              <Text>{intl.formatMessage({id: 'blurt_price'})}</Text>
+              <Text>{intl.formatMessage({id: 'steem_price'})}</Text>
+              {props.price ? <Text>${props.price.toFixed(3)}</Text> : null}
+            </Block>
+          )}
+          {props.isUser && (
+            <Block row space="between">
+              <Text>{intl.formatMessage({id: 'sbd_price'})}</Text>
               {props.price ? <Text>${props.price.toFixed(3)}</Text> : null}
             </Block>
           )}
@@ -243,7 +256,7 @@ const WalletStatsView = (props: Props): JSX.Element => {
             <Text color={argonTheme.COLORS.ERROR}>
               {intl.formatMessage(
                 {id: 'Wallet.reward_blurt'},
-                {what: rewardBlurt},
+                {what: rewardSteem},
               )}
             </Text>
             <Button onPress={props.handlePressClaim} loading={props.claiming}>
