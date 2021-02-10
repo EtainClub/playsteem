@@ -406,7 +406,7 @@ export const vestToSteem = (vestingShares: number) => {
   return (
     parseFloat(total_vesting_fund_steem) *
     (vestingShares / parseFloat(total_vesting_shares))
-  ).toFixed(0);
+  ).toFixed(3);
 };
 
 export const vestsToRshares = (

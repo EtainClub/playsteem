@@ -11,8 +11,6 @@ import {DropdownModal} from '~/components/DropdownModal';
 import ModalDropdown from 'react-native-modal-dropdown';
 import moment from 'moment';
 import {WalletData} from '~/contexts/types';
-//// blockchain
-import {vestToSteem} from '~/providers/steem/dsteemApi';
 
 //// utils
 import {get} from 'lodash';
@@ -87,11 +85,6 @@ const WalletStatsView = (props: Props): JSX.Element => {
 
   const _renderItem = ({item, index}) => {
     let value = get(item, 'value', '');
-    if (value) {
-      const _value = value.split(' ');
-      if (_value[1] === 'VESTS') value = vestToSteem(parseFloat(_value[0]));
-      else if (_value[1] === 'STEEM') value = _value[0];
-    }
     //const value = parseFloat(get(item, 'value', '')).toFixed(2);
     const op = get(item, 'textKey', '');
     const hideOp = op === 'transfer' ? true : false;
@@ -99,7 +92,7 @@ const WalletStatsView = (props: Props): JSX.Element => {
       op === 'transfer' ? ' from ' + get(item, 'details', '') : '';
 
     // handle small value
-    if (parseFloat(value) < 0.001) return;
+    if (parseFloat(value) < 0.01) return;
 
     return (
       <Block
@@ -108,10 +101,10 @@ const WalletStatsView = (props: Props): JSX.Element => {
         space="between"
         style={[
           styles.rows,
-          {
-            backgroundColor:
-              BACKGROUND_COLORS[index % BACKGROUND_COLORS.length],
-          },
+          // {
+          //   backgroundColor:
+          //     BACKGROUND_COLORS[index % BACKGROUND_COLORS.length],
+          // },
         ]}>
         <Block row>
           <Icon
@@ -127,7 +120,7 @@ const WalletStatsView = (props: Props): JSX.Element => {
             size={12}>
             {!hideOp &&
               intl.formatMessage({id: `Wallet.${get(item, 'textKey')}`})}{' '}
-            {value} STEEM
+            {value}
             {description}
           </Text>
         </Block>

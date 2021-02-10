@@ -16,7 +16,7 @@ import {
   fetchFollowers,
 } from '~/providers/steem/dsteemApi';
 import {estimateVoteAmount} from '~/utils/estimateVoteAmount';
-import {parseBlurtTransaction} from '~/utils/parseTransaction';
+import {parseSteemTransaction} from '~/utils/parseTransaction';
 
 import {
   PostRef,
@@ -191,7 +191,7 @@ const UserProvider = ({children}: Props) => {
       // parse transaction
       const parsedTransactions = walletData.transactions
         .map((transaction) => {
-          return parseBlurtTransaction(transaction);
+          return parseSteemTransaction(transaction);
         })
         .reverse();
       walletData.transactions = parsedTransactions;

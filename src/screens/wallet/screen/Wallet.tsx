@@ -9,12 +9,12 @@ import {Block, Icon, Button, Input, Text, theme} from 'galio-framework';
 import {TabView, SceneMap} from 'react-native-tab-view';
 import {argonTheme} from '~/constants';
 import {WalletStatsView, WalletKeyView} from '~/components';
-import {KeyTypes} from '~/contexts/types';
+import {KeyTypes, PriceData} from '~/contexts/types';
 import {WalletData} from '~/contexts/types';
 
 interface Props {
   walletData: WalletData;
-  price: number;
+  price: PriceData;
   handlePressClaim: () => void;
   claiming: boolean;
   handlePressTransfer: (index: number) => void;
