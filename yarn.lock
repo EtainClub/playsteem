@@ -826,10 +826,9 @@
   dependencies:
     "@hapi/hoek" "^8.3.0"
 
-"@hiveio/dhive@^0.14.12":
+"@hiveio/dhive@https://github.com/EtainClub/dhive":
   version "0.14.12"
-  resolved "https://registry.yarnpkg.com/@hiveio/dhive/-/dhive-0.14.12.tgz#1e0eddc7ad7c0e169fe8349fb302d108683cf251"
-  integrity sha512-jYbLrRX2Citax+IzVrM1f1RoyYEjwCnAPr9ZT+aMjrtYvYOjsxg46eGfO6m/tTB1PkhABRGyAbb1yBodNogjyw==
+  resolved "https://github.com/EtainClub/dhive#69b64bb76007f5f99e4fc2b8632e2b3465edd30c"
   dependencies:
     bs58 "^4.0.1"
     bytebuffer "^5.0.1"

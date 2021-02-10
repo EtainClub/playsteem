@@ -560,7 +560,8 @@ const PostsProvider = ({children}: Props) => {
       // });
     } else {
       const postState = postsState[postsType].posts[postIndex].state;
-      // update payout
+
+      // // update payout
       postState.payout = (
         parseFloat(postState.payout) +
         (voteAmount * votingWeight) / 100
@@ -568,7 +569,7 @@ const PostsProvider = ({children}: Props) => {
       // update vote count
       postState.vote_count += 1;
       // update voters
-      postState.voters = [`${username} (${voteAmount})`, ...postState.voters];
+      postState.voters = [`${username} ($${voteAmount})`, ...postState.voters];
       // update voted flag
       postState.voted = true;
 
