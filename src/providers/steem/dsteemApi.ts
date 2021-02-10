@@ -461,7 +461,9 @@ export const fetchGlobalProps = async (): Promise<BlockchainGlobalProps> => {
   const quote = parseToken(feedHistory.current_median_history.quote);
   const fundRecentClaims = rewardFund.recent_claims;
   const fundRewardBalance = parseToken(rewardFund.reward_balance);
-  return {
+
+  // update the globalProps
+  globalProps = {
     steemPerMVests,
     base,
     quote,
@@ -471,43 +473,10 @@ export const fetchGlobalProps = async (): Promise<BlockchainGlobalProps> => {
     dynamicProps: globalDynamic,
     chainProps: {},
   };
+
+  console.log('[fetchGlobalProps] globalProps', globalProps);
+  return globalProps;
 };
-
-// // fetch global properties
-// export const fetchGlobalProps = async (): Promise<BlockchainGlobalProps> => {
-//   // const globalDynamic = await getDynamicGlobalProperties();
-//   // console.log('[fetchGlobalProps] globalDynamic', globalDynamic);
-//   const rewardFund = await getRewardFund();
-//   console.log('[fetchGlobalProps] rewardFund', rewardFund);
-//   const chainProperties = await getChainProperties();
-//   console.log('[fetchGlobalProps] chainProperties', chainProperties);
-//   // const  feedHistory = await getFeedHistory();
-//   //    console.log('[fetchGlobalProps] feedHistory', feedHistory);
-
-//   // const steemPerMVests =
-//   //   (parseToken(globalDynamic.total_vesting_fund_steem as string) /
-//   //     parseToken(globalDynamic.total_vesting_shares as string)) *
-//   //   1e6;
-//   // const sbdPrintRate = globalDynamic.sbd_print_rate;
-//   //  const base = parseToken(feedHistory.current_median_history.base);
-//   //  const quote = parseToken(feedHistory.current_median_history.quote);
-//   const fundRecentClaims = rewardFund.recent_claims;
-//   const fundRewardBalance = parseToken(rewardFund.reward_balance);
-
-//   // update the globalProps
-//   globalProps = {
-//     steemPerMVests: 1,
-//     base: 1,
-//     quote: 1,
-//     fundRecentClaims,
-//     fundRewardBalance,
-//     sbdPrintRate: 1,
-//     dynamicProps: {},
-//     chainProps: chainProperties,
-//   };
-
-//   return globalProps;
-// };
 
 //// get latest block
 export const fetchLatestBlock = async () => {
@@ -612,7 +581,7 @@ export const fetchUserProfile = async (username: string) => {
   try {
     // get profile
     const fetchedProfile = await fetchProfile(username);
-    console.log('[fetchUserProfile] profile data', fetchedProfile);
+    console.log('[fetchUserProfile] fetched profile', fetchedProfile);
 
     // get account
     const account = await getAccount(username);
@@ -620,9 +589,9 @@ export const fetchUserProfile = async (username: string) => {
 
     const profileData: ProfileData = {
       profile: {
-        meta: fetchedProfile.metadata.profile,
+        metadata: fetchedProfile.metadata.profile,
         name: username,
-        voteAmount: '0',
+        voteAmount: estimateVoteAmount(account, globalProps),
         votePower: '0',
         balance: account.balance,
         power: fetchedProfile.stats.sp,
@@ -638,6 +607,8 @@ export const fetchUserProfile = async (username: string) => {
     };
 
     console.log('fetchUserProfile. profileData', profileData);
+
+    return profileData;
 
     // // get account state
     // const params = `@${username}`;

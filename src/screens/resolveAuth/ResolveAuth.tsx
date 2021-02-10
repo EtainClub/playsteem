@@ -49,7 +49,7 @@ export const ResolveAuth = (props) => {
 
   useEffect(() => {
     if (fetched) {
-      // get blurt global props and get user's vote amount
+      //
       //      fetchBlockchainGlobalProps(username);
       setAuthResolved(true);
       // TODO is this not necessary, why?
@@ -62,7 +62,7 @@ export const ResolveAuth = (props) => {
     // get settings from storage
     await getAllSettingsFromStorage();
     // fetch global props
-    fetchBlockchainGlobalProps();
+    await fetchBlockchainGlobalProps();
 
     // get user login token from storage
     let username = await AsyncStorage.getItem(LOGIN_TOKEN);
@@ -78,9 +78,9 @@ export const ResolveAuth = (props) => {
     if (username) {
       console.log('[resolveAuth] username', username);
       try {
-        // get user profile
-        const profileData = await getUserProfileData(username);
-        console.log('[resolveAuth] profile data', profileData);
+        // // get user profile
+        // const profileData = await getUserProfileData(username);
+        // console.log('[resolveAuth] profile data', profileData);
         // get followings
         const followings = await getFollowings(username);
         // why this???

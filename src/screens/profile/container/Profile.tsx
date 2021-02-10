@@ -113,8 +113,7 @@ const Profile = ({navigation}): JSX.Element => {
     if (_profileData) {
       setAvatarUrl(_profileData.profile.metadata.profile_image);
       //      setAvatarUrl(`${settingsState.blockchains.image}/u/${author}/avatar`);
-      const startRef = {author: null, permlink: null};
-      const posts = await fetchPosts(
+      const {fetchedPosts, fetchedAll} = await fetchPosts(
         PostsTypes.AUTHOR,
         0,
         0,
@@ -123,8 +122,8 @@ const Profile = ({navigation}): JSX.Element => {
         false,
         author,
       );
-      console.log('[_getAuthorProfile] blog summarys', posts);
-      setBlogs(posts);
+      console.log('[_getAuthorProfile] blog summarys', fetchedPosts);
+      setBlogs(fetchedPosts);
       setProfileFetched(true);
       setFetching(false);
     }

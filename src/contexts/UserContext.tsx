@@ -38,10 +38,12 @@ const initialState = {
       balance: '',
       power: '',
       sbd: '',
+      reputation: 25,
       stats: {
         post_count: 0,
         following: 0,
         followers: 0,
+        rank: 0,
       },
     },
     blogRefs: [],
