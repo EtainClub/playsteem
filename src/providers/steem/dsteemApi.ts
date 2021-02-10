@@ -609,47 +609,57 @@ export const fetchProfile = async (author: string) =>
 
 //// fetch user state
 export const fetchUserProfile = async (username: string) => {
-  const params = `@${username}`;
-  const accountState = await client.call('condenser_api', `get_state`, [
-    params,
-  ]);
-  console.log('[fetchUserProfile] accountState', accountState);
-
   try {
-    const fetchedProfile = await client.call('bridge', 'get_profile', {
-      account: username,
-    });
-
+    // get profile
+    const fetchedProfile = await fetchProfile(username);
     console.log('[fetchUserProfile] profile data', fetchedProfile);
-    if (!fetchedProfile) {
-      console.log('[fetchUserProfile] accountState is null', fetchedProfile);
-      return null;
-    }
 
-    // profile: {
-    //   metadata: any;
-    //   name: string;
-    //   voteAmount: string;
-    //   votePower: string;
-    //   balance: string;
-    //   power: string;
-    //   sbd: string;
-    //   reputation: number;
-    //   stats: {
-    //     post_count: number;
-    //     following: number;
-    //     followers: number;
-    //     rank: number;
-    //   };
+    // get account
+    const account = await getAccount(username);
+    console.log('get account. account', account);
+
+    const profileData: ProfileData = {
+      profile: {
+        meta: fetchedProfile.metadata.profile,
+        name: username,
+        voteAmount: '0',
+        votePower: '0',
+        balance: account.balance,
+        power: fetchedProfile.stats.sp,
+        sbd: account.sbd_balance,
+        reputation: fetchedProfile.reputation,
+        stats: {
+          post_count: fetchedProfile.post_count,
+          following: fetchedProfile.stats.following,
+          followers: fetchedProfile.stats.followers,
+          rank: fetchedProfile.stats.rank,
+        },
+      },
+    };
+
+    console.log('fetchUserProfile. profileData', profileData);
+
+    // // get account state
+    // const params = `@${username}`;
+    // const accountState = await client.call('condenser_api', `get_state`, [
+    //   params,
+    // ]);
+    // console.log('[fetchUserProfile] accountState', accountState);
+    // if (!accountState) {
+    //   console.log('[fetchUserProfile] accountState is null', accountState);
+    //   return null;
     // }
+    // // get account
+    // const account = get(accountState.accounts, username, '');
+    // const {net_vesting_share} = account;
 
     // // build profile data
     // const profileData: ProfileData = {
     //   profile: {
     //     metadata: fetchedProfile.metadata.profile,
     //     name: username,
-    //     voteAmount: estimateVoteAmount(username, globalProps),
-    //     votePower: String(voting_power),
+    //     voteAmount: estimateVoteAmount(account, globalProps),
+    //     votePower: '0' // String(voting_power),
     //     balance: balance.split(' ')[0],
     //     power: String(power),
     //     stats: {
@@ -662,8 +672,6 @@ export const fetchUserProfile = async (username: string) => {
     //   blogs: accountState.content,
     // };
 
-    // // get account
-    // const account = get(accountState.accounts, username, '');
     // // destructure
     // const {
     //   balance,
