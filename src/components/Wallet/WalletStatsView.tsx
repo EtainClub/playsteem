@@ -11,12 +11,15 @@ import {DropdownModal} from '~/components/DropdownModal';
 import ModalDropdown from 'react-native-modal-dropdown';
 import moment from 'moment';
 import {WalletData} from '~/contexts/types';
+//// blockchain
+import {vestToSteem} from '~/providers/steem/dsteemApi';
 
 //// utils
 import {get} from 'lodash';
 import {putComma} from '~/utils/stats';
 import {getTimeFromNow} from '~/utils/time';
 import {UIContext} from '~/contexts';
+import {PriceData} from '~/contexts/types';
 
 const BACKGROUND_COLORS = [
   argonTheme.COLORS.BORDER,
@@ -29,12 +32,13 @@ interface Props {
   handlePressClaim?: () => void;
   claiming?: boolean;
   showTransactions?: boolean;
-  price?: number;
+  price?: PriceData;
   handlePressTransfer?: (index: number) => void;
   onRefresh: () => void;
 }
 const WalletStatsView = (props: Props): JSX.Element => {
   //// props
+  const {price} = props;
   let {
     balance,
     balanceSBD,
@@ -82,7 +86,13 @@ const WalletStatsView = (props: Props): JSX.Element => {
   };
 
   const _renderItem = ({item, index}) => {
-    const value = parseFloat(get(item, 'value', '')).toFixed(2);
+    let value = get(item, 'value', '');
+    if (value) {
+      const _value = value.split(' ');
+      if (_value[1] === 'VESTS') value = vestToSteem(parseFloat(_value[0]));
+      else if (_value[1] === 'STEEM') value = _value[0];
+    }
+    //const value = parseFloat(get(item, 'value', '')).toFixed(2);
     const op = get(item, 'textKey', '');
     const hideOp = op === 'transfer' ? true : false;
     const description =
@@ -241,13 +251,27 @@ const WalletStatsView = (props: Props): JSX.Element => {
           {props.isUser && (
             <Block row space="between">
               <Text>{intl.formatMessage({id: 'steem_price'})}</Text>
-              {props.price ? <Text>${props.price.toFixed(3)}</Text> : null}
+              <Block middle row>
+                {price ? <Text>${price.steem.usd.toFixed(3)}</Text> : null}
+                {price ? (
+                  <Block card style={styles.priceRate}>
+                    <Text>{price.steem.change24h.toFixed(3)}%</Text>
+                  </Block>
+                ) : null}
+              </Block>
             </Block>
           )}
           {props.isUser && (
             <Block row space="between">
               <Text>{intl.formatMessage({id: 'sbd_price'})}</Text>
-              {props.price ? <Text>${props.price.toFixed(3)}</Text> : null}
+              <Block middle row>
+                {price ? <Text>${price.sbd.usd.toFixed(3)}</Text> : null}
+                {price ? (
+                  <Block card style={styles.priceRate}>
+                    <Text>{price.sbd.change24h.toFixed(3)}%</Text>
+                  </Block>
+                ) : null}
+              </Block>
             </Block>
           )}
         </Block>
@@ -337,5 +361,11 @@ const styles = StyleSheet.create({
   dropdown: {
     width: 180,
     marginLeft: 10,
+  },
+  priceRate: {
+    backgroundColor: argonTheme.COLORS.INPUT_SUCCESS,
+    paddingHorizontal: 5,
+    marginHorizontal: 2,
+    marginVertical: 3,
   },
 });

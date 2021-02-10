@@ -71,7 +71,10 @@ const initialState = {
     votePower: '0',
     transactions: [],
   },
-  price: 0,
+  price: {
+    steem: {usd: 0, change24h: 0},
+    sbd: {usd: 0, change24h: 0},
+  },
   followings: [],
   followers: [],
   phoneNumber: '',
@@ -241,14 +244,19 @@ const UserProvider = ({children}: Props) => {
   };
 
   const getPrice = async () => {
-    const {price_usd} = await fetchPrice();
-    console.log('[getPrice] price', price_usd);
-    if (price_usd) {
+    const priceData = await fetchPrice();
+    console.log('[getPrice] price', priceData);
+    const {steem} = priceData;
+    const sbd = priceData['steem-dollars'];
+    if (priceData) {
       dispatch({
         type: UserActionTypes.SET_PRICE,
-        payload: price_usd,
+        payload: {
+          steem: {usd: steem.usd, change24h: steem.usd_24h_change},
+          sbd: {usd: sbd.usd, change24h: sbd.usd_24h_change},
+        },
       });
-      return price_usd;
+      return priceData;
     } else {
       setToastMessage(intl.formatMessage({id: 'fetch_error'}));
       return null;

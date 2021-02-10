@@ -398,15 +398,16 @@ export const parseToken = (strVal: string): number => {
   }
   return Number(parseFloat(strVal.split(' ')[0]));
 };
-export const vestToSteem = (
-  vestingShares: number,
-  totalVestingShares: string,
-  totalVestingFundSteem: string,
-) =>
-  (
-    parseFloat(totalVestingFundSteem) *
-    (vestingShares / parseFloat(totalVestingShares))
+export const vestToSteem = (vestingShares: number) => {
+  const {
+    total_vesting_shares,
+    total_vesting_fund_steem,
+  } = globalProps.dynamicProps;
+  return (
+    parseFloat(total_vesting_fund_steem) *
+    (vestingShares / parseFloat(total_vesting_shares))
   ).toFixed(0);
+};
 
 export const vestsToRshares = (
   vests: number,
@@ -745,11 +746,16 @@ export const fetchTagList = async () => {
 
 //// steem price
 export const fetchPrice = async () => {
-  const {data} = await axios.get(PRICE_ENDPOINT, {
-    timeout: 5000,
-  });
-  if (data) return data;
-  else return null;
+  try {
+    const {data} = await axios.get(PRICE_ENDPOINT, {
+      timeout: 5000,
+    });
+    if (data) return data;
+    else return null;
+  } catch (error) {
+    console.log('failed to fetch price', error);
+    return null;
+  }
 };
 
 // fetch community list of a user
@@ -1418,11 +1424,7 @@ export const fetchWalletData = async (username: string) => {
         parseInt(received_vesting_shares.split(' ')[0]) -
         parseInt(delegated_vesting_shares.split(' ')[0]);
       // convert the shares to steem
-      const power = vestToSteem(
-        sumShares,
-        globalProps.dynamicProps.total_vesting_shares,
-        globalProps.dynamicProps.total_vesting_fund_steem,
-      );
+      const power = vestToSteem(sumShares);
       // build wallet data
       const walletData: WalletData = {
         balance: balance.split(' ')[0],

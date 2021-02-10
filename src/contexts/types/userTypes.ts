@@ -75,13 +75,25 @@ export interface WalletData {
   transactions: any[];
 }
 
+//// price data
+export interface PriceData {
+  steem: {
+    usd: number;
+    change24h: number;
+  };
+  sbd: {
+    usd: number;
+    change24h: number;
+  };
+}
+
 //// user state
 export interface UserState {
   profileData: ProfileData;
   globalProps: BlockchainGlobalProps;
   walletData: WalletData;
   // price in usd
-  price?: number;
+  price?: PriceData;
   followings: string[];
   followers: string[];
 }
@@ -140,7 +152,7 @@ interface SetProfileDataAction {
 // set price
 interface SetPriceAction {
   type: UserActionTypes.SET_PRICE;
-  payload: number;
+  payload: PriceData;
 }
 // set following
 interface SetFollowingsAction {
@@ -168,7 +180,7 @@ export interface UserContextType {
   // get user notifications
   getNotifications: (username: string) => Promise<any[]>;
   // get price
-  getPrice: () => Promise<number>;
+  getPrice: () => Promise<PriceData>;
   // update follow state
   updateFollowState: (
     follower: string,

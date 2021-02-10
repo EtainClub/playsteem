@@ -6,7 +6,7 @@ import {View} from 'react-native';
 import {useIntl} from 'react-intl';
 ////
 import {AuthContext, UIContext, UserContext} from '~/contexts';
-import {WalletData, KeyTypes} from '~/contexts/types';
+import {WalletData, KeyTypes, PriceData} from '~/contexts/types';
 //// blockchain
 import {claimRewardBalance} from '~/providers/steem/dsteemApi';
 //// components
@@ -36,7 +36,7 @@ const Wallet = (props: Props): JSX.Element => {
     userState.walletData,
   );
   const [claiming, setClaiming] = useState(false);
-  const [price, setPrice] = useState(0);
+  const [price, setPrice] = useState<PriceData>();
   const [showTransferModal, setShowTransferModal] = useState(false);
   const [followingList, setFollowingList] = useState([]);
   //////// events
