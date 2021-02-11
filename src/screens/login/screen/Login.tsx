@@ -5,6 +5,8 @@ import {
   KeyboardAvoidingView,
   Alert,
   Platform,
+  TouchableOpacity,
+  Linking,
 } from 'react-native';
 import {Block, Button, Input, Text, theme} from 'galio-framework';
 
@@ -14,6 +16,9 @@ import {HeaderHeight, iPhoneX} from '~/constants/utils';
 import {navigate} from '~/navigation/service';
 
 import {useIntl} from 'react-intl';
+
+const TERMS_URL = 'https://playsteem.app/terms';
+const PRIVACY_URL = 'https://playsteem.app/privacy';
 
 const {width, height} = Dimensions.get('window');
 
@@ -90,10 +95,20 @@ const LoginScreen = (props: Props): JSX.Element => {
             />
             <Text style={{color: 'red'}}>{message}</Text>
           </Block>
+          <Block center row>
+            <TouchableOpacity onPress={() => Linking.openURL(TERMS_URL)}>
+              <Text color="white">Terms</Text>
+            </TouchableOpacity>
+            <Text color="white"> and </Text>
+            <TouchableOpacity onPress={() => Linking.openURL(PRIVACY_URL)}>
+              <Text color="white">Policy</Text>
+            </TouchableOpacity>
+          </Block>
+
           <Block flex top style={{marginTop: 20}}>
             <Button
               shadowless
-              color={argonTheme.COLORS.ERROR}
+              color={argonTheme.COLORS.STEEM}
               style={styles.button}
               loading={loading}
               onPress={props.processLogin}>

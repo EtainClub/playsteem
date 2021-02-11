@@ -92,6 +92,7 @@ export const parsePost = async (
 
       // user's actions related
       voted: false,
+      downvoted: false,
       bookmarked: false,
       resteemed: false,
       favorite: false,
@@ -320,6 +321,7 @@ export const parseComment = async (comment: Discussion, username: string) => {
 
       // user's actions related
       voted: false,
+      downvoted: false,
       bookmarked: false,
       resteemed: false,
       favorite: false,

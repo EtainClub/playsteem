@@ -79,8 +79,7 @@ const AuthorProfile = (props: Props): JSX.Element => {
     setProfileData(_profileData);
     // build summaries of blogs
     if (_profileData) {
-      const startRef = {author: null, permlink: null};
-      const posts = await fetchPosts(
+      const {fetchedPosts, fetchedAll} = await fetchPosts(
         PostsTypes.AUTHOR,
         0,
         0,
@@ -90,8 +89,8 @@ const AuthorProfile = (props: Props): JSX.Element => {
         author,
       );
 
-      console.log('[_getAuthorProfile] blog summarys', posts);
-      setBlogs(posts);
+      console.log('[_getAuthorProfile] blog summarys', fetchedPosts);
+      setBlogs(fetchedPosts);
       setProfileFetched(true);
     }
   };

@@ -27,7 +27,8 @@ export const IMAGE_SERVERS = ['https://steemitimages.com'];
 export const BASE_URL = 'https://steemit.com';
 
 export const TAG_ENDPOINT = 'https://api.blurt.buzz/tags';
-export const PRICE_ENDPOINT = 'https://api.blurt.buzz/price_info';
+export const PRICE_ENDPOINT =
+  'https://api.coingecko.com/api/v3/simple/price?ids=steem,steem-dollars,snax-token&vs_currencies=usd&include_24hr_change=true';
 export const NOTIFICATIONS_ENDPOINT = 'wss://notifications.blurt.world/';
 
 export const BENEFICIARY_WEIGHT = 500;

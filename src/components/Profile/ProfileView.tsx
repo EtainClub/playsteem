@@ -46,8 +46,6 @@ const ProfileView: React.FC<Props> = ({
   //// props
   const {profile} = props.profileData;
 
-  console.log('[ProfileView] profile data', profile);
-
   //// language
   const intl = useIntl();
   //// contexts
@@ -193,7 +191,7 @@ const ProfileView: React.FC<Props> = ({
               style={{
                 marginBottom: 4,
               }}>
-              {profile.voteAmount} B
+              ${profile.voteAmount}
             </Text>
             <Text size={12} color={argonTheme.COLORS.TEXT}>
               {intl.formatMessage({id: 'Profile.vote_amount'})}

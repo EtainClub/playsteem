@@ -16,7 +16,7 @@ import {
   fetchFollowers,
 } from '~/providers/steem/dsteemApi';
 import {estimateVoteAmount} from '~/utils/estimateVoteAmount';
-import {parseBlurtTransaction} from '~/utils/parseTransaction';
+import {parseSteemTransaction} from '~/utils/parseTransaction';
 
 import {
   PostRef,
@@ -38,10 +38,12 @@ const initialState = {
       balance: '',
       power: '',
       sbd: '',
+      reputation: 25,
       stats: {
         post_count: 0,
         following: 0,
         followers: 0,
+        rank: 0,
       },
     },
     blogRefs: [],
@@ -58,16 +60,21 @@ const initialState = {
     chainProps: {},
   },
   walletData: {
-    blurt: '0',
+    balance: '0',
+    balanceSBD: '0',
     power: '0',
-    savings: '0',
-    rewardBlurt: '0',
-    rewardVests: '0',
+    savingsSteem: '0',
+    savingsSBD: '0',
+    rewardSteem: '0',
+    rewardSBD: '0',
     voteAmount: '0',
     votePower: '0',
     transactions: [],
   },
-  price: 0,
+  price: {
+    steem: {usd: 0, change24h: 0},
+    sbd: {usd: 0, change24h: 0},
+  },
   followings: [],
   followers: [],
   phoneNumber: '',
@@ -184,7 +191,7 @@ const UserProvider = ({children}: Props) => {
       // parse transaction
       const parsedTransactions = walletData.transactions
         .map((transaction) => {
-          return parseBlurtTransaction(transaction);
+          return parseSteemTransaction(transaction);
         })
         .reverse();
       walletData.transactions = parsedTransactions;
@@ -237,14 +244,19 @@ const UserProvider = ({children}: Props) => {
   };
 
   const getPrice = async () => {
-    const {price_usd} = await fetchPrice();
-    console.log('[getPrice] price', price_usd);
-    if (price_usd) {
+    const priceData = await fetchPrice();
+    console.log('[getPrice] price', priceData);
+    const {steem} = priceData;
+    const sbd = priceData['steem-dollars'];
+    if (priceData) {
       dispatch({
         type: UserActionTypes.SET_PRICE,
-        payload: price_usd,
+        payload: {
+          steem: {usd: steem.usd, change24h: steem.usd_24h_change},
+          sbd: {usd: sbd.usd, change24h: sbd.usd_24h_change},
+        },
       });
-      return price_usd;
+      return priceData;
     } else {
       setToastMessage(intl.formatMessage({id: 'fetch_error'}));
       return null;

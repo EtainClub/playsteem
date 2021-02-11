@@ -28,6 +28,7 @@ interface Props {
   username: string;
   isUser: boolean;
   showVotingModal: boolean;
+  showDownvoting: boolean;
   voting: boolean;
   voteAmount: number;
   votingDollar: string;
@@ -37,6 +38,7 @@ interface Props {
   handlePressVoteIcon: () => void;
   handleVotingSlidingComplete: (weight: number) => void;
   handlePressVoting: (votingWeight: number) => void;
+  handlePressDownvote: () => void;
   handlePressComments?: () => void;
   handlePressEditPost?: () => void;
   handlePressEditComment?: () => void;
@@ -52,7 +54,13 @@ interface Props {
 
 const ActionBarView = (props: Props): JSX.Element => {
   // props
-  const {actionBarStyle, postState} = props;
+  const {
+    actionBarStyle,
+    postState,
+    showDownvoting,
+    showVotingModal,
+    voting,
+  } = props;
   // language
   const intl = useIntl();
 
@@ -73,7 +81,7 @@ const ActionBarView = (props: Props): JSX.Element => {
 
     return (
       <Modal
-        isVisible={props.showVotingModal}
+        isVisible={showVotingModal}
         animationIn="zoomIn"
         animationOut="zoomOut"
         onBackdropPress={props.handleCancelVotingModal}>
@@ -112,6 +120,56 @@ const ActionBarView = (props: Props): JSX.Element => {
     </View>
   );
 
+  //// render voting modal
+  const _renderDownvotingModal = () => {
+    // return if voting finishes
+    if (postState.downvoted) return null;
+
+    return (
+      <Modal
+        isVisible={showDownvoting}
+        animationIn="zoomIn"
+        animationOut="zoomOut"
+        onBackdropPress={props.handleCancelVotingModal}>
+        <Block card center style={styles.votingContainer}>
+          <Text
+            style={{
+              borderBottomColor: 'red',
+              borderBottomWidth: 5,
+              marginBottom: 10,
+            }}
+            color="red"
+            size={30}>
+            {intl.formatMessage({id: 'Actionbar.warning'})}
+          </Text>
+          <Text color={argonTheme.COLORS.FACEBOOK}>
+            -{props.votingWeight} % (${props.votingDollar})
+          </Text>
+          <Slider
+            style={{width: width * 0.5, height: 40}}
+            value={100}
+            onValueChange={(weight) =>
+              props.handleVotingSlidingComplete(weight)
+            }
+            minimumValue={0}
+            maximumValue={100}
+            step={1}
+          />
+          <Text style={{padding: 5}} color="black">
+            {intl.formatMessage({id: 'Actionbar.downvote_warning'})}
+          </Text>
+          <Icon
+            size={40}
+            color={argonTheme.COLORS.FACEBOOK}
+            name="downcircleo"
+            family="antdesign"
+            onPress={props.handlePressVoting}
+          />
+        </Block>
+      </Modal>
+    );
+  };
+
   return (
     <Block>
       <Block row style={actionBarStyle.styles}>
@@ -124,7 +182,7 @@ const ActionBarView = (props: Props): JSX.Element => {
           </Text>
           <Button
             onPress={props.handlePressVoteIcon}
-            loading={props.voting}
+            loading={voting}
             onlyIcon
             icon={postState.voted ? 'upcircleo' : 'upcircle'}
             iconFamily="antdesign"
@@ -274,8 +332,27 @@ const ActionBarView = (props: Props): JSX.Element => {
             onPress={props.handlePressEditPost}
           />
         )}
+        {actionBarStyle.downvote && (
+          <Button
+            onPress={props.handlePressDownvote}
+            loading={voting}
+            onlyIcon
+            icon={postState.downvoted ? 'downcircleo' : 'downcircle'}
+            iconFamily="antdesign"
+            iconSize={actionBarStyle.iconSize}
+            color={argonTheme.COLORS.FACEBOOK}
+            style={{
+              marginHorizontal: 5,
+              padding: 0,
+              top: actionBarStyle.bookmark ? 0 : -7,
+              width: actionBarStyle.iconSize + 3,
+              height: actionBarStyle.iconSize + 3,
+            }}
+          />
+        )}
       </Block>
       {_renderVotingModal()}
+      {_renderDownvotingModal()}
     </Block>
   );
 };
@@ -284,7 +361,7 @@ export {ActionBarView};
 
 const styles = StyleSheet.create({
   votingContainer: {
-    width: '70%',
+    width: '80%',
     height: 'auto',
     backgroundColor: theme.COLORS.WHITE,
     paddingVertical: 10,

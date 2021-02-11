@@ -14,7 +14,7 @@
   "and": "and",
   "cancel": "Cancel",
   "confirm": "Confirm",
-  "intro-msg": "Let's Blurt on Mobile Devices",
+  "intro-msg": "Play Steem on Mobile Devices",
   "intro-button": "Get Started",
   "account": "Account",
   "voting-weight": "Voting Weight",
@@ -34,10 +34,11 @@
   "following": "Following",
   "logout": "Log out",
   "not_supported": "It is not supported",
-  "blurt": "Blurt",
-  "blurt_power": "Blurt Power",
+  "steem": "Steem",
+  "steem_power": "Steem Power",
   "voting_power": "Voting Power",
-  "blurt_price": "Blurt Price",
+  "steem_price": "Steem Price",
+  "sbd_price": "SBD Price",
   "reward": "Reward",
   "something_wrong": "Something went wrong",
   "failed": "Failed",
@@ -63,7 +64,7 @@
   },
   "Signup": {
     "header": "Create Account",
-    "header_desc": "Choose your BLURT username",
+    "header_desc": "Choose your STEEM username",
     "button": "Continue",
     "username_guide": "must be longer than 3 and shorter than 16 characters.",
     "signin_guide": "Already have an account? Sign In",
@@ -92,13 +93,13 @@
     "copy_confirm": "Copied",
     "finish_button": "Finish",
     "welcome_header": "You're all set!",
-    "welcome_guide": "Now you can use the Let's Blurt app and other BLURT Dapps via your username and private key",
-    "login_button": "Let's Blurt!"
+    "welcome_guide": "Now you can use the Play Steem app and other STEEM Dapps via your username and private key",
+    "login_button": "Play Steem!"
   },
   "Login": {
     "header": "Login",
-    "header_desc": "Enter your BLURT username and password (posting key is preferred).",
-    "button": "Login",
+    "header_desc": "Enter your STEEM username and password (posting key is preferred).",
+    "button": "Consent and Login",
     "signup_guide": "Create an account",
     "login_error": "username or password is not correct",
     "msg_username": "username does not exist",
@@ -134,7 +135,8 @@
     "reply": " replied to your post",
     "mention": "mentioned you in this post",
     "transfer": "transferred {what} to you",
-    "reblog": "reblogged your post"
+    "reblog": "reblogged your post",
+    "vote": "voted ({what}) your posting."
   },
   "Posting": {
     "title": "Title",
@@ -190,8 +192,8 @@
     "unfavorite_ok": "Unfavorite successful",
     "unfavorite_error": "Failed to Unfavorite",
     "postings": "Postings",
-    "power": "Blurt Power",
-    "balance": "Blurt",
+    "power": "Steem Power",
+    "balance": "Steem",
     "vote_amount": "Voting Value",
     "display_name": "Display Name",
     "introduction": "Introduction",
@@ -333,7 +335,10 @@
     "vote_wo_login": "You need to login to vote",
     "vote_again": "You already voted on this post",
     "voted": "Successfully voted!",
-    "reblogged": "Successfully reblogged"
+    "reblogged": "Successfully reblogged",
+    "downvoted": "Down voted",
+    "warning": "Warning",
+    "downvote_warning": "Downvoting a post can decrease pending rewards and make it less visible"
   },
   "ImageUpload": {
     "upload_success": "Image uploaded successfully",

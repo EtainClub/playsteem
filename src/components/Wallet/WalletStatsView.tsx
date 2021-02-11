@@ -17,6 +17,7 @@ import {get} from 'lodash';
 import {putComma} from '~/utils/stats';
 import {getTimeFromNow} from '~/utils/time';
 import {UIContext} from '~/contexts';
+import {PriceData} from '~/contexts/types';
 
 const BACKGROUND_COLORS = [
   argonTheme.COLORS.BORDER,
@@ -29,27 +30,33 @@ interface Props {
   handlePressClaim?: () => void;
   claiming?: boolean;
   showTransactions?: boolean;
-  price?: number;
+  price?: PriceData;
   handlePressTransfer?: (index: number) => void;
   onRefresh: () => void;
 }
 const WalletStatsView = (props: Props): JSX.Element => {
   //// props
+  const {price} = props;
   let {
-    blurt,
+    balance,
+    balanceSBD,
     power,
-    savings,
-    rewardBlurt,
+    savingsSteem,
+    savingsSBD,
+    rewardSteem,
+    rewardSBD,
     transactions,
     votePower,
   } = props.walletData;
-  console.log('[WalletStatsView] props, walletdata', props.walletData);
-
-  blurt = putComma(parseFloat(blurt).toFixed(3));
+  balance = putComma(parseFloat(balance).toFixed(3));
+  balanceSBD = putComma(parseFloat(balanceSBD).toFixed(3));
   power = putComma(parseFloat(power).toFixed(3));
-  savings = putComma(savings);
-  const needToClaim = parseFloat(rewardBlurt) > 0 ? true : false;
-  rewardBlurt = putComma(rewardBlurt);
+  savingsSteem = putComma(savingsSteem);
+  savingsSBD = putComma(savingsSBD);
+  const needToClaim =
+    parseFloat(rewardSteem) > 0 || parseFloat(rewardSBD) > 0 ? true : false;
+  rewardSteem = putComma(rewardSteem);
+  rewardSBD = putComma(rewardSBD);
   //// language
   const intl = useIntl();
   const {setToastMessage} = useContext(UIContext);
@@ -77,14 +84,15 @@ const WalletStatsView = (props: Props): JSX.Element => {
   };
 
   const _renderItem = ({item, index}) => {
-    const value = parseFloat(get(item, 'value', '')).toFixed(2);
+    let value = get(item, 'value', '');
+    //const value = parseFloat(get(item, 'value', '')).toFixed(2);
     const op = get(item, 'textKey', '');
     const hideOp = op === 'transfer' ? true : false;
     const description =
       op === 'transfer' ? ' from ' + get(item, 'details', '') : '';
 
     // handle small value
-    if (parseFloat(value) < 0.001) return;
+    if (parseFloat(value) < 0.01) return;
 
     return (
       <Block
@@ -93,10 +101,10 @@ const WalletStatsView = (props: Props): JSX.Element => {
         space="between"
         style={[
           styles.rows,
-          {
-            backgroundColor:
-              BACKGROUND_COLORS[index % BACKGROUND_COLORS.length],
-          },
+          // {
+          //   backgroundColor:
+          //     BACKGROUND_COLORS[index % BACKGROUND_COLORS.length],
+          // },
         ]}>
         <Block row>
           <Icon
@@ -112,7 +120,7 @@ const WalletStatsView = (props: Props): JSX.Element => {
             size={12}>
             {!hideOp &&
               intl.formatMessage({id: `Wallet.${get(item, 'textKey')}`})}{' '}
-            {value} BLURT
+            {value}
             {description}
           </Text>
         </Block>
@@ -157,12 +165,12 @@ const WalletStatsView = (props: Props): JSX.Element => {
           }}>
           {props.isUser ? (
             <Block row middle space="between">
-              <Text>BLURT</Text>
+              <Text>STEEM</Text>
               <Block row middle>
                 <DropdownModal
                   key={blurtIndex}
                   options={blurtOptions}
-                  defaultText={`${blurt} BLURT`}
+                  defaultText={`${balance} STEEM`}
                   dropdownButtonStyle={styles.dropdownButtonStyle}
                   selectedOptionIndex={-1}
                   rowTextStyle={styles.rowTextStyle}
@@ -175,17 +183,17 @@ const WalletStatsView = (props: Props): JSX.Element => {
             </Block>
           ) : (
             <Block row space="between">
-              <Text color={argonTheme.COLORS.FACEBOOK}>BLURT</Text>
-              <Text color={argonTheme.COLORS.ERROR}>{`${blurt} BLURT`}</Text>
+              <Text color={argonTheme.COLORS.FACEBOOK}>STEEM</Text>
+              <Text color={argonTheme.COLORS.ERROR}>{`${balance} STEEM`}</Text>
             </Block>
           )}
           {props.isUser ? (
             <Block row middle space="between">
-              <Text>BLURT POWER</Text>
+              <Text>STEEM POWER</Text>
               <Block row middle>
                 <DropdownModal
                   key={powerIndex}
-                  defaultText={`${power} BLURT`}
+                  defaultText={`${power} STEEM`}
                   dropdownButtonStyle={styles.dropdownButtonStyle}
                   selectedOptionIndex={-1}
                   rowTextStyle={styles.rowTextStyle}
@@ -199,42 +207,64 @@ const WalletStatsView = (props: Props): JSX.Element => {
             </Block>
           ) : (
             <Block row space="between">
-              <Text color={argonTheme.COLORS.FACEBOOK}>BLURT POWER</Text>
-              <Text color={argonTheme.COLORS.ERROR}>{`${power} BLURT`}</Text>
+              <Text color={argonTheme.COLORS.FACEBOOK}>STEEM POWER</Text>
+              <Text color={argonTheme.COLORS.ERROR}>{`${power} STEEM`}</Text>
             </Block>
           )}
           {props.isUser ? (
             <Block row middle space="between">
-              <Text>SAVINGS</Text>
+              <Text>STEEM DOLLARS</Text>
               <Block row middle>
                 <DropdownModal
-                  key={savingsIndex}
-                  options={savingsOptions}
-                  defaultText={`${savings} BLURT`}
+                  key={powerIndex}
+                  defaultText={`$${balanceSBD}`}
                   dropdownButtonStyle={styles.dropdownButtonStyle}
                   selectedOptionIndex={-1}
                   rowTextStyle={styles.rowTextStyle}
                   style={styles.dropdown}
                   dropdownStyle={styles.dropdownStyle}
                   textStyle={styles.dropdownText}
-                  onSelect={_onSelectSavingsOption}
+                  options={powerOptions}
+                  onSelect={_onSelectPowerOption}
                 />
               </Block>
             </Block>
           ) : (
             <Block row space="between">
-              <Text color={argonTheme.COLORS.FACEBOOK}>SAVINGS</Text>
-              <Text color={argonTheme.COLORS.ERROR}>{`${savings} BLURT`}</Text>
+              <Text color={argonTheme.COLORS.FACEBOOK}>STEEM DOLLARS</Text>
+              <Text color={argonTheme.COLORS.ERROR}>{`$${balanceSBD}`}</Text>
             </Block>
           )}
+
           <Block row space="between">
             <Text>{intl.formatMessage({id: 'voting_power'})}</Text>
             <Text>{parseInt(votePower) / 100}%</Text>
           </Block>
+
           {props.isUser && (
             <Block row space="between">
-              <Text>{intl.formatMessage({id: 'blurt_price'})}</Text>
-              {props.price ? <Text>${props.price.toFixed(3)}</Text> : null}
+              <Text>{intl.formatMessage({id: 'steem_price'})}</Text>
+              <Block middle row>
+                {price ? <Text>${price.steem.usd.toFixed(3)}</Text> : null}
+                {price ? (
+                  <Block card style={styles.priceRate}>
+                    <Text>{price.steem.change24h.toFixed(3)}%</Text>
+                  </Block>
+                ) : null}
+              </Block>
+            </Block>
+          )}
+          {props.isUser && (
+            <Block row space="between">
+              <Text>{intl.formatMessage({id: 'sbd_price'})}</Text>
+              <Block middle row>
+                {price ? <Text>${price.sbd.usd.toFixed(3)}</Text> : null}
+                {price ? (
+                  <Block card style={styles.priceRate}>
+                    <Text>{price.sbd.change24h.toFixed(3)}%</Text>
+                  </Block>
+                ) : null}
+              </Block>
             </Block>
           )}
         </Block>
@@ -243,7 +273,7 @@ const WalletStatsView = (props: Props): JSX.Element => {
             <Text color={argonTheme.COLORS.ERROR}>
               {intl.formatMessage(
                 {id: 'Wallet.reward_blurt'},
-                {what: rewardBlurt},
+                {what: rewardSteem},
               )}
             </Text>
             <Button onPress={props.handlePressClaim} loading={props.claiming}>
@@ -324,5 +354,11 @@ const styles = StyleSheet.create({
   dropdown: {
     width: 180,
     marginLeft: 10,
+  },
+  priceRate: {
+    backgroundColor: argonTheme.COLORS.INPUT_SUCCESS,
+    paddingHorizontal: 5,
+    marginHorizontal: 2,
+    marginVertical: 3,
   },
 });

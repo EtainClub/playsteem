@@ -96,7 +96,7 @@ export const addPostingOptions = (
   const options = {
     author,
     permlink,
-    max_accepted_payout: '1000000.000 BLURT',
+    max_accepted_payout: '1000000.000 STEEM',
     allow_votes: true,
     allow_curation_rewards: true,
     extensions: [[0, {beneficiaries: sortedBeneficiaries}]], // 5%
@@ -104,15 +104,15 @@ export const addPostingOptions = (
 
   switch (operationType) {
     case 'powerup':
-      options.max_accepted_payout = '1000000.000 BLURT';
+      options.max_accepted_payout = '1000000.000 STEEM';
       break;
 
     case 'decline':
-      options.max_accepted_payout = '0.000 BLURT';
+      options.max_accepted_payout = '0.000 STEEM';
       break;
 
     default:
-      options.max_accepted_payout = '1000000.000 BLURT';
+      options.max_accepted_payout = '1000000.000 STEEM';
       break;
   }
 

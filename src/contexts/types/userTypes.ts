@@ -21,17 +21,28 @@ export enum UserActionTypes {
 // profile data type
 export interface ProfileData {
   profile: {
+    // about, cover_image, locations, name(display_name), profile_image, website
     metadata: any;
+    // account name
     name: string;
+    // vote amount
     voteAmount: string;
+    // vote power
     votePower: string;
-    balance: string; // blurt or steem
-    power: string; // blurt power or steem power
-    sbd?: string; // sbd
+    // liquid steem balance
+    balance: string;
+    // steem power
+    power: string;
+    // sbd balance
+    sbd: string;
+    // reputation
+    reputation: number;
+    // following, followers, rank, steem power
     stats: {
       post_count: number;
       following: number;
       followers: number;
+      rank: number;
     };
   };
   blogRefs?: string[];
@@ -42,14 +53,38 @@ export interface ProfileData {
 
 //// wallet data
 export interface WalletData {
-  blurt: string;
+  // liquid steem
+  balance: string;
+  // sdb balance
+  balanceSBD: string;
+  // steem power
   power: string;
-  savings: string;
-  rewardBlurt: string;
-  rewardVests: string;
+  // steem savings
+  savingsSteem: string;
+  // sbd savings
+  savingsSBD: string;
+  // steem reward
+  rewardSteem: string;
+  // sbd reward
+  rewardSBD: string;
+  // vote amount
   voteAmount?: string;
+  // voting weight
   votePower?: string;
+  // transaction history
   transactions: any[];
+}
+
+//// price data
+export interface PriceData {
+  steem: {
+    usd: number;
+    change24h: number;
+  };
+  sbd: {
+    usd: number;
+    change24h: number;
+  };
 }
 
 //// user state
@@ -58,7 +93,7 @@ export interface UserState {
   globalProps: BlockchainGlobalProps;
   walletData: WalletData;
   // price in usd
-  price?: number;
+  price?: PriceData;
   followings: string[];
   followers: string[];
 }
@@ -117,7 +152,7 @@ interface SetProfileDataAction {
 // set price
 interface SetPriceAction {
   type: UserActionTypes.SET_PRICE;
-  payload: number;
+  payload: PriceData;
 }
 // set following
 interface SetFollowingsAction {
@@ -145,7 +180,7 @@ export interface UserContextType {
   // get user notifications
   getNotifications: (username: string) => Promise<any[]>;
   // get price
-  getPrice: () => Promise<number>;
+  getPrice: () => Promise<PriceData>;
   // update follow state
   updateFollowState: (
     follower: string,

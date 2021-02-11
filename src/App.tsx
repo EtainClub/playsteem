@@ -41,8 +41,7 @@ const App = () => {
   //
   useEffect(() => {
     // check update
-    // @test
-    //    _codePushSync();
+    _codePushSync();
     // get locale
     _getLocale();
   }, []);
@@ -109,7 +108,5 @@ const App = () => {
 const codePushOptions = {
   checkFrequency: codePush.CheckFrequency.ON_APP_START,
 };
-// @test temp
-export default App;
 
-//export default codePush(codePushOptions)(App);
+export default codePush(codePushOptions)(App);

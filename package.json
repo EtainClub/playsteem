@@ -1,6 +1,6 @@
 {
   "name": "PlaySteem",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -12,7 +12,7 @@
   "dependencies": {
     "@busyorg/busyjs": "^1.0.1",
     "@esteemapp/dhive": "^0.14.15",
-    "@hiveio/dhive": "^0.14.12",
+    "@hiveio/dhive": "https://github.com/EtainClub/dhive",
     "@react-native-community/async-storage": "^1.12.0",
     "@react-native-community/cameraroll": "^4.0.1",
     "@react-native-community/clipboard": "^1.2.3",

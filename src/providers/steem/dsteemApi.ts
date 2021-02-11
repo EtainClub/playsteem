@@ -143,11 +143,8 @@ global.Buffer = global.Buffer || require('buffer').Buffer;
 const wifToPublic = (privWif: string) => {
   // get private key from wif format
   const privateKey = PrivateKey.fromString(privWif);
-
   // get public key of the private key and then convert it into wif format
   const pubWif = privateKey.createPublic(client.addressPrefix).toString();
-  // blurt
-  //  const blurtPubWif = pubWif.replace(/^STM/, 'BLT');
   // return the public wif
   return pubWif;
 };
@@ -398,15 +395,16 @@ export const parseToken = (strVal: string): number => {
   }
   return Number(parseFloat(strVal.split(' ')[0]));
 };
-export const vestToSteem = async (
-  vestingShares: string,
-  totalVestingShares: string,
-  totalVestingFundSteem: string,
-) =>
-  (
-    parseFloat(totalVestingFundSteem) *
-    (parseFloat(vestingShares) / parseFloat(totalVestingShares))
-  ).toFixed(0);
+export const vestToSteem = (vestingShares: number) => {
+  const {
+    total_vesting_shares,
+    total_vesting_fund_steem,
+  } = globalProps.dynamicProps;
+  return (
+    parseFloat(total_vesting_fund_steem) *
+    (vestingShares / parseFloat(total_vesting_shares))
+  ).toFixed(3);
+};
 
 export const vestsToRshares = (
   vests: number,
@@ -461,7 +459,9 @@ export const fetchGlobalProps = async (): Promise<BlockchainGlobalProps> => {
   const quote = parseToken(feedHistory.current_median_history.quote);
   const fundRecentClaims = rewardFund.recent_claims;
   const fundRewardBalance = parseToken(rewardFund.reward_balance);
-  return {
+
+  // update the globalProps
+  globalProps = {
     steemPerMVests,
     base,
     quote,
@@ -471,43 +471,10 @@ export const fetchGlobalProps = async (): Promise<BlockchainGlobalProps> => {
     dynamicProps: globalDynamic,
     chainProps: {},
   };
+
+  console.log('[fetchGlobalProps] globalProps', globalProps);
+  return globalProps;
 };
-
-// // fetch global properties
-// export const fetchGlobalProps = async (): Promise<BlockchainGlobalProps> => {
-//   // const globalDynamic = await getDynamicGlobalProperties();
-//   // console.log('[fetchGlobalProps] globalDynamic', globalDynamic);
-//   const rewardFund = await getRewardFund();
-//   console.log('[fetchGlobalProps] rewardFund', rewardFund);
-//   const chainProperties = await getChainProperties();
-//   console.log('[fetchGlobalProps] chainProperties', chainProperties);
-//   // const  feedHistory = await getFeedHistory();
-//   //    console.log('[fetchGlobalProps] feedHistory', feedHistory);
-
-//   // const steemPerMVests =
-//   //   (parseToken(globalDynamic.total_vesting_fund_steem as string) /
-//   //     parseToken(globalDynamic.total_vesting_shares as string)) *
-//   //   1e6;
-//   // const sbdPrintRate = globalDynamic.sbd_print_rate;
-//   //  const base = parseToken(feedHistory.current_median_history.base);
-//   //  const quote = parseToken(feedHistory.current_median_history.quote);
-//   const fundRecentClaims = rewardFund.recent_claims;
-//   const fundRewardBalance = parseToken(rewardFund.reward_balance);
-
-//   // update the globalProps
-//   globalProps = {
-//     steemPerMVests: 1,
-//     base: 1,
-//     quote: 1,
-//     fundRecentClaims,
-//     fundRewardBalance,
-//     sbdPrintRate: 1,
-//     dynamicProps: {},
-//     chainProps: chainProperties,
-//   };
-
-//   return globalProps;
-// };
 
 //// get latest block
 export const fetchLatestBlock = async () => {
@@ -610,73 +577,34 @@ export const fetchProfile = async (author: string) =>
 //// fetch user state
 export const fetchUserProfile = async (username: string) => {
   try {
-    // get state
-    const params = `@${username}`;
-    const accountState = await client.call('condenser_api', `get_state`, [
-      params,
-    ]);
-    console.log('[fetchUserProfile] accountState', accountState);
-    if (!accountState) {
-      console.log('[fetchUserProfile] accountState is null', accountState);
-      return null;
-    }
+    // get profile
+    const fetchedProfile = await fetchProfile(username);
+    //    console.log('[fetchUserProfile] fetched profile', fetchedProfile);
+
     // get account
-    const account = get(accountState.accounts, username, '');
-    // destructure
-    const {
-      balance,
-      voting_power,
-      vesting_shares,
-      received_vesting_shares,
-      delegated_vesting_shares,
-    } = account;
-    const power =
-      parseInt(vesting_shares.split(' ')[0]) +
-      parseInt(received_vesting_shares.split(' ')[0]) -
-      parseInt(delegated_vesting_shares.split(' ')[0]);
+    const account = await getAccount(username);
+    //    console.log('get account. account', account);
 
-    // parse meta data
-    if (
-      has(account, 'posting_json_metadata') ||
-      has(account, 'json_metadata')
-    ) {
-      try {
-        account.about =
-          JSON.parse(get(account, 'json_metadata')) ||
-          JSON.parse(get(account, 'posting_json_metadata'));
-        console.log('[fetchUserProfile]', account.about);
-      } catch (error) {
-        console.log('failed to fetch profile metadata', error);
-        account.about = {};
-      }
-    }
-    account.avatar = getAvatar(get(account, 'about'));
-    account.nickname = getName(get(account, 'about'));
-
-    // get followers/following count
-    const followCount = await fetchFollows(username);
-    console.log('[fetchUserProfile] follow count', followCount);
-
-    // build profile data
     const profileData: ProfileData = {
       profile: {
-        metadata: account.about.profile
-          ? account.about.profile
-          : {name: '', cover_image: '', profile_image: ''},
+        metadata: fetchedProfile.metadata.profile,
         name: username,
         voteAmount: estimateVoteAmount(account, globalProps),
-        votePower: String(voting_power),
-        balance: balance.split(' ')[0],
-        power: String(power),
+        votePower: '0',
+        balance: account.balance,
+        power: fetchedProfile.stats.sp,
+        sbd: account.sbd_balance,
+        reputation: fetchedProfile.reputation,
         stats: {
-          post_count: account.post_count,
-          following: followCount.following_count,
-          followers: followCount.follower_count,
+          post_count: fetchedProfile.post_count,
+          following: fetchedProfile.stats.following,
+          followers: fetchedProfile.stats.followers,
+          rank: fetchedProfile.stats.rank,
         },
       },
-      blogRefs: account.blog,
-      blogs: accountState.content,
     };
+
+    //    console.log('fetchUserProfile. profileData', profileData);
     return profileData;
   } catch (error) {
     console.log('Failed to fetch user profile data', error);
@@ -813,13 +741,18 @@ export const fetchTagList = async () => {
   return data;
 };
 
-//// blurt price
+//// steem price
 export const fetchPrice = async () => {
-  const {data} = await axios.get(PRICE_ENDPOINT, {
-    timeout: 5000,
-  });
-  if (data) return data;
-  else return null;
+  try {
+    const {data} = await axios.get(PRICE_ENDPOINT, {
+      timeout: 5000,
+    });
+    if (data) return data;
+    else return null;
+  } catch (error) {
+    console.log('failed to fetch price', error);
+    return null;
+  }
 };
 
 // fetch community list of a user
@@ -832,11 +765,11 @@ export const fetchCommunityList = async (username: string): Promise<any[]> => {
     if (communities) {
       return communities;
     } else {
-      return null;
+      return [];
     }
   } catch (error) {
     console.log('failed to fetch community list', error);
-    return null;
+    return [];
   }
 };
 
@@ -1431,15 +1364,29 @@ export const broadcastProfileUpdate = async (
 //     return null;
 //   }
 // };
+
 export const fetchNotifications = async (username: string): Promise<any[]> => {
-  return new Promise((resolve, reject) => {
-    const notiClient = new NotiClient('wss://notifications.blurt.world');
-    notiClient.call('get_notifications', [username], (err, result) => {
-      if (err) reject(err);
-      resolve(result);
+  try {
+    const notifications = await client.call('bridge', 'account_notifications', {
+      account: username,
+      limit: 50,
     });
-  });
+    return notifications;
+  } catch (error) {
+    console.log('faield to fetch notifications');
+    return null;
+  }
 };
+
+// export const fetchNotifications = async (username: string): Promise<any[]> => {
+//   return new Promise((resolve, reject) => {
+//     const notiClient = new NotiClient('wss://notifications.blurt.world');
+//     notiClient.call('get_notifications', [username], (err, result) => {
+//       if (err) reject(err);
+//       resolve(result);
+//     });
+//   });
+// };
 
 //////////// wallet
 //// fetch wallet data
@@ -1454,27 +1401,36 @@ export const fetchWalletData = async (username: string) => {
     if (accountState) {
       const account = get(accountState.accounts, username, '');
       console.log('[fetchWalletData] account', account);
+      // destructuring
       const {
         balance,
         savings_balance,
+        sbd_balance,
+        savings_sbd_balance,
+        reward_steem_balance,
+        reward_sbd_balance,
         voting_power,
         vesting_shares,
         received_vesting_shares,
         delegated_vesting_shares,
-        reward_vesting_blurt,
-        reward_vesting_balance,
         transfer_history,
       } = account;
-      const power =
+      // get sum of shares
+      const sumShares =
         parseInt(vesting_shares.split(' ')[0]) +
         parseInt(received_vesting_shares.split(' ')[0]) -
         parseInt(delegated_vesting_shares.split(' ')[0]);
+      // convert the shares to steem
+      const power = vestToSteem(sumShares);
+      // build wallet data
       const walletData: WalletData = {
-        blurt: balance.split(' ')[0],
-        power: String(power),
-        savings: savings_balance.split(' ')[0],
-        rewardBlurt: reward_vesting_blurt.split(' ')[0],
-        rewardVests: reward_vesting_balance.split(' ')[0],
+        balance: balance.split(' ')[0],
+        balanceSBD: sbd_balance.split(' ')[0],
+        power: power,
+        savingsSteem: savings_balance.split(' ')[0],
+        savingsSBD: savings_sbd_balance.split(' ')[0],
+        rewardSteem: reward_steem_balance.split(' ')[0],
+        rewardSBD: reward_sbd_balance.split(' ')[0],
         voteAmount: '0',
         votePower: String(voting_power),
         transactions: transfer_history
@@ -1502,15 +1458,19 @@ export const claimRewardBalance = async (
   // get privake key from password wif
   const privateKey = PrivateKey.from(password);
   if (privateKey) {
-    const balance = account.reward_blurt_balance;
-    const vests = account.reward_vesting_balance;
+    const {
+      reward_steem_balance: rewardSteem,
+      reward_sbd_balance: rewardSBD,
+      reward_vesting_balance: rewardVests,
+    } = account;
     const opArray = [
       [
         'claim_reward_balance',
         {
           account: username,
-          reward_blurt: balance,
-          reward_vests: vests,
+          reward_steem: rewardSteem,
+          reward_sbd: rewardSBD,
+          reward_vests: rewardVests,
         },
       ],
     ];
@@ -1600,247 +1560,9 @@ export const getAvatar = (about) => {
   return null;
 };
 
-/* 
-from blutjs ChainTypes.js
-
-ChainTypes.operations= {
-    vote: 0,
-    comment: 1,
-    transfer: 2,
-    transfer_to_vesting: 3,
-    withdraw_vesting: 4,
-    account_create: 5,
-    account_update: 6,
-    witness_update: 7,
-    account_witness_vote: 8,
-    account_witness_proxy: 9,
-    custom: 10,
-    delete_comment: 11,
-    custom_json: 12,
-    comment_options: 13,
-    set_withdraw_vesting_route: 14,
-    claim_account: 15,
-    create_claimed_account: 16,
-    request_account_recovery: 17,
-    recover_account: 18,
-    change_recovery_account: 19,
-    escrow_transfer: 20,
-    escrow_dispute: 21,
-    escrow_release: 22,
-    escrow_approve: 23,
-    transfer_to_savings: 24,
-    transfer_from_savings: 25,
-    cancel_transfer_from_savings: 26,
-    custom_binary: 27,
-    decline_voting_rights: 28,
-    reset_account: 29,
-    set_reset_account: 30,
-    claim_reward_balance: 31,
-    delegate_vesting_shares: 32,
-    witness_set_properties: 33,
-    create_proposal: 34,
-    update_proposal_votes: 35,
-    remove_proposal: 36,
-
-    author_reward: 37,  // new
-    curation_reward: 38, // new
-    comment_reward: 39, // new
-    fill_vesting_withdraw: 40, // new
-    shutdown_witness: 41, // new
-    fill_transfer_from_savings: 42, // new
-    hardfork: 43, // new
-    comment_payout_update: 44, // new
-    return_vesting_delegation: 45, // new
-    comment_benefactor_reward: 46, // new
-
-    account_update2: 47 // not exist in blurt?
-};
-*/
-
 /*
 
 /////////////// Blockchain Operations Helpers ////////////////////////
-//// setup transation operation
-const setupTransactionOperations = async (operations: Operation[]) => {
-  const props = await getDynamicGlobalProperties();
-  const ref_block_num = props.head_block_number & 0xffff;
-  const ref_block_prefix = Buffer.from(props.head_block_id, 'hex').readUInt32LE(
-    4,
-  );
-  const expireTime = 60 * 1000;
-  const expiration = new Date(new Date(props.time + 'Z').getTime() + expireTime)
-    .toISOString()
-    .slice(0, -5);
-  const extensions = [];
-
-  const tx: Transaction = {
-    expiration,
-    extensions,
-    operations,
-    ref_block_num,
-    ref_block_prefix,
-  };
-
-  // serialize
-  const ByteBuffer = require('bytebuffer');
-
-  const buffer = new ByteBuffer(
-    ByteBuffer.DEFAULT_CAPACITY,
-    ByteBuffer.LITTLE_ENDIAN,
-  );
-  return {buffer, tx};
-};
-
-// Return a deep copy of a JSON-serializable object.
-function copy<T>(object: T): T {
-  return JSON.parse(JSON.stringify(object));
-}
-
-function isCanonicalSignature(signature: Buffer): boolean {
-  return (
-    !(signature[0] & 0x80) &&
-    !(signature[0] === 0 && !(signature[1] & 0x80)) &&
-    !(signature[32] & 0x80) &&
-    !(signature[32] === 0 && !(signature[33] & 0x80))
-  );
-}
-
-
-//// send comment operations to blockchain
-const sendCommentOperations = async (
-  operations: Operation[],
-  keys: PrivateKey | PrivateKey[],
-) => {
-  // setup operations
-  const {buffer, tx} = await setupTransactionOperations(operations);
-
-  // serialize, order matters
-  buffer.writeUInt16(tx.ref_block_num);
-  buffer.writeUInt32(tx.ref_block_prefix);
-  buffer.writeUint32(
-    Math.floor(new Date(tx.expiration + 'Z').getTime() / 1000),
-  );
-  buffer.writeVarint32(tx.operations.length); // number of operations
-  buffer.writeVarint32(1); // comment operation id
-  buffer.writeVString(operations[0][1].parent_author);
-  buffer.writeVString(operations[0][1].parent_permlink);
-  buffer.writeVString(operations[0][1].author);
-  buffer.writeVString(operations[0][1].permlink);
-  buffer.writeVString(operations[0][1].title);
-  buffer.writeVString(operations[0][1].body);
-  buffer.writeVString(operations[0][1].json_metadata);
-  buffer.writeVarint32(tx.extensions.length);
-
-  const result = await signTransaction(buffer, tx, keys);
-  return result;
-};
-
-//// send vote operations to blockchain
-const sendVoteOperations = async (
-  operations: Operation[],
-  keys: PrivateKey | PrivateKey[],
-) => {
-  const {buffer, tx} = await setupTransactionOperations(operations);
-
-  // serialize
-  buffer.writeUInt16(tx.ref_block_num);
-  buffer.writeUInt32(tx.ref_block_prefix);
-  //buffer.writeUInt32(tx.expiration);
-  buffer.writeUint32(
-    Math.floor(new Date(tx.expiration + 'Z').getTime() / 1000),
-  );
-  buffer.writeVarint32(tx.operations.length); // number of operations
-  buffer.writeVarint32(0); // operation id
-  buffer.writeVString(operations[0][1].voter);
-  buffer.writeVString(operations[0][1].author);
-  buffer.writeVString(operations[0][1].permlink);
-  buffer.writeInt16(operations[0][1].weight);
-  buffer.writeVarint32(tx.extensions.length); // number of extensions
-
-  const result = await signTransaction(buffer, tx, keys);
-
-  return result;
-};
-
-//// sign transation
-const signTransaction = async (
-  buffer,
-  tx: Transaction,
-  keys: PrivateKey | PrivateKey[],
-) => {
-  // convert byte buffer to actual buffer
-  buffer.flip();
-  const transactionData = Buffer.from(buffer.toBuffer());
-  console.log('[dblurt|signTransaction] transactionData', transactionData);
-  const digest = cryptoUtils.sha256(
-    Buffer.concat([client.chainId, transactionData]),
-  );
-  console.log('[dblurt|signTransaction] digest', digest);
-
-  const signedTransaction = copy(tx) as SignedTransaction;
-  if (!signedTransaction.signatures) {
-    signedTransaction.signatures = [];
-  }
-
-  if (!Array.isArray(keys)) {
-    keys = [keys];
-  }
-
-  for (const key of keys) {
-    const signature = _signTransaction(key.key, digest);
-    console.log('[dblurt|signTransaction] signature', signature);
-
-    const buffer = Buffer.alloc(65);
-    buffer.writeUInt8(signature.recovery + 31, 0);
-    signature.data.copy(buffer, 1);
-    console.log('[dblurt|signTransaction] buffer', buffer);
-
-    // const sigString = Array.prototype.map
-    //   .call(new Uint8Array(buffer), (x) => ('00' + x.toString(16)).slice(-2))
-    //   .join('')
-    //   .match(/[a-fA-F0-9]{2}/g)
-    //   .join('');
-
-    const sigString = buffer.toString('hex');
-    console.log('[dblurt|signTransaction] sigString', sigString);
-    signedTransaction.signatures.push(sigString);
-  }
-
-  const result = await client.call(
-    'condenser_api',
-    'broadcast_transaction_synchronous',
-    [signedTransaction],
-  );
-
-  console.log('[dblurt|signTransaction] result', result);
-
-  return result;
-};
-
-// sign message
-function _signTransaction(key: Buffer, message: Buffer): Signature {
-  let rv: {signature: Buffer; recovery: number};
-  let attempts = 0;
-  do {
-    const options = {
-      data: cryptoUtils.sha256(
-        Buffer.concat([message, Buffer.alloc(1, ++attempts)]),
-      ),
-    };
-    console.log('[dblurt|signTransaction] sign, options', options);
-
-    rv = secp256k1.sign(message, key, options);
-    console.log('[dblurt|signTransaction] sign, rv', rv);
-  } while (!isCanonicalSignature(rv.signature));
-  const signature = new Signature(rv.signature, rv.recovery);
-  console.log('[dblurt|signTransaction] sign. signature', signature);
-
-  return signature;
-}
-
-*/
-
-/*
 
 // fetch user profile
 export const fetchProfile = async (author: string) =>

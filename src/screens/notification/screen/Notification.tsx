@@ -43,57 +43,62 @@ interface Props {
 }
 const NotificationScreen = (props: Props): JSX.Element => {
   console.log('[NotificationScreen] props', props);
-  const {imageServer} = props;
+  const {imageServer, username} = props;
   //// lanugage
   const intl = useIntl();
 
   //// render item
   const _renderItem = ({item, index}) => {
     const notiType = item.type;
+    //// parse message
+    const {msg} = item;
+    //
     let iconName = '';
     let iconFamily = '';
     let text = '';
-    let avatar = '';
-    let author = item.author;
-    let permlink = null;
+    let amount_regex = /\$\d+.\d+/;
+    const _match = msg.match(amount_regex);
+    let amount = null;
+    if (_match) {
+      amount = _match[0];
+    }
+    let actor = msg.split(' ')[0].split('@')[1];
+    const avatar = `${imageServer}/u/${actor}/avatar`;
+    const parsedUrl = item.url.split('/');
+    const author = parsedUrl[0].split('@')[1];
+    const permlink = parsedUrl[1];
     switch (notiType) {
-      // TODO: handle reblog
+      case 'vote':
+        iconName = 'chevron-up';
+        iconFamily = 'font-awesome';
+        text = intl.formatMessage({id: 'Notifications.vote'}, {what: amount});
+        break;
       case 'reblog':
         iconName = 'repeat';
         iconFamily = 'material-community';
-        author = author;
-        avatar = `${imageServer}/u/${author}/avatar`;
         text = intl.formatMessage({id: 'Notifications.reblog'});
         break;
       case 'follow':
         iconName = 'adduser';
         iconFamily = 'antdesign';
-        author = item.follower;
-        avatar = `${imageServer}/u/${author}/avatar`;
         text = intl.formatMessage({id: 'Notifications.follow'});
         break;
       case 'reply':
         iconName = 'message-reply-text';
         iconFamily = 'material-community';
-        avatar = `${imageServer}/u/${author}/avatar`;
         text = intl.formatMessage({id: 'Notifications.reply'});
-        permlink = item.permlink;
         break;
       case 'mention':
         iconName = 'at';
         iconFamily = 'font-awesome';
-        avatar = `${imageServer}/u/${author}/avatar`;
         text = intl.formatMessage({id: 'Notifications.mention'});
-        permlink = item.permlink;
         break;
       case 'transfer':
-        author = item.from;
         iconName = 'exchange';
         iconFamily = 'font-awesome';
-        avatar = `${imageServer}/u/${item.from}/avatar`;
         text = intl.formatMessage(
           {id: 'Notifications.transfer'},
-          {what: item.amount},
+          {what: amount},
         );
         break;
       default:
@@ -132,13 +137,7 @@ const NotificationScreen = (props: Props): JSX.Element => {
               <Text>{text}</Text>
             </Block>
           </Block>
-          <Block middle>
-            {
-              <Text>
-                {getTimeFromNow(moment.unix(item.timestamp)).split('ago')[0]}
-              </Text>
-            }
-          </Block>
+          <Block middle>{<Text>{getTimeFromNow(item.date)}</Text>}</Block>
         </Block>
       </TouchableWithoutFeedback>
     );

@@ -64,6 +64,7 @@ export const INITIAL_SETTINGS: SettingsState = {
     'reply',
     'mention',
     'follow',
+    'reblog',
   ],
   [StorageSchema.BLOCKCHAINS]: {
     rpc: RPC_SERVERS[0],
