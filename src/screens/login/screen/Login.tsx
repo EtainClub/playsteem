@@ -17,8 +17,8 @@ import {navigate} from '~/navigation/service';
 
 import {useIntl} from 'react-intl';
 
-const TERMS_URL = 'https://letsblurt.app/terms';
-const PRIVACY_URL = 'https://letsblurt.app/privacy';
+const TERMS_URL = 'https://playsteem.app/terms';
+const PRIVACY_URL = 'https://playsteem.app/privacy';
 
 const {width, height} = Dimensions.get('window');
 

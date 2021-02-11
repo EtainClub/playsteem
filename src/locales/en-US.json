@@ -335,7 +335,10 @@
     "vote_wo_login": "You need to login to vote",
     "vote_again": "You already voted on this post",
     "voted": "Successfully voted!",
-    "reblogged": "Successfully reblogged"
+    "reblogged": "Successfully reblogged",
+    "downvoted": "Down voted",
+    "warning": "Warning",
+    "downvote_warning": "Downvoting a post can decrease pending rewards and make it less visible"
   },
   "ImageUpload": {
     "upload_success": "Image uploaded successfully",

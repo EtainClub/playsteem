@@ -13,6 +13,7 @@ export interface ActionBarStyle {
   resteem?: boolean;
   translation?: boolean;
   read?: boolean;
+  downvote?: boolean;
 }
 
 export const ActionBarStyleFeed: ActionBarStyle = {
@@ -50,6 +51,7 @@ export const ActionBarStylePost: ActionBarStyle = {
   share: true,
   translation: true,
   read: true,
+  downvote: true,
 };
 
 export const ActionBarStyleComment: ActionBarStyle = {
@@ -62,6 +64,7 @@ export const ActionBarStyleComment: ActionBarStyle = {
   edit: false,
   translation: true,
   read: true,
+  downvote: true,
 };
 
 export const ActionBarStyleCommentEdit: ActionBarStyle = {

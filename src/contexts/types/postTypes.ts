@@ -66,6 +66,7 @@ export interface PostState {
 
   // user's actions related
   voted: boolean;
+  downvoted: boolean;
   bookmarked?: boolean;
   resteemed?: boolean;
   favorite?: boolean;
@@ -151,6 +152,7 @@ export const INIT_POST_DATA = {
 
     // user's actions related
     voted: false,
+    downvoted: false,
     bookmarked: false,
     resteemed: false,
     favorite: false,

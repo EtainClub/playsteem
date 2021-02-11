@@ -244,7 +244,7 @@
     "fill_transfer_from_savings": "Savings Executed",
     "fill_vesting_withdraw": "파워 다운 진행",
 
-    "reward_blurt": "보상: {what} Blurt",
+    "reward_steem": "보상: {what} STEEM",
     "claim_ok": "보상 청구 성공",
     "claim_error": "보상 청구 에러",
     "keys_header": "키(암호)와 권한",
@@ -283,7 +283,7 @@
     "empty_recipient": "수신자를 입력해야 합니다.",
     "amount_message": "금액을 확인하세요.",
     "error": "오류가 발생했습니다. 메시지를 확인하세요.",
-    "balance": "잔고 {what} Blurt",
+    "balance": "잔고 {what} STEEM",
     "amount": "금액",
     "memo": "메모",
     "memo_message": "이 메모는 누구나 볼 수 있습니다.",
@@ -339,7 +339,10 @@
     "vote_wo_login": "보팅하려면 로그인해야 합니다.",
     "vote_again": "이미 보팅했습니다.",
     "voted": "보팅 성공",
-    "reblogged": "reblog 성공"
+    "reblogged": "reblog 성공",
+    "downvoted": "다운보트 성공",
+    "warning": "주의",
+    "downvote_warning": "다운 보팅은 포스트의 보상액을 감소시키며, 노출이 덜 되게 하니 주의해서 실행하시기 바랍니다."
   },
   "Actionsheet": {
     "open": "링크 열기",

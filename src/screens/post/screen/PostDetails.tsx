@@ -81,9 +81,18 @@ const PostDetailsScreen = (props: Props): JSX.Element => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={50}
       style={{flex: 1}}>
-      <Block style={{marginHorizontal: 5, marginBottom: 150}}>
+      <Block style={{marginHorizontal: 20}}>
         {props.parentPost && <ParentPost post={props.parentPost} />}
-        <Text size={24}>{post.state.title}</Text>
+        <Block row space="between">
+          <Text size={24}>{post.state.title}</Text>
+          <Icon
+            style={{margin: 5}}
+            size={16}
+            color={argonTheme.COLORS.MUTED}
+            name="flag-outline"
+            family="ionicon"
+          />
+        </Block>
         <Block row space="between">
           <Avatar
             avatar={post.state.avatar}
@@ -96,7 +105,9 @@ const PostDetailsScreen = (props: Props): JSX.Element => {
           />
           <Text style={{top: 10, marginRight: 20}}>{formatedTime}</Text>
         </Block>
-        <Block style={{}}>
+      </Block>
+      <Block style={{marginBottom: 150}}>
+        <Block>
           <ActionBar
             actionBarStyle={ActionBarStylePost}
             postState={state}
