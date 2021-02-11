@@ -344,7 +344,7 @@ const ActionBarView = (props: Props): JSX.Element => {
             style={{
               marginHorizontal: 5,
               padding: 0,
-              top: 0,
+              top: actionBarStyle.bookmark ? 0 : -7,
               width: actionBarStyle.iconSize + 3,
               height: actionBarStyle.iconSize + 3,
             }}

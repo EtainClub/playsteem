@@ -128,13 +128,14 @@ const ActionBarContainer = (props: Props): JSX.Element => {
       // new payout estimate
       let _payout = '0';
       let _state = null;
+      let _voters = null;
       if (!showDownvoting) {
         _payout = (
           parseFloat(postState.payout) +
           (voteAmount * votingWeight) / 100
         ).toFixed(2);
         // append the user to ther voters
-        const _voters = [`${username} ($${voteAmount})`, ...postState.voters];
+        _voters = [`${username} ($${voteAmount})`, ...postState.voters];
         // update states
         _state = {
           ...postState,
@@ -147,11 +148,14 @@ const ActionBarContainer = (props: Props): JSX.Element => {
           parseFloat(postState.payout) -
           (voteAmount * votingWeight) / 100
         ).toFixed(2);
+        // append the user to ther voters
+        _voters = [`-${username} ($${voteAmount})`, ...postState.voters];
         // update states
         _state = {
           ...postState,
           downvoted: true,
           payout: _payout,
+          voters: _voters,
         };
       }
       setPostState(_state);
