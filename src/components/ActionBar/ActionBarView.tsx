@@ -78,6 +78,7 @@ const ActionBarView = (props: Props): JSX.Element => {
   const _renderVotingModal = () => {
     // return if voting finishes
     if (postState.voted) return null;
+    console.log('upvote modal. props', props);
 
     return (
       <Modal
@@ -124,6 +125,7 @@ const ActionBarView = (props: Props): JSX.Element => {
   const _renderDownvotingModal = () => {
     // return if voting finishes
     if (postState.downvoted) return null;
+    console.log('downvote modal. props', props);
 
     return (
       <Modal
@@ -351,8 +353,8 @@ const ActionBarView = (props: Props): JSX.Element => {
           />
         )}
       </Block>
-      {_renderVotingModal()}
-      {_renderDownvotingModal()}
+      {showVotingModal && _renderVotingModal()}
+      {showDownvoting && _renderDownvotingModal()}
     </Block>
   );
 };

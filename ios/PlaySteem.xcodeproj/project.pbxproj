@@ -21,6 +21,7 @@
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		85BF328FDFBBC3BFAF598274 /* libPods-PlaySteem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADA053A8D372F9B94426AC79 /* libPods-PlaySteem.a */; };
 		B21E045525B2B7DA00DF7DB7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B21E045425B2B7D900DF7DB7 /* GoogleService-Info.plist */; };
+		B29536F025D56CAD00EFE5A1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B29536EF25D56CAD00EFE5A1 /* GoogleService-Info.plist */; };
 		B2C8CED625CBBB0E008E91C4 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B2C8CED525CBBB0E008E91C4 /* SplashScreen.storyboard */; };
 /* End PBXBuildFile section */
 
@@ -64,6 +65,7 @@
 		A06BB6A08C5AF956F23A6A2F /* Pods-PlaySteem.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PlaySteem.debug.xcconfig"; path = "Target Support Files/Pods-PlaySteem/Pods-PlaySteem.debug.xcconfig"; sourceTree = "<group>"; };
 		ADA053A8D372F9B94426AC79 /* libPods-PlaySteem.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PlaySteem.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B21E045425B2B7D900DF7DB7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		B29536EF25D56CAD00EFE5A1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		B2C8CED525CBBB0E008E91C4 /* SplashScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = SplashScreen.storyboard; sourceTree = "<group>"; };
 		B2C8CEDB25CBCAD8008E91C4 /* PlaySteem.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = PlaySteem.entitlements; path = PlaySteem/PlaySteem.entitlements; sourceTree = "<group>"; };
 		D23630BC72C41875ACF29A1D /* libPods-PlaySteem-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PlaySteem-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -165,6 +167,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				B29536EF25D56CAD00EFE5A1 /* GoogleService-Info.plist */,
 				B2C8CED525CBBB0E008E91C4 /* SplashScreen.storyboard */,
 				B21E045425B2B7D900DF7DB7 /* GoogleService-Info.plist */,
 				13B07FAE1A68108700A75B9A /* PlaySteem */,
@@ -352,6 +355,7 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				B2C8CED625CBBB0E008E91C4 /* SplashScreen.storyboard in Resources */,
+				B29536F025D56CAD00EFE5A1 /* GoogleService-Info.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				B21E045525B2B7DA00DF7DB7 /* GoogleService-Info.plist in Resources */,
 			);
