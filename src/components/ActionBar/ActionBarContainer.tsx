@@ -39,8 +39,9 @@ const ActionBarContainer = (props: Props): JSX.Element => {
   //// states
   const [postState, setPostState] = useState<PostState>(props.postState);
   const [voting, setVoting] = useState(false);
+  const [downvoting, setDownvoting] = useState(false);
   const [votingWeight, setVotingWeight] = useState(100);
-  const [votingDollar, setVotingDollar] = useState<string>(postState.payout);
+  const [votingDollar, setVotingDollar] = useState<string>('0');
   const [showVotingModal, setShowVotingModal] = useState(false);
   const [showDownvoting, setShowDownvoting] = useState(false);
   const [showOriginal, setShowOriginal] = useState(true);
@@ -58,8 +59,7 @@ const ActionBarContainer = (props: Props): JSX.Element => {
   //   }
   // }, [postState]);
 
-  //// handle press vote icon of action bar
-  const _handlePressVoteIcon = () => {
+  const _updateVoteAmount = () => {
     console.log('user state', userState);
     // get vote amount of the user
     const voteAmount = parseFloat(userState.profileData.profile.voteAmount);
@@ -79,6 +79,11 @@ const ActionBarContainer = (props: Props): JSX.Element => {
       return;
     }
     console.log('vote amount', voteAmount);
+  };
+
+  //// handle press vote icon of action bar
+  const _handlePressVoteIcon = () => {
+    _updateVoteAmount();
     // show voting modal
     setShowVotingModal(true);
   };
@@ -89,12 +94,12 @@ const ActionBarContainer = (props: Props): JSX.Element => {
     if (!authState.loggedIn) return;
     // get credentials
     const {username, password} = authState.currentCredentials;
-    // set loading
-    setVoting(true);
     // hide voting modal
     setShowVotingModal(false);
     let results = null;
     if (!showDownvoting) {
+      // set loading
+      setVoting(true);
       // submit upvote transaction
       results = await upvote(
         props.postsType,
@@ -107,7 +112,9 @@ const ActionBarContainer = (props: Props): JSX.Element => {
         parseFloat(userState.profileData.profile.voteAmount),
       );
     } else {
-      results = upvote(
+      // set loading
+      setDownvoting(true);
+      results = await upvote(
         props.postsType,
         props.postIndex,
         postState.isComment,
@@ -143,6 +150,8 @@ const ActionBarContainer = (props: Props): JSX.Element => {
           payout: _payout,
           voters: _voters,
         };
+        // cancel loading
+        setVoting(false);
       } else {
         _payout = (
           parseFloat(postState.payout) -
@@ -157,11 +166,11 @@ const ActionBarContainer = (props: Props): JSX.Element => {
           payout: _payout,
           voters: _voters,
         };
+        // cancel loading
+        setDownvoting(false);
       }
       setPostState(_state);
     }
-    // cancel loading
-    setVoting(false);
   };
 
   //// handle press a voter
@@ -178,6 +187,7 @@ const ActionBarContainer = (props: Props): JSX.Element => {
 
   //// handle press down vote
   const _handlePressDownvote = () => {
+    _updateVoteAmount();
     setShowDownvoting(true);
   };
 
@@ -274,6 +284,7 @@ const ActionBarContainer = (props: Props): JSX.Element => {
       showVotingModal={showVotingModal}
       showDownvoting={showDownvoting}
       voting={voting}
+      downvoting={downvoting}
       votingDollar={votingDollar}
       votingWeight={votingWeight}
       voteAmount={parseFloat(userState.profileData.profile.voteAmount)}

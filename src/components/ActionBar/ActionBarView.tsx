@@ -30,6 +30,7 @@ interface Props {
   showVotingModal: boolean;
   showDownvoting: boolean;
   voting: boolean;
+  downvoting: boolean;
   voteAmount: number;
   votingDollar: string;
   votingWeight: number;
@@ -37,7 +38,7 @@ interface Props {
   handleCancelVotingModal: () => void;
   handlePressVoteIcon: () => void;
   handleVotingSlidingComplete: (weight: number) => void;
-  handlePressVoting: (votingWeight: number) => void;
+  handlePressVoting: () => void;
   handlePressDownvote: () => void;
   handlePressComments?: () => void;
   handlePressEditPost?: () => void;
@@ -60,6 +61,7 @@ const ActionBarView = (props: Props): JSX.Element => {
     showDownvoting,
     showVotingModal,
     voting,
+    downvoting,
   } = props;
   // language
   const intl = useIntl();
@@ -337,7 +339,7 @@ const ActionBarView = (props: Props): JSX.Element => {
         {actionBarStyle.downvote && (
           <Button
             onPress={props.handlePressDownvote}
-            loading={voting}
+            loading={downvoting}
             onlyIcon
             icon={postState.downvoted ? 'downcircleo' : 'downcircle'}
             iconFamily="antdesign"
