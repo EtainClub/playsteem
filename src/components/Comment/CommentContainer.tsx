@@ -209,6 +209,7 @@ const CommentContainer = (props: Props): JSX.Element => {
           key={comment.id}
           comment={comment}
           showChildComments={showChildComments}
+          reputation={reputation}
           handlePressReply={_handlePressReply}
           handlePressEditComment={_handlePressEditComment}
           handlePressTranslation={_handlePressTranslation}

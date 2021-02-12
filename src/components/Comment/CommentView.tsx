@@ -33,6 +33,7 @@ const {height, width} = Dimensions.get('window');
 interface Props {
   comment: CommentData;
   showChildComments: boolean;
+  reputation: string;
   handlePressReply: () => void;
   handlePressEditComment: () => void;
   handlePressTranslation: () => void;
@@ -44,7 +45,7 @@ interface Props {
 }
 const CommentView = (props: Props): JSX.Element => {
   //// props
-  const {comment, showChildComments} = props;
+  const {comment, showChildComments, reputation} = props;
   //// language
   const intl = useIntl();
   //// state
@@ -73,6 +74,7 @@ const CommentView = (props: Props): JSX.Element => {
             nickname={comment.state.post_ref.author}
             avatar={comment.state.avatar}
             avatarSize={30}
+            reputation={reputation}
             textSize={12}
             truncate={false}
           />

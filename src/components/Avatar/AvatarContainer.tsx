@@ -8,7 +8,7 @@ import {AvatarView} from './AvatarView';
 interface Props {
   account: string;
   nickname?: string;
-  reputation?: string;
+  reputation: string;
   avatar: string;
   avatarSize: number;
   textSize: number;

@@ -344,6 +344,8 @@ export const parseComment = async (comment: Discussion, username: string) => {
     commentData.json_metadata = '{}';
   }
 
+  const _profile = await fetchProfile(commentData.state.post_ref.author);
+
   const profile = {
     post_count: comment.post_count,
     metadata: {
@@ -364,7 +366,9 @@ export const parseComment = async (comment: Discussion, username: string) => {
   //   comment.pending_payout_value as string,
   // ).toFixed(2);
 
-  commentData.state.reputation = get(profile, 'reputation');
+  commentData.state.reputation = get(_profile, 'reputation');
+
+  debugger;
   //  extComment.postUserState.reputation = calculateReputation(
   //    comment.author_reputation,
   //  );
