@@ -272,19 +272,9 @@ const UserProvider = ({children}: Props) => {
     following: string,
     action: string,
   ) => {
-    const {chainProps} = userState.globalProps;
-    const op_fee = parseFloat(chainProps.operation_flat_fee.split(' ')[0]);
-    const bw_fee = parseFloat(chainProps.bandwidth_kbytes_fee.split(' ')[0]);
-
-    const result = await updateFollow(
-      follower,
-      password,
-      following,
-      action,
-      op_fee,
-      bw_fee,
-    );
+    const result = await updateFollow(follower, password, following, action);
     console.log('[updateFollowState] transaction result', result);
+    debugger;
     if (result) return result;
     setToastMessage(intl.formatMessage({id: 'update_error'}));
     return null;

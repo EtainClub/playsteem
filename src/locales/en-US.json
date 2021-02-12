@@ -227,6 +227,7 @@
     "curation_reward": "Curation Reward",
     "author_reward": "Author Reward",
     "claim_reward": "Claim Reward",
+    "claim_reward_prefix": "Unclaimed reward: ",
 
     "comment_benefactor_reward": "Benefactor Reward",
     "claim_reward_balance": "Claim Reward ",
