@@ -233,9 +233,7 @@ export const INIT_FILTER_LIST = ['trending', 'created', 'hot'];
 // initial tag item for friends posts of feed posts
 export const INIT_FRIENDS_TAG = ['Friends', '', ''];
 // initial tag item for my posts of feed posts
-export const INIT_MY_TAG = ['My', '', ''];
-// initial tag item for author posts
-export const INIT_AUTHOR_TAG = ['Author', '', ''];
+export const INIT_ALL_TAG = ['All', '', ''];
 
 //// actions
 // fetching posts

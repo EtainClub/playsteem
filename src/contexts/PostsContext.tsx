@@ -12,6 +12,7 @@ import {
   fetchPostDetails2,
   fetchAccountState,
   fetchCommunityList,
+  fetchCommunity,
 } from '~/providers/steem/dsteemApi';
 import {renderPostBody} from '~/utils/render-helpers';
 import firestore from '@react-native-firebase/firestore';

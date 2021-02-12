@@ -274,7 +274,6 @@ const UserProvider = ({children}: Props) => {
   ) => {
     const result = await updateFollow(follower, password, following, action);
     console.log('[updateFollowState] transaction result', result);
-    debugger;
     if (result) return result;
     setToastMessage(intl.formatMessage({id: 'update_error'}));
     return null;
