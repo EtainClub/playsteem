@@ -130,7 +130,7 @@ const NotificationScreen = (props: Props): JSX.Element => {
                   }}
                   style={styles.avatar}
                 />
-                {<Text size={10}>{author}</Text>}
+                {<Text size={10}>{actor}</Text>}
               </Block>
             </Block>
             <Block middle>
