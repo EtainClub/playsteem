@@ -579,11 +579,11 @@ export const fetchUserProfile = async (username: string) => {
   try {
     // get profile
     const fetchedProfile = await fetchProfile(username);
-    //    console.log('[fetchUserProfile] fetched profile', fetchedProfile);
+    console.log('[fetchUserProfile] fetched profile', fetchedProfile);
 
     // get account
     const account = await getAccount(username);
-    //    console.log('get account. account', account);
+    console.log('get account. account', account);
 
     const profileData: ProfileData = {
       profile: {
@@ -701,6 +701,7 @@ export const fetchFollowers = async (
       followType,
       limit,
     ]);
+    console.log('[fetchFollowers], followers', result);
     if (result) {
       return result;
     }

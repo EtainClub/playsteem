@@ -320,23 +320,13 @@ const UserProvider = ({children}: Props) => {
 
   //// get followings
   const getFollowers = async (username: string) => {
-    const startFollowing: string = '';
-    const followingType: string = 'blog';
-    const limit: number = 1000;
-    const result = await fetchFollowers(
-      username,
-      startFollowing,
-      followingType,
-      limit,
-    );
-    if (!result) {
+    // get followers
+    let followers: string[] = [];
+    followers = await _getFollowers(username, followers);
+    if (!followers) {
       setToastMessage(intl.formatMessage({id: 'fetch_error'}));
       return [];
     }
-    // get the followers
-    const followers = result.map((item) => {
-      return item.follower;
-    });
     // dispatch action
     dispatch({
       type: UserActionTypes.SET_FOLLOWERS,
@@ -364,6 +354,34 @@ const UserProvider = ({children}: Props) => {
   );
 };
 
-//// helper functions
+/////// helper functions
+//// get followings recursively
+const _getFollowers = async (
+  username: string,
+  followers: string[],
+  startFollowing?: string,
+) => {
+  const followingType: string = 'blog';
+  const limit: number = 1000;
+  const result = await fetchFollowers(
+    username,
+    startFollowing ? startFollowing : '',
+    followingType,
+    limit,
+  );
+  // get the followers
+  const _followers = result.map((item) => {
+    return item.follower;
+  });
+  // accumulate
+  followers = [...followers, ..._followers];
+  // check if the limit exceeds
+  if (_followers.length > 999) {
+    // fetch more
+    const startWith = _followers[_followers.length - 1];
+    followers = await _getFollowers(username, followers, startWith);
+  }
+  return followers;
+};
 
 export {UserContext, UserProvider};
