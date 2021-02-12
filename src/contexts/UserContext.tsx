@@ -292,33 +292,23 @@ const UserProvider = ({children}: Props) => {
 
   //// get followings
   const getFollowings = async (follower: string) => {
-    const startFollowing: string = '';
-    const followingType: string = 'blog';
-    const limit: number = 1000;
-    const result = await fetchFollowings(
-      follower,
-      startFollowing,
-      followingType,
-      limit,
-    );
-    if (result) {
-      // get the followings
-      const followings = result.map((item) => {
-        return item.following;
-      });
-      // dispatch action
-      dispatch({
-        type: UserActionTypes.SET_FOLLOWINGS,
-        payload: followings,
-      });
-      return followings;
-    } else {
+    // get followers
+    let followings: string[] = [];
+    followings = await _getFollowings(follower, followings);
+
+    if (!followings) {
       setToastMessage(intl.formatMessage({id: 'fetch_error'}));
       return [];
     }
+    // dispatch action
+    dispatch({
+      type: UserActionTypes.SET_FOLLOWINGS,
+      payload: followings,
+    });
+    return followings;
   };
 
-  //// get followings
+  //// get followers
   const getFollowers = async (username: string) => {
     // get followers
     let followers: string[] = [];
@@ -355,7 +345,7 @@ const UserProvider = ({children}: Props) => {
 };
 
 /////// helper functions
-//// get followings recursively
+//// get followers recursively
 const _getFollowers = async (
   username: string,
   followers: string[],
@@ -382,6 +372,35 @@ const _getFollowers = async (
     followers = await _getFollowers(username, followers, startWith);
   }
   return followers;
+};
+
+//// get followings recursively
+const _getFollowings = async (
+  follower: string,
+  followings: string[],
+  startFollowing?: string,
+) => {
+  const followingType: string = 'blog';
+  const limit: number = 1000;
+  const result = await fetchFollowings(
+    follower,
+    startFollowing,
+    followingType,
+    limit,
+  );
+  // get the followings
+  const _followings = result.map((item) => {
+    return item.following;
+  });
+  // accumulate
+  followings = [...followings, ..._followings];
+  // check if the limit exceeds
+  if (_followings.length > 999) {
+    // fetch more
+    const startWith = _followings[_followings.length - 1];
+    followings = await _getFollowings(follower, followings, startWith);
+  }
+  return followings;
 };
 
 export {UserContext, UserProvider};
