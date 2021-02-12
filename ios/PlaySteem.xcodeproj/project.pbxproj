@@ -20,7 +20,6 @@
 		4F12FF0FE1DE5D5A25AB338D /* libPods-PlaySteem-PlaySteemTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6ECA4512F1C49F81131F0AAD /* libPods-PlaySteem-PlaySteemTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		85BF328FDFBBC3BFAF598274 /* libPods-PlaySteem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADA053A8D372F9B94426AC79 /* libPods-PlaySteem.a */; };
-		B21E045525B2B7DA00DF7DB7 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B21E045425B2B7D900DF7DB7 /* GoogleService-Info.plist */; };
 		B29536F025D56CAD00EFE5A1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B29536EF25D56CAD00EFE5A1 /* GoogleService-Info.plist */; };
 		B2C8CED625CBBB0E008E91C4 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B2C8CED525CBBB0E008E91C4 /* SplashScreen.storyboard */; };
 /* End PBXBuildFile section */
@@ -357,7 +356,6 @@
 				B2C8CED625CBBB0E008E91C4 /* SplashScreen.storyboard in Resources */,
 				B29536F025D56CAD00EFE5A1 /* GoogleService-Info.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				B21E045525B2B7DA00DF7DB7 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
