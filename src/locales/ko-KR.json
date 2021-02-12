@@ -227,6 +227,7 @@
     "curation_reward": "큐레이션 보상",
     "author_reward": "저자 보상",
     "claim_reward": "보상 청구",
+    "claim_reward_prefix": "미청구 보상 ",
 
     "comment_benefactor_reward": "베네피셔리 보상",
     "claim_reward_balance": "보상 청구 ",

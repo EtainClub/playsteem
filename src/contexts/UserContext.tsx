@@ -67,6 +67,7 @@ const initialState = {
     savingsSBD: '0',
     rewardSteem: '0',
     rewardSBD: '0',
+    rewardVesting: '0',
     voteAmount: '0',
     votePower: '0',
     transactions: [],

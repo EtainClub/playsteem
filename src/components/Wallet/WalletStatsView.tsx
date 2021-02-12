@@ -8,8 +8,6 @@ import {useIntl} from 'react-intl';
 import {Block, Icon, Button, Input, Text, theme} from 'galio-framework';
 import {argonTheme} from '~/constants';
 import {DropdownModal} from '~/components/DropdownModal';
-import ModalDropdown from 'react-native-modal-dropdown';
-import moment from 'moment';
 import {WalletData} from '~/contexts/types';
 
 //// utils
@@ -45,18 +43,10 @@ const WalletStatsView = (props: Props): JSX.Element => {
     savingsSBD,
     rewardSteem,
     rewardSBD,
+    rewardVesting,
     transactions,
     votePower,
   } = props.walletData;
-  balance = putComma(parseFloat(balance).toFixed(3));
-  balanceSBD = putComma(parseFloat(balanceSBD).toFixed(3));
-  power = putComma(parseFloat(power).toFixed(3));
-  savingsSteem = putComma(savingsSteem);
-  savingsSBD = putComma(savingsSBD);
-  const needToClaim =
-    parseFloat(rewardSteem) > 0 || parseFloat(rewardSBD) > 0 ? true : false;
-  rewardSteem = putComma(rewardSteem);
-  rewardSBD = putComma(rewardSBD);
   //// language
   const intl = useIntl();
   const {setToastMessage} = useContext(UIContext);
@@ -76,6 +66,29 @@ const WalletStatsView = (props: Props): JSX.Element => {
     intl.formatMessage({id: 'Wallet.dropdown_powerup'}),
   ];
   const savingsOptions = [intl.formatMessage({id: 'Wallet.dropdown_withdraw'})];
+
+  // put commas in reward
+  balance = putComma(parseFloat(balance).toFixed(3));
+  balanceSBD = putComma(parseFloat(balanceSBD).toFixed(3));
+  power = putComma(parseFloat(power).toFixed(3));
+  savingsSteem = putComma(savingsSteem);
+  savingsSBD = putComma(savingsSBD);
+  let needToClaim = false;
+  let rewardText = intl.formatMessage({id: 'Wallet.claim_reward_prefix'});
+  if (
+    parseFloat(rewardSteem) > 0 ||
+    parseFloat(rewardSBD) > 0 ||
+    parseFloat(rewardVesting) > 0
+  ) {
+    needToClaim = true;
+    // build text for rewards
+    if (parseFloat(rewardSteem) > 0) rewardText += `${rewardSteem} STEEM`;
+    if (parseFloat(rewardSBD) > 0) rewardText += `${rewardSteem} SBD`;
+    if (parseFloat(rewardVesting) > 0) rewardText += `${rewardVesting} SP`;
+    rewardSteem = putComma(rewardSteem);
+    rewardSBD = putComma(rewardSBD);
+    rewardVesting = putComma(rewardVesting);
+  }
 
   const _onRefresh = async () => {
     setReloading(true);
@@ -270,13 +283,11 @@ const WalletStatsView = (props: Props): JSX.Element => {
         </Block>
         {props.isUser && needToClaim ? (
           <Block center>
-            <Text color={argonTheme.COLORS.ERROR}>
-              {intl.formatMessage(
-                {id: 'Wallet.reward_blurt'},
-                {what: rewardSteem},
-              )}
-            </Text>
-            <Button onPress={props.handlePressClaim} loading={props.claiming}>
+            <Text color={argonTheme.COLORS.ERROR}>{rewardText}</Text>
+            <Button
+              color={argonTheme.COLORS.ERROR}
+              onPress={props.handlePressClaim}
+              loading={props.claiming}>
               {intl.formatMessage({id: 'Wallet.claim_reward'})}
             </Button>
           </Block>
@@ -288,25 +299,6 @@ const WalletStatsView = (props: Props): JSX.Element => {
             onRefresh={_onRefresh}
             keyExtractor={(item, index) => index.toString()}
             renderItem={_renderItem}
-            // ListHeaderComponent={
-            //   props.isUser && (
-            //     <Block style={styles.title}>
-            //       <Text
-            //         style={{paddingBottom: 5}}
-            //         center
-            //         size={16}
-            //         color={argonTheme.COLORS.TEXT}>
-            //         {intl.formatMessage({id: 'Wallet.transaction_header'})}
-            //       </Text>
-            //       <Text
-            //         center
-            //         size={12}
-            //         color={argonTheme.COLORS.TEXT}>
-            //         {intl.formatMessage({id: 'Wallet.transaction_desc'})}
-            //       </Text>
-            //     </Block>
-            //   )
-            // }
           />
         </Block>
       </Block>

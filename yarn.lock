@@ -828,7 +828,7 @@
 
 "@hiveio/dhive@https://github.com/EtainClub/dhive":
   version "0.14.12"
-  resolved "https://github.com/EtainClub/dhive#69b64bb76007f5f99e4fc2b8632e2b3465edd30c"
+  resolved "https://github.com/EtainClub/dhive#7ce2ea53e8aaa39016b06b3a7ac2072f373c4fa3"
   dependencies:
     bs58 "^4.0.1"
     bytebuffer "^5.0.1"

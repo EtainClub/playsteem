@@ -86,7 +86,6 @@ const Wallet = (props: Props): JSX.Element => {
   //// event: price fetched
   useEffect(() => {
     setPrice(userState.price);
-    console.log('[Wallet] set price', userState.price);
   }, [userState.price]);
 
   //// get wallet data

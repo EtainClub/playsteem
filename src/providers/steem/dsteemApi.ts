@@ -1409,6 +1409,7 @@ export const fetchWalletData = async (username: string) => {
         savings_sbd_balance,
         reward_steem_balance,
         reward_sbd_balance,
+        reward_vesting_steem,
         voting_power,
         vesting_shares,
         received_vesting_shares,
@@ -1431,6 +1432,7 @@ export const fetchWalletData = async (username: string) => {
         savingsSBD: savings_sbd_balance.split(' ')[0],
         rewardSteem: reward_steem_balance.split(' ')[0],
         rewardSBD: reward_sbd_balance.split(' ')[0],
+        rewardVesting: reward_vesting_steem.split(' ')[0],
         voteAmount: '0',
         votePower: String(voting_power),
         transactions: transfer_history

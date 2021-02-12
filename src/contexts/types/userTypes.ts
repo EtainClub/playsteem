@@ -67,6 +67,8 @@ export interface WalletData {
   rewardSteem: string;
   // sbd reward
   rewardSBD: string;
+  // vesting reward
+  rewardVesting: string;
   // vote amount
   voteAmount?: string;
   // voting weight
