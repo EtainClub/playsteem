@@ -348,7 +348,7 @@ const Header = (props: Props): JSX.Element => {
           marginRight: 0,
           left: -70,
         }}
-        leftStyle={{paddingTop: 3, flex: 0.3}}
+        // leftStyle={{paddingTop: 3, flex: 0.3}}
         leftIconName={back ? 'chevron-left' : 'navicon'}
         leftIconFamily="font-awesome"
         leftIconColor={white ? theme.COLORS.WHITE : theme.COLORS.ICON}

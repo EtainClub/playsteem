@@ -368,7 +368,6 @@ export const parseComment = async (comment: Discussion, username: string) => {
 
   commentData.state.reputation = get(_profile, 'reputation');
 
-  debugger;
   //  extComment.postUserState.reputation = calculateReputation(
   //    comment.author_reputation,
   //  );
