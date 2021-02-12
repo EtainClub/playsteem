@@ -44,6 +44,8 @@ export type LanguageTypes = {
 //// ui types
 export type UITypes = {
   nsfw: boolean;
+  filter: string;
+  tag: string;
 };
 
 // settings state
@@ -84,6 +86,8 @@ export const INITIAL_SETTINGS: SettingsState = {
   },
   [StorageSchema.UI]: {
     nsfw: false,
+    filter: 'trending',
+    tag: '',
   },
 };
 
