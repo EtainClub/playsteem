@@ -114,8 +114,8 @@ const WalletKeyView = (props: Props): JSX.Element => {
           onPress={() => copyKeyToClipboard(password)}
           size={16}
           color={theme.COLORS.BLACK}
-          name="pencil"
-          family="font-awesome"
+          name="copy1"
+          family="antdesign"
         />
       </Block>
     </Block>
