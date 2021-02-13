@@ -325,6 +325,8 @@
     "msg_restart": "변경된 설정을 적용하려면 앱을 재시작 해야 합니다.",
     "rate_app": "앱 평가하기",
     "app_version": "앱 버전",
+    "version_body": "최신 버전입니다.",
+    "version_update": "업데이트 v{what}가 존재합니다. 업데이트 하시겠습니까?",
     "terms": "이용약관",
     "privacy": "개인정보 취급방침",
     "share": "이 앱을 공유하기",

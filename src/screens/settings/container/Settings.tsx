@@ -2,6 +2,7 @@
 import React, {useState, useEffect, useContext} from 'react';
 //// react native
 import {
+  Alert,
   TouchableHighlight,
   TouchableOpacity,
   StyleSheet,
@@ -10,6 +11,7 @@ import {
   ScrollView,
   FlatList,
   Platform,
+  Linking,
 } from 'react-native';
 //// language
 import {useIntl} from 'react-intl';
@@ -17,7 +19,6 @@ import {useIntl} from 'react-intl';
 import {Button, Icon, Block, Input, Text, theme} from 'galio-framework';
 import {materialTheme} from '~/constants/materialTheme';
 const {height, width} = Dimensions.get('window');
-import {argonTheme} from '~/constants';
 import {DropdownModal} from '~/components';
 import ModalDropdown from 'react-native-modal-dropdown';
 //// storage
@@ -36,6 +37,15 @@ import {SUPPORTED_LOCALES} from '~/locales';
 import moment, {locale} from 'moment';
 import {StorageSchema} from '~/contexts/types';
 import {setBlockchainClient} from '~/providers/steem/dsteemApi';
+//// constants
+import {
+  argonTheme,
+  GOOGLEPLAY,
+  APPSTORE,
+  APP_ANDROID_VERSION,
+  APP_IOS_VERSION,
+} from '~/constants';
+
 // start date and time: 1AM
 const DATE1 = new Date(2021, 12, 12, 1, 0, 0);
 // local time offset in hours from UTC+0
@@ -107,6 +117,8 @@ const SettingsContainer = (props: Props): JSX.Element => {
     settingsState.languages.translation,
   );
 
+  // app store, google play link
+  const APP_LINK = Platform.OS === 'android' ? GOOGLEPLAY : APPSTORE;
   //// effects
   // event: mount
   useEffect(() => {
@@ -384,14 +396,58 @@ const SettingsContainer = (props: Props): JSX.Element => {
     console.log('_handlePressButton. uiType', uiType);
     switch (uiType) {
       case SettingUITypes.NOTICE:
+        // get
         break;
       case SettingUITypes.APP_VERSION:
+        // get app version
+        const statsRef = firestore().doc(`stats/${Platform.OS}`);
+        statsRef.get().then((doc) => {
+          const latestVersion = doc.data().version;
+          if (
+            (Platform.OS === 'android'
+              ? APP_ANDROID_VERSION
+              : APP_IOS_VERSION) !== latestVersion
+          ) {
+            // show update modal
+            Alert.alert(
+              intl.formatMessage({id: 'Settings.app_version'}),
+              intl.formatMessage(
+                {id: 'Settings.version_update'},
+                {what: latestVersion},
+              ),
+              [
+                {text: intl.formatMessage({id: 'no'}), style: 'cancel'},
+                {
+                  text: intl.formatMessage({id: 'yes'}),
+                  onPress: () => Linking.openURL(APP_LINK),
+                },
+              ],
+              {cancelable: true},
+            );
+          } else {
+            // show confirm modal
+            Alert.alert(
+              intl.formatMessage({id: 'Settings.app_version'}),
+              intl.formatMessage({id: 'Settings.version_body'}),
+              [
+                {
+                  text: intl.formatMessage({id: 'yes'}),
+                },
+              ],
+              {cancelable: true},
+            );
+          }
+        });
+
         break;
       case SettingUITypes.RATE_APP:
+        Linking.openURL(APP_LINK);
         break;
       case SettingUITypes.TERMS:
+        Linking.openURL('https://playsteem.app/terms');
         break;
       case SettingUITypes.PRIVACY:
+        Linking.openURL('https://playsteem.app/privacy');
         break;
       default:
         break;
@@ -401,6 +457,52 @@ const SettingsContainer = (props: Props): JSX.Element => {
   //// handle press text items
   const _handlePressText = async (uiType: SettingUITypes) => {
     console.log('_handlePressText. uiType', uiType);
+    switch (uiType) {
+      case SettingUITypes.APP_VERSION:
+        // get app version
+        const statsRef = firestore().doc(`stats/${Platform.OS}`);
+        statsRef.get().then((doc) => {
+          const latestVersion = doc.data().version;
+          if (
+            (Platform.OS === 'android'
+              ? APP_ANDROID_VERSION
+              : APP_IOS_VERSION) !== latestVersion
+          ) {
+            // show update modal
+            Alert.alert(
+              intl.formatMessage({id: 'Settings.app_version'}),
+              intl.formatMessage(
+                {id: 'Settings.version_update'},
+                {what: latestVersion},
+              ),
+              [
+                {text: intl.formatMessage({id: 'no'}), style: 'cancel'},
+                {
+                  text: intl.formatMessage({id: 'yes'}),
+                  onPress: () => Linking.openURL(APP_LINK),
+                },
+              ],
+              {cancelable: true},
+            );
+          } else {
+            // show confirm modal
+            Alert.alert(
+              intl.formatMessage({id: 'Settings.app_version'}),
+              intl.formatMessage({id: 'Settings.version_body'}),
+              [
+                {
+                  text: intl.formatMessage({id: 'confirm'}),
+                },
+              ],
+              {cancelable: true},
+            );
+          }
+        });
+
+        break;
+      default:
+        break;
+    }
   };
 
   // convert the timestamp to time

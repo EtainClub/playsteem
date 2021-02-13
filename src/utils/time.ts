@@ -5,7 +5,7 @@ moment.locale('en', {
     future: 'in %s',
     past: '%s',
     s: function (number, withoutSuffix) {
-      return withoutSuffix ? 'now' : 'a few seconds';
+      return withoutSuffix ? 'now' : 'now';
     },
     m: '1m',
     mm: '%dm',
