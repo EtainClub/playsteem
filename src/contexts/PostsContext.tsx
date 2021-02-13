@@ -243,11 +243,19 @@ const PostsProvider = ({children}: Props) => {
     let tagList = null;
     if (username) {
       const communities = await fetchCommunityList(username);
-      tagList = [
-        [username, ...INIT_FRIENDS_TAG],
-        ['', ...INIT_ALL_TAG],
-        ...communities,
-      ];
+      if (communities.length > 0) {
+        tagList = [
+          [username, ...INIT_FRIENDS_TAG],
+          ['', ...INIT_ALL_TAG],
+          ...communities,
+        ];
+      } else {
+        tagList = [
+          [username, ...INIT_FRIENDS_TAG],
+          ['', ...INIT_ALL_TAG],
+          ...TOP_TAGS,
+        ];
+      }
     } else {
       tagList = [['', ...INIT_ALL_TAG], ...TOP_TAGS];
     }

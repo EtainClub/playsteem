@@ -28,6 +28,7 @@ import {ActionBar} from '../ActionBar';
 import {ActionBarStyle} from '~/constants/actionBarTypes';
 import {POST_TITLE_LENGTH} from '~/constants/utils';
 import {Avatar} from '~/components/Avatar';
+import {getTimeFromNow} from '~/utils/time';
 
 interface Props {
   post: PostData;
@@ -95,13 +96,14 @@ const PostView = (props: Props): JSX.Element => {
               />
             )}
           </Block>
-          <Block style={{marginBottom: 0}}>
+          <Block row space="between">
             <ActionBar
               actionBarStyle={props.actionBarStyle}
               postState={post.state}
               postsType={props.postsType}
               postIndex={props.index}
             />
+            <Text>{getTimeFromNow(post.state.createdAt)}</Text>
           </Block>
         </Block>
       </TouchableWithoutFeedback>

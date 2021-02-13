@@ -82,9 +82,10 @@ const WalletStatsView = (props: Props): JSX.Element => {
   ) {
     needToClaim = true;
     // build text for rewards
-    if (parseFloat(rewardSteem) > 0) rewardText += `${rewardSteem} STEEM`;
-    if (parseFloat(rewardSBD) > 0) rewardText += `${rewardSteem} SBD`;
-    if (parseFloat(rewardVesting) > 0) rewardText += `${rewardVesting} SP`;
+    if (parseFloat(rewardSteem) >= 0.001)
+      rewardText += `${rewardSteem} STEEM, `;
+    if (parseFloat(rewardSBD) >= 0.001) rewardText += `${rewardSteem} SBD, `;
+    if (parseFloat(rewardVesting) >= 0.001) rewardText += `${rewardVesting} SP`;
     rewardSteem = putComma(rewardSteem);
     rewardSBD = putComma(rewardSBD);
     rewardVesting = putComma(rewardVesting);
@@ -108,17 +109,7 @@ const WalletStatsView = (props: Props): JSX.Element => {
     if (parseFloat(value) < 0.01) return;
 
     return (
-      <Block
-        row
-        middle
-        space="between"
-        style={[
-          styles.rows,
-          // {
-          //   backgroundColor:
-          //     BACKGROUND_COLORS[index % BACKGROUND_COLORS.length],
-          // },
-        ]}>
+      <Block row middle space="between" style={[styles.rows]}>
         <Block row>
           <Icon
             size={20}

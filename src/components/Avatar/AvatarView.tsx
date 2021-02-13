@@ -47,10 +47,13 @@ const AvatarView = (props: Props): JSX.Element => {
           />
           <Block style={{top: -2}}>
             <Text size={textSize} color="blue">
-              {truncate ? nickname.substring(0, 16) : nickname}
+              {truncate ? nickname.substring(0, 13) : nickname}
             </Text>
             <Text size={textSize}>
-              @{truncate ? account.substring(0, 8) : account} ({reputation})
+              @
+              {truncate
+                ? account.substring(0, 11)
+                : `${account} (${reputation})`}
             </Text>
           </Block>
         </Block>

@@ -131,12 +131,12 @@
   },
   "Feed": {},
   "Notifications": {
-    "follow": "당신을 팔로잉합니다.",
-    "reply": "글에 답글을 달았습니다.",
-    "mention": "포스트에서 당신을 멘션했습니다.",
-    "transfer": "{what}를 전송했습니다.",
-    "reblog": "당신의 글을 공유했습니다.",
-    "vote": "당신의 글을 보팅 ({what}) 하였습니다."
+    "follow": "팔로잉",
+    "reply": "글에 답글",
+    "mention": "포스트에서 멘션",
+    "transfer": "{what}를 전송",
+    "reblog": "당신의 글을 공유",
+    "vote": "당신의 글을 보팅 ({what})"
   },
   "Posting": {
     "title": "제목",
