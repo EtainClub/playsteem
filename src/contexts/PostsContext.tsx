@@ -16,7 +16,11 @@ import {
 } from '~/providers/steem/dsteemApi';
 import {renderPostBody} from '~/utils/render-helpers';
 import firestore from '@react-native-firebase/firestore';
-import {NUM_FETCH_POSTS, NUM_FETCH_BLOG_POSTS} from '~/constants/blockchain';
+import {
+  NUM_FETCH_POSTS,
+  NUM_FETCH_BLOG_POSTS,
+  TOP_TAGS,
+} from '~/constants/blockchain';
 
 //// types
 import {
@@ -31,8 +35,8 @@ import {
   INIT_POST_DATA,
   INIT_POSTS_DATA,
   INIT_FRIENDS_TAG,
-  INIT_MY_TAG,
   INIT_FILTER_LIST,
+  INIT_ALL_TAG,
 } from '~/contexts/types';
 import {defaults, filter} from 'lodash';
 
@@ -236,9 +240,17 @@ const PostsProvider = ({children}: Props) => {
   //// fetch tag list
   const getTagList = async (username?: string) => {
     // fetch communities
-    const communityList = await fetchCommunityList(username);
-    // build tag list from community tags
-    const tagList = [[username, ...INIT_FRIENDS_TAG], ...communityList];
+    let tagList = null;
+    if (username) {
+      const communities = await fetchCommunityList(username);
+      tagList = [
+        [username, ...INIT_FRIENDS_TAG],
+        ['', ...INIT_ALL_TAG],
+        ...communities,
+      ];
+    } else {
+      tagList = [['', ...INIT_ALL_TAG], ...TOP_TAGS];
+    }
     // dispatch action
     dispatch({
       type: PostsActionTypes.SET_TAG_LIST,

@@ -28,7 +28,7 @@ import {
 
 // 5%
 const DEFAULT_BENEFICIARY: BeneficiaryItem = {
-  account: 'etainclub',
+  account: 'playsteemit',
   weight: BENEFICIARY_WEIGHT,
 };
 

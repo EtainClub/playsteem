@@ -36,6 +36,21 @@ export const BENEFICIARY_WEIGHT = 500;
 // max number of tags
 export const MAX_NUM_TAGS = 10;
 
+export const TOP_TAGS = [
+  ['hive-144703', 'Communities Feedback'],
+  ['hive-101145', 'SCT.암호화폐.Crypto'],
+  ['hive-150232', 'Amaze Creater Union'],
+  ['hive-196917', 'Korea • 한국 • KR • KO'],
+  ['hive-185836', 'WORLD OF XPILAR'],
+  ['hive-193637', 'Steem Venezuela'],
+  ['hive-193186', 'WhereIN'],
+  ['hive-167622', 'SteemAlive'],
+  ['hive-188403', 'SteemWomen Club'],
+  ['hive-138339', 'Steem Bangladesh'],
+  ['hive-108451', 'crypto-academy'],
+  ['hive-120412', 'LifeStyle'],
+];
+
 // export const BLURT_CHAIN_ID =
 //   'cd8d90f29ae273abec3eaa7731e25934c63eb654d55080caff2ebb7f5df6381f';
 // export const BLURT_CHAIN_PREFIX = 'BLT';
