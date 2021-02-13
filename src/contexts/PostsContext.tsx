@@ -141,6 +141,7 @@ const postsReducer = (state: PostsState, action: PostsAction) => {
         tagIndex: state.tagIndex,
         filterList: state.filterList,
         filterIndex: state.filterIndex,
+        communityList: state.communityList,
       };
 
     case PostsActionTypes.SET_TAG_AND_FILTER:
@@ -243,6 +244,12 @@ const PostsProvider = ({children}: Props) => {
     let tagList = null;
     if (username) {
       const communities = await fetchCommunityList(username);
+      // dispatch community
+      dispatch({
+        type: PostsActionTypes.SET_COMMUNITIES,
+        payload: communities,
+      });
+      // build tag list
       if (communities.length > 0) {
         tagList = [
           [username, ...INIT_FRIENDS_TAG],

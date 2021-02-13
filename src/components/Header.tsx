@@ -309,9 +309,34 @@ const Header = (props: Props): JSX.Element => {
             </Block>
           </Block>
         );
+      case 'Posting':
+        postsState.communityList.forEach((item) => tagOptions.push(item[1]));
+        console.log('Posting. tagOptions', tagOptions);
+        tagOptions = ['blog', ...tagOptions];
+        const postingTag = settingsState.ui.postingTag;
+        return (
+          <Block row space="between">
+            <Block style={{left: 0}}>
+              <DropdownModal
+                key={tagOptions[tagIndex]}
+                defaultText={postingTag || tagOptions[tagIndex]}
+                dropdownButtonStyle={styles.postingDropdownButtonStyle}
+                selectedOptionIndex={tagIndex}
+                rowTextStyle={styles.rowTextStyle}
+                style={styles.dropdown}
+                dropdownStyle={styles.postingDropdownStyle}
+                textStyle={styles.dropdownText}
+                options={tagOptions}
+                onSelect={_handleOnTagChange}
+              />
+            </Block>
+            <Block style={{left: 120, top: 0}}>
+              <Avatar />
+            </Block>
+          </Block>
+        );
       case 'Search':
       case 'Post':
-      case 'Posting':
       case 'Profile':
       case 'Author':
       case 'Notification':
@@ -491,5 +516,19 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 62,
     borderWidth: 0,
+  },
+  postingDropdownStyle: {
+    marginTop: 15,
+    minWidth: 160,
+    width: 160,
+    backgroundColor: argonTheme.COLORS.DEFAULT,
+  },
+  postingDropdownButtonStyle: {
+    borderColor: '#f5f5f5',
+    borderWidth: 1,
+    height: 44,
+    width: 140,
+    borderRadius: 8,
+    marginRight: 10,
   },
 });

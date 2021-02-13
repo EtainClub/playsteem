@@ -46,6 +46,7 @@ export type UITypes = {
   nsfw: boolean;
   filter: string;
   tag: string;
+  postingTag: string;
 };
 
 // settings state
@@ -88,6 +89,7 @@ export const INITIAL_SETTINGS: SettingsState = {
     nsfw: false,
     filter: 'trending',
     tag: '',
+    postingTag: 'blog', // tag name (alias)
   },
 };
 
