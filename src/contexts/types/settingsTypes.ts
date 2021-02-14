@@ -44,9 +44,10 @@ export type LanguageTypes = {
 //// ui types
 export type UITypes = {
   nsfw: boolean;
-  filter: string;
-  tag: string;
-  postingTag: string;
+  filterIndex: number;
+  tagIndex: number;
+  communityIndex: number;
+  payoutIndex: number;
 };
 
 // settings state
@@ -87,9 +88,10 @@ export const INITIAL_SETTINGS: SettingsState = {
   },
   [StorageSchema.UI]: {
     nsfw: false,
-    filter: 'trending',
-    tag: '',
-    postingTag: 'blog', // tag name (alias)
+    filterIndex: 0,
+    tagIndex: 0,
+    communityIndex: 0,
+    payoutIndex: 0,
   },
 };
 

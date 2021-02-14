@@ -20,6 +20,7 @@ export enum PostsActionTypes {
   COMMENT_POST,
   SET_POST_REF,
   SET_COMMUNITIES,
+  SET_COMMUNITY_INDEX,
   SELECT_TAG,
   SELECT_FILTER,
   RETRY_FETCHING,
@@ -200,12 +201,14 @@ export interface PostsState {
   tagList: any[];
   // tag index
   tagIndex: number;
-  // community list
-  communityList: any[];
   // filter: trending, created
   filterList: string[];
   // filter index
   filterIndex: number;
+  // community list
+  communityList: any[];
+  // community index for posting
+  communityIndex: number;
 }
 
 // initial posts
@@ -308,6 +311,11 @@ interface SetTagIndexAction {
 // set filter index
 interface SetFilterIndexAction {
   type: PostsActionTypes.SET_FILTER_INDEX;
+  payload: number;
+}
+// set community index
+interface SetCommunityIndexAction {
+  type: PostsActionTypes.SET_COMMUNITY_INDEX;
   payload: number;
 }
 // set post details
@@ -456,6 +464,8 @@ export interface PostsContextType {
   appendTag: (tag: string) => void;
   // set need to fetch flag
   setNeedToFetch: (needing: boolean) => void;
+  // set community index for posting
+  setCommunityIndex: (index: number, username?: string) => void;
 }
 
 export type PostsAction =
@@ -477,19 +487,6 @@ export type PostsAction =
   | SetTagIndexAction
   | SetTagListAction
   | SetFilterIndexAction
+  | SetCommunityIndexAction
   | RetryFetchingAction
   | AppendTagAction;
-
-/*
-  export interface PostsQuery {
-  sort: string;
-  tag: string;
-  observer?: string;
-  limit: number;
-  start_permlink: string;
-  start_author: string;
-  truncate_body?: number;
-  filterNsfw?: boolean;
-}
-
-*/

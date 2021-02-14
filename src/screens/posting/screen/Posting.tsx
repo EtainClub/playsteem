@@ -79,7 +79,12 @@ const PostingScreen = (props: Props): JSX.Element => {
     </Block>
   );
 
-  const rewardOptions = ['Power Up 100%', 'No Reward'];
+  const rewardOptions = [
+    intl.formatMessage({id: 'Posting.powerup_50'}),
+    intl.formatMessage({id: 'Posting.powerup_100'}),
+    intl.formatMessage({id: 'Posting.no_reward'}),
+  ];
+
   const defaultOptionText = '';
   return (
     <View>

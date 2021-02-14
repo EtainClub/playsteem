@@ -60,9 +60,12 @@ const Header = (props: Props): JSX.Element => {
   const {authState, changeAccount, processLogout} = useContext(AuthContext);
   const {userState, getFollowings, updateVoteAmount} = useContext(UserContext);
   const {uiState, setSearchParam, setLanguageParam} = useContext(UIContext);
-  const {postsState, setTagIndex, setFilterIndex, clearPosts} = useContext(
-    PostsContext,
-  );
+  const {
+    postsState,
+    setTagIndex,
+    setFilterIndex,
+    setCommunityIndex,
+  } = useContext(PostsContext);
   const {settingsState} = useContext(SettingsContext);
   // states
   const [username, setUsername] = useState(null);
@@ -232,10 +235,9 @@ const Header = (props: Props): JSX.Element => {
     setFilterIndex(index, authState.currentCredentials.username);
   };
 
-  //// handle on language change
-  const _handleOnLanguageChange = (index: number, value: string) => {
-    console.log('header _handleOnLanguageChange. index, value', index, value);
-    setLanguageParam(value.toLowerCase());
+  //// update posting tag
+  const _handleOnCommunityChange = (index: number, value: string) => {
+    setCommunityIndex(index, authState.currentCredentials.username);
   };
 
   //// update tag index of uiState
@@ -311,24 +313,32 @@ const Header = (props: Props): JSX.Element => {
         );
       case 'Posting':
         postsState.communityList.forEach((item) => tagOptions.push(item[1]));
-        console.log('Posting. tagOptions', tagOptions);
-        tagOptions = ['blog', ...tagOptions];
-        const postingTag = settingsState.ui.postingTag;
+        console.log('setting state', settingsState);
+        console.log(
+          'posting community index',
+          postsState.communityList,
+          postsState.communityList[settingsState.ui.communityIndex],
+        );
+        const postingTag =
+          postsState.communityList[settingsState.ui.communityIndex][1];
         return (
           <Block row space="between">
-            <Block style={{left: 0}}>
-              <DropdownModal
-                key={tagOptions[tagIndex]}
-                defaultText={postingTag || tagOptions[tagIndex]}
-                dropdownButtonStyle={styles.postingDropdownButtonStyle}
-                selectedOptionIndex={tagIndex}
-                rowTextStyle={styles.rowTextStyle}
-                style={styles.dropdown}
-                dropdownStyle={styles.postingDropdownStyle}
-                textStyle={styles.dropdownText}
-                options={tagOptions}
-                onSelect={_handleOnTagChange}
-              />
+            <Block row center style={{left: 100}}>
+              <Text>To: </Text>
+              <Block style={{}}>
+                <DropdownModal
+                  key={tagOptions[tagIndex]}
+                  defaultText={postingTag || tagOptions[tagIndex]}
+                  dropdownButtonStyle={styles.postingDropdownButtonStyle}
+                  selectedOptionIndex={tagIndex}
+                  rowTextStyle={styles.rowTextStyle}
+                  style={styles.dropdown}
+                  dropdownStyle={styles.postingDropdownStyle}
+                  textStyle={styles.dropdownText}
+                  options={tagOptions}
+                  onSelect={_handleOnCommunityChange}
+                />
+              </Block>
             </Block>
             <Block style={{left: 120, top: 0}}>
               <Avatar />
@@ -504,6 +514,7 @@ const styles = StyleSheet.create({
   },
   dropdown: {
     width: 100,
+    marginLeft: 10,
   },
   textStyle: {
     color: '#357ce6',
@@ -519,16 +530,32 @@ const styles = StyleSheet.create({
   },
   postingDropdownStyle: {
     marginTop: 15,
-    minWidth: 160,
-    width: 160,
+    minWidth: 150,
+    width: 200,
     backgroundColor: argonTheme.COLORS.DEFAULT,
   },
   postingDropdownButtonStyle: {
     borderColor: '#f5f5f5',
     borderWidth: 1,
     height: 44,
-    width: 140,
+    width: 180,
     borderRadius: 8,
     marginRight: 10,
   },
 });
+
+// dropdownStyle: {
+//   marginTop: 15,
+//   minWidth: 150,
+//   width: 200,
+//   backgroundColor: argonTheme.COLORS.DEFAULT,
+// },
+// dropdownButtonStyle: {
+//   color: argonTheme.COLORS.ERROR,
+//   width: 180,
+//   marginRight: 10,
+// },
+// dropdown: {
+//   width: 180,
+//   marginLeft: 10,
+// },

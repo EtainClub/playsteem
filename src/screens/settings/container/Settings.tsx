@@ -292,8 +292,9 @@ const SettingsContainer = (props: Props): JSX.Element => {
         updateSettingSchema(StorageSchema.PUSH_NOTIFICATIONS, _notifications);
         break;
       case SettingUITypes.NSFW:
+        debugger;
         // build structure
-        const _ui = {nsfw: value};
+        const _ui = {...settingsState.ui, nsfw: value};
         // update in context state
         updateSettingSchema(StorageSchema.UI, _ui);
         break;

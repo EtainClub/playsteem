@@ -70,6 +70,8 @@ const initialState: PostsState = {
   tagIndex: 0,
   // community list
   communityList: [],
+  // community index for posting
+  communityIndex: 0,
   // filter: trending, created
   filterList: INIT_FILTER_LIST,
   // filter index
@@ -142,6 +144,7 @@ const postsReducer = (state: PostsState, action: PostsAction) => {
         filterList: state.filterList,
         filterIndex: state.filterIndex,
         communityList: state.communityList,
+        communityIndex: state.communityIndex,
       };
 
     case PostsActionTypes.SET_TAG_AND_FILTER:
@@ -164,6 +167,9 @@ const postsReducer = (state: PostsState, action: PostsAction) => {
       };
     case PostsActionTypes.SET_FILTER_INDEX:
       return {...state, filterIndex: action.payload, needToFetch: true};
+
+    case PostsActionTypes.SET_COMMUNITY_INDEX:
+      return {...state, communityIndex: action.payload};
 
     case PostsActionTypes.SET_POST_DETAILS:
       return {
@@ -244,10 +250,11 @@ const PostsProvider = ({children}: Props) => {
     let tagList = null;
     if (username) {
       const communities = await fetchCommunityList(username);
+      const _communityList = [['blog', 'Blog', '', ''], ...communities];
       // dispatch community
       dispatch({
         type: PostsActionTypes.SET_COMMUNITIES,
-        payload: communities,
+        payload: _communityList,
       });
       // build tag list
       if (communities.length > 0) {
@@ -380,7 +387,8 @@ const PostsProvider = ({children}: Props) => {
     } else {
       //      setToastMessage(intl.formatMessage({id: 'fetch_error'}));
       return {
-        fetchedPosts: [],
+        // return the current posts
+        fetchedPosts: postsState[postsType].posts,
         fetchedAll: true,
       };
     }
@@ -498,7 +506,7 @@ const PostsProvider = ({children}: Props) => {
   };
 
   //// set tag index
-  const setTagIndex = async (
+  const setTagIndex = (
     tagIndex: number,
     postsType: PostsTypes,
     username?: string,
@@ -519,7 +527,7 @@ const PostsProvider = ({children}: Props) => {
   };
 
   //// set filter index
-  const setFilterIndex = async (filterIndex: number, username?: string) => {
+  const setFilterIndex = (filterIndex: number, username?: string) => {
     console.log('[PostsContext|setfilter] filter Index', filterIndex);
     // check sanity
     if (filterIndex < 0 || filterIndex >= postsState.filterList.length) {
@@ -530,6 +538,21 @@ const PostsProvider = ({children}: Props) => {
     dispatch({
       type: PostsActionTypes.SET_FILTER_INDEX,
       payload: filterIndex,
+    });
+  };
+
+  //// set community index for posting
+  const setCommunityIndex = (index: number, username?: string) => {
+    console.log('[PostsContext|setCommunity] Community Index', index);
+    // check sanity
+    if (index < 0 || index >= postsState.communityList.length) {
+      console.log('[setCommunity] community is not defined', index);
+      return;
+    }
+    // dispatch action
+    dispatch({
+      type: PostsActionTypes.SET_COMMUNITY_INDEX,
+      payload: index,
     });
   };
 
@@ -902,6 +925,7 @@ const PostsProvider = ({children}: Props) => {
         setTagIndex,
         appendTag,
         setFilterIndex,
+        setCommunityIndex,
         upvote,
         submitPost,
         updatePost,
@@ -926,7 +950,12 @@ const _fetchPosts = async (
   username?: string,
   limit?: number,
 ) => {
-  console.log('[fetchPosts] category, tag', filter, tag);
+  console.log(
+    '[fetchPosts] category, tag, startRef',
+    filter,
+    tag,
+    startPostRef,
+  );
   // fetch summary of posts
   const result = await fetchPostsSummary(
     filter,

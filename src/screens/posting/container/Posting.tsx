@@ -1,4 +1,5 @@
 import React, {useState, useContext, useEffect} from 'react';
+import {Alert} from 'react-native';
 import {useIntl} from 'react-intl';
 import ImagePicker, {ImageOrVideo} from 'react-native-image-crop-picker';
 import {AuthContext, PostsContext, UIContext, UserContext} from '~/contexts';
@@ -31,6 +32,8 @@ const DEFAULT_BENEFICIARY: BeneficiaryItem = {
   account: 'playsteemit',
   weight: BENEFICIARY_WEIGHT,
 };
+
+const PAYOUT_OPTIONS = ['sp50sbd50', 'powerup', 'decline'];
 
 interface Props {
   navigation: any;
@@ -156,10 +159,24 @@ const Posting = (props: Props): JSX.Element => {
 
   //// handle press post
   const _handlePressPostSubmit = async () => {
-    // check sanity: title, body, tags
-    if (!tags || !body || !title) {
+    const {communityIndex} = postsState;
+    // check sanity: title, body
+    if (!body || !title) {
       setToastMessage(intl.formatMessage({id: 'Posting.missing'}));
       return;
+    }
+
+    let _tagString = tags;
+    // get community tag. check if it is a blog
+    if (communityIndex !== 0) {
+      // put the community tag at first
+      _tagString = `${postsState.communityList[communityIndex][0]} ${tags}`;
+    } else {
+      // check sanity: tags
+      if (!_tagString) {
+        setToastMessage(intl.formatMessage({id: 'Posting.missing'}));
+        return;
+      }
     }
 
     // check validity of tags
@@ -168,16 +185,13 @@ const Posting = (props: Props): JSX.Element => {
       return;
     }
 
-    // set loading for posting
-    setPosting(true);
-
     ////// build a post
     // author is the user
     const {username, password} = authState.currentCredentials;
     // extract meta
     const _meta = extractMetadata(body);
     // split tags by space
-    let _tags = tags.split(' ');
+    let _tags = _tagString.split(' ');
     // filter out empty tags
     _tags = _tags.filter((tag) => tag && tag !== ' ');
     const jsonMeta = makeJsonMetadata(_meta, _tags);
@@ -192,7 +206,13 @@ const Posting = (props: Props): JSX.Element => {
         permlink = generatePermlink(title, true);
       }
       // add options such as beneficiaries
-      options = addPostingOptions(username, permlink, 'powerup', beneficiaries);
+      // TODO: handle reward index
+      options = addPostingOptions(
+        username,
+        permlink,
+        PAYOUT_OPTIONS[rewardIndex],
+        beneficiaries,
+      );
       console.log('_handlePressPostSumbit. options', options);
     }
     // build posting content
@@ -217,6 +237,37 @@ const Posting = (props: Props): JSX.Element => {
       console.log('[updatePost] postingContent', postingContent);
     }
 
+    //// show confir modal
+    // show update modal
+    Alert.alert(
+      intl.formatMessage({id: 'Posting.confirm_title'}),
+      intl.formatMessage(
+        {id: 'Posting.community'},
+        {what: postsState.communityList[communityIndex][1]},
+      ),
+      [
+        {
+          text: intl.formatMessage({id: 'no'}),
+          onPress: () => {},
+          style: 'cancel',
+        },
+        {
+          text: intl.formatMessage({id: 'yes'}),
+          onPress: () =>
+            _submitPost(
+              postingContent,
+              communityIndex,
+              options,
+              username,
+              password,
+            ),
+        },
+      ],
+      {cancelable: true},
+    );
+
+    return;
+
     //// submit the post
     const result = await submitPost(postingContent, password, false, options);
     if (result) {
@@ -238,17 +289,19 @@ const Posting = (props: Props): JSX.Element => {
         ]);
       }
 
+      ////// post process
+      //// TODO: store the community tag index in settings
+      //// TODO: store the payout index in settings
+
       ////
       // set tag to all
       setTagAndFilter(
-        1,
-        1,
+        communityIndex !== 0 ? communityIndex + 1 : 1, // community : all
+        1, // created
         PostsTypes.FEED,
         authState.currentCredentials.username,
       );
-      // setTagIndex(1, PostsTypes.FEED, authState.currentCredentials.username);
-      // set filter to created
-      // setFilterIndex(1, authState.currentCredentials.username);
+
       // navigate feed
       navigate({name: 'Feed'});
     }
@@ -268,6 +321,63 @@ const Posting = (props: Props): JSX.Element => {
       // navigate to the feed with the first tag
       navigate({name: 'Feed'});
     }
+  };
+
+  const _submitPost = async (
+    postingContent: PostingContent,
+    communityIndex: number,
+    options: any[],
+    username: string,
+    password: string,
+  ) => {
+    // set loading for posting
+    setPosting(true);
+
+    //// submit the post
+    const result = await submitPost(postingContent, password, false, options);
+    if (result) {
+      console.log('[posting] result', result);
+      // TODO: clear the title, body, and tags, beneficiary
+      // initialie beneficiaries
+      if (username === 'playsteemit') {
+        setBeneficiaries([
+          {account: username, weight: 5000},
+          {account: 'etainclub', weight: 5000},
+        ]);
+      } else {
+        setBeneficiaries([
+          DEFAULT_BENEFICIARY,
+          {
+            account: username,
+            weight: 10000 - DEFAULT_BENEFICIARY.weight,
+          },
+        ]);
+      }
+
+      ////// post process
+      // TODO: store the community tag index in settings
+      // TODO: store the payout index in settings
+
+      // set tag to all
+      setTagAndFilter(
+        communityIndex !== 0 ? communityIndex + 1 : 1, // community : all
+        1, // created
+        PostsTypes.FEED,
+        authState.currentCredentials.username,
+      );
+      // clear posting flag
+      setPosting(false);
+      // clear all
+      _handleClearAll();
+      // navigate feed
+      navigate({name: 'Feed'});
+    }
+    //// TODO: update post details.. here or in postsContext
+
+    // clear posting flag
+    setPosting(false);
+    // toast message: failed
+    setToastMessage(intl.formatMessage({id: 'failed'}));
   };
 
   const _handlePressBeneficiary = () => {

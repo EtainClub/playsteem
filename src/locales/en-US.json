@@ -160,7 +160,10 @@
     "beneficiary_button": "Beneficiary",
     "preview": "Preview",
     "missing": "title, body, or tags is missing",
-    "tag_error": "some of tags are not correct"
+    "tag_error": "some of tags are not correct",
+    "powerup_100": "Power Up 100%",
+    "powerup_50": "SP 50%, SBD 50%",
+    "no_reward": "Decline Payout"
   },
   "Beneficiary": {
     "header": "Beneficiary Setting",

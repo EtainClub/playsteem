@@ -160,7 +160,12 @@
     "beneficiary_button": "베네피셔리 설정",
     "preview": "미리보기",
     "missing": "제목/본문/태그가 빠졌습니다.",
-    "tag_error": "태그가 올바르지 않습니다."
+    "tag_error": "태그가 올바르지 않습니다.",
+    "powerup_100": "파워업 100%",
+    "powerup_50": "파워업 50%, 스달 50%",
+    "no_reward": "보상 거절",
+    "confirm_title": "포스팅 확인",
+    "community": "포스팅 커뮤니티: {what}"
   },
   "Beneficiary": {
     "header": "베네피셔리 설정",

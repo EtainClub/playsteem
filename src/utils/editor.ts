@@ -104,6 +104,11 @@ export const addPostingOptions = (
   };
 
   switch (operationType) {
+    case 'sp50sbd50':
+      options.max_accepted_payout = '1000000.000 SBD';
+      options.percent_steem_dollars = 10000;
+      break;
+
     case 'powerup':
       options.max_accepted_payout = '1000000.000 SBD';
       options.percent_steem_dollars = 0;
