@@ -353,6 +353,8 @@ const Profile = ({navigation}): JSX.Element => {
     setRefreshing(false);
   };
 
+  if (!authState.loggedIn) return <View></View>;
+
   return !editMode ? (
     profileData ? (
       <ProfileScreen
