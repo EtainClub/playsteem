@@ -313,12 +313,6 @@ const Header = (props: Props): JSX.Element => {
         );
       case 'Posting':
         postsState.communityList.forEach((item) => tagOptions.push(item[1]));
-        console.log('setting state', settingsState);
-        console.log(
-          'posting community index',
-          postsState.communityList,
-          postsState.communityList[settingsState.ui.communityIndex],
-        );
         const postingTag =
           postsState.communityList[settingsState.ui.communityIndex][1];
         return (
@@ -332,7 +326,7 @@ const Header = (props: Props): JSX.Element => {
                   dropdownButtonStyle={styles.postingDropdownButtonStyle}
                   selectedOptionIndex={tagIndex}
                   rowTextStyle={styles.rowTextStyle}
-                  style={styles.dropdown}
+                  style={styles.postingDropdown}
                   dropdownStyle={styles.postingDropdownStyle}
                   textStyle={styles.dropdownText}
                   options={tagOptions}
@@ -530,17 +524,20 @@ const styles = StyleSheet.create({
   },
   postingDropdownStyle: {
     marginTop: 15,
-    minWidth: 150,
+    minWidth: 180,
     width: 200,
     backgroundColor: argonTheme.COLORS.DEFAULT,
   },
   postingDropdownButtonStyle: {
     borderColor: '#f5f5f5',
     borderWidth: 1,
-    height: 44,
     width: 180,
     borderRadius: 8,
     marginRight: 10,
+  },
+  postingDropdown: {
+    width: 180,
+    marginLeft: 10,
   },
 });
 

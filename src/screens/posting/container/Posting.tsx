@@ -2,11 +2,17 @@ import React, {useState, useContext, useEffect} from 'react';
 import {Alert} from 'react-native';
 import {useIntl} from 'react-intl';
 import ImagePicker, {ImageOrVideo} from 'react-native-image-crop-picker';
-import {AuthContext, PostsContext, UIContext, UserContext} from '~/contexts';
+import {
+  AuthContext,
+  PostsContext,
+  SettingsContext,
+  UIContext,
+  UserContext,
+} from '~/contexts';
 import {PostingScreen} from '../screen/Posting';
 import {fetchRawPost} from '~/providers/steem/dsteemApi';
 import {Discussion} from '@hiveio/dhive';
-import {PostingContent} from '~/contexts/types';
+import {PostingContent, StorageSchema} from '~/contexts/types';
 //// navigation
 import {navigate} from '~/navigation/service';
 //// UIs
@@ -57,6 +63,7 @@ const Posting = (props: Props): JSX.Element => {
     updatePost,
   } = useContext(PostsContext);
   const {userState, getFollowings} = useContext(UserContext);
+  const {settingsState, updateSettingSchema} = useContext(SettingsContext);
   // states
   //  const [editMode, setEditMode] = useState(route.params?.editMode);
   const [title, setTitle] = useState('');
@@ -159,13 +166,13 @@ const Posting = (props: Props): JSX.Element => {
 
   //// handle press post
   const _handlePressPostSubmit = async () => {
-    const {communityIndex} = postsState;
+    // get community index from settings
+    const {communityIndex} = settingsState.ui;
     // check sanity: title, body
     if (!body || !title) {
       setToastMessage(intl.formatMessage({id: 'Posting.missing'}));
       return;
     }
-
     let _tagString = tags;
     // get community tag. check if it is a blog
     if (communityIndex !== 0) {
@@ -226,8 +233,6 @@ const Posting = (props: Props): JSX.Element => {
       permlink: permlink,
     };
     //// update post if original post exists
-    let success = false;
-    let message = '';
     if (originalPost) {
       console.log('[updatePost] originalPost', originalPost);
       // TODO: use submitPost after patching instead of updatePost
@@ -237,8 +242,7 @@ const Posting = (props: Props): JSX.Element => {
       console.log('[updatePost] postingContent', postingContent);
     }
 
-    //// show confir modal
-    // show update modal
+    //// show confirm modal
     Alert.alert(
       intl.formatMessage({id: 'Posting.confirm_title'}),
       intl.formatMessage(
@@ -265,62 +269,6 @@ const Posting = (props: Props): JSX.Element => {
       ],
       {cancelable: true},
     );
-
-    return;
-
-    //// submit the post
-    const result = await submitPost(postingContent, password, false, options);
-    if (result) {
-      console.log('[posting] result', result);
-      // TODO: clear the title, body, and tags, beneficiary
-      // initialie beneficiaries
-      if (username === 'playsteemit') {
-        setBeneficiaries([
-          {account: username, weight: 5000},
-          {account: 'etainclub', weight: 5000},
-        ]);
-      } else {
-        setBeneficiaries([
-          DEFAULT_BENEFICIARY,
-          {
-            account: username,
-            weight: 10000 - DEFAULT_BENEFICIARY.weight,
-          },
-        ]);
-      }
-
-      ////// post process
-      //// TODO: store the community tag index in settings
-      //// TODO: store the payout index in settings
-
-      ////
-      // set tag to all
-      setTagAndFilter(
-        communityIndex !== 0 ? communityIndex + 1 : 1, // community : all
-        1, // created
-        PostsTypes.FEED,
-        authState.currentCredentials.username,
-      );
-
-      // navigate feed
-      navigate({name: 'Feed'});
-    }
-    //// TODO: update post details.. here or in postsContext
-
-    // toast message
-    setToastMessage(message);
-    // clear posting flag
-    setPosting(false);
-
-    //// navigate
-    if (success) {
-      // append tag
-      appendTag(_tags[0]);
-      // set tag param
-      //      setTagParam(_tags[0]);
-      // navigate to the feed with the first tag
-      navigate({name: 'Feed'});
-    }
   };
 
   const _submitPost = async (
@@ -355,9 +303,13 @@ const Posting = (props: Props): JSX.Element => {
       }
 
       ////// post process
-      // TODO: store the community tag index in settings
-      // TODO: store the payout index in settings
-
+      // store the community and posting indices in settings
+      const postingSetting = {
+        ...settingsState.ui,
+        communityIndex,
+        payoutIndex: rewardIndex,
+      };
+      updateSettingSchema(StorageSchema.UI, postingSetting);
       // set tag to all
       setTagAndFilter(
         communityIndex !== 0 ? communityIndex + 1 : 1, // community : all
@@ -371,9 +323,8 @@ const Posting = (props: Props): JSX.Element => {
       _handleClearAll();
       // navigate feed
       navigate({name: 'Feed'});
+      return;
     }
-    //// TODO: update post details.. here or in postsContext
-
     // clear posting flag
     setPosting(false);
     // toast message: failed
