@@ -103,7 +103,7 @@ export const ResolveAuth = (props) => {
       setFetched(true);
     } else {
       // fetch tags
-      //      await getTagList();
+      await getTagList(username);
       // @test
       //navigate({name: 'Drawer'});
       navigate({name: 'Welcome'});

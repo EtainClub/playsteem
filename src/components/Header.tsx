@@ -65,6 +65,7 @@ const Header = (props: Props): JSX.Element => {
     setTagIndex,
     setFilterIndex,
     setCommunityIndex,
+    getTagList,
   } = useContext(PostsContext);
   const {settingsState} = useContext(SettingsContext);
   // states
@@ -180,6 +181,8 @@ const Header = (props: Props): JSX.Element => {
     else {
       // TODO: show modal to inform that all saved passwords will be removed
       processLogout();
+      // get default tag  list
+      getTagList();
     }
   };
 
@@ -313,31 +316,40 @@ const Header = (props: Props): JSX.Element => {
         );
       case 'Posting':
         postsState.communityList.forEach((item) => tagOptions.push(item[1]));
-        const postingTag =
-          postsState.communityList[settingsState.ui.communityIndex][1];
+        console.log(
+          '[Header] postsState community list',
+          postsState.communityList,
+        );
+        console.log('[Header] settingsState ui', settingsState.ui);
+        let postingTag = null;
+        if (postsState.communityList.length > 0)
+          postingTag =
+            postsState.communityList[settingsState.ui.communityIndex][1];
         return (
-          <Block row space="between">
-            <Block row center style={{left: 100}}>
-              <Text>To: </Text>
-              <Block style={{}}>
-                <DropdownModal
-                  key={tagOptions[tagIndex]}
-                  defaultText={postingTag || tagOptions[tagIndex]}
-                  dropdownButtonStyle={styles.postingDropdownButtonStyle}
-                  selectedOptionIndex={tagIndex}
-                  rowTextStyle={styles.rowTextStyle}
-                  style={styles.postingDropdown}
-                  dropdownStyle={styles.postingDropdownStyle}
-                  textStyle={styles.dropdownText}
-                  options={tagOptions}
-                  onSelect={_handleOnCommunityChange}
-                />
+          authState.loggedIn && (
+            <Block row space="between">
+              <Block row center style={{left: 100}}>
+                <Text>To: </Text>
+                <Block style={{}}>
+                  <DropdownModal
+                    key={tagOptions[tagIndex]}
+                    defaultText={postingTag || tagOptions[tagIndex]}
+                    dropdownButtonStyle={styles.postingDropdownButtonStyle}
+                    selectedOptionIndex={tagIndex}
+                    rowTextStyle={styles.rowTextStyle}
+                    style={styles.postingDropdown}
+                    dropdownStyle={styles.postingDropdownStyle}
+                    textStyle={styles.dropdownText}
+                    options={tagOptions}
+                    onSelect={_handleOnCommunityChange}
+                  />
+                </Block>
+              </Block>
+              <Block style={{left: 120, top: 0}}>
+                <Avatar />
               </Block>
             </Block>
-            <Block style={{left: 120, top: 0}}>
-              <Avatar />
-            </Block>
-          </Block>
+          )
         );
       case 'Search':
       case 'Post':
