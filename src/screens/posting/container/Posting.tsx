@@ -55,12 +55,9 @@ const Posting = (props: Props): JSX.Element => {
   const {uiState, setToastMessage, setEditMode} = useContext(UIContext);
   const {
     postsState,
-    appendTag,
     submitPost,
-    setTagIndex,
-    setFilterIndex,
     setTagAndFilter,
-    updatePost,
+    setCommunityIndex,
   } = useContext(PostsContext);
   const {userState, getFollowings} = useContext(UserContext);
   const {settingsState, updateSettingSchema} = useContext(SettingsContext);
@@ -93,6 +90,8 @@ const Posting = (props: Props): JSX.Element => {
       _getFollowingList(username);
       // initialize beneficiaries
       _initBeneficiaries();
+      // get community index
+      _setCommunityIndex();
     }
   }, []);
   //// event: edit mode
@@ -162,6 +161,14 @@ const Posting = (props: Props): JSX.Element => {
     const _followings = await getFollowings(username);
     setFollowingList(_followings);
     setFilteredFollowings(_followings);
+  };
+
+  //// set community index to posts state
+  const _setCommunityIndex = () => {
+    // get community index from settings
+    const {communityIndex} = settingsState.ui;
+    // set it to the posts state community
+    setCommunityIndex(communityIndex);
   };
 
   //// handle press post

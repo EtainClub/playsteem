@@ -73,10 +73,7 @@ const Header = (props: Props): JSX.Element => {
   const [searchText, setSearchText] = useState('');
   const [accounts, setAccounts] = useState(null);
   const [keyTypes, setKeyTypes] = useState(null);
-  const [searching, setSearching] = useState(false);
   const [community, setCommunity] = useState(0);
-  const [category, setTag] = useState(0);
-
   /// auth state change effect
   useEffect(() => {
     //    if (authState.loggedIn) {
@@ -243,11 +240,6 @@ const Header = (props: Props): JSX.Element => {
     setCommunityIndex(index, authState.currentCredentials.username);
   };
 
-  //// update tag index of uiState
-  const _handleOnTagChangeForPosting = (index: number, value: string) => {
-    console.log('[Header] _handleOnTagChangeForPosting. community', value);
-  };
-
   ////
   const _handleLeftPress = () => {
     const {back, navigation} = props;
@@ -316,13 +308,13 @@ const Header = (props: Props): JSX.Element => {
         );
       case 'Posting':
         postsState.communityList.forEach((item) => tagOptions.push(item[1]));
-        console.log(
-          '[Header] postsState community list',
-          postsState.communityList,
-        );
-        console.log('[Header] settingsState ui', settingsState.ui);
+        // console.log(
+        //   '[Header] postsState community list',
+        //   postsState.communityList,
+        // );
         let postingTag = null;
-        const {communityIndex} = settingsState.ui;
+        const {communityIndex} = postsState;
+        console.log('[Header] community index', communityIndex);
         if (postsState.communityList.length > 0)
           postingTag = postsState.communityList[communityIndex][1];
         return (
