@@ -159,8 +159,8 @@
     "limited_lastchar": "태그의 끝은 문자나 숫자로 끝나야 합니다.",
     "beneficiary_button": "베네피셔리 설정",
     "preview": "미리보기",
-    "missing": "제목/본문/태그가 빠졌습니다.",
-    "tag_error": "태그가 올바르지 않습니다.",
+    "missing": "제목/본문/태그가 빠졌습니다",
+    "tag_error": "태그가 올바르지 않습니다",
     "powerup_100": "파워업 100%",
     "powerup_50": "파워업 50%, 스달 50%",
     "no_reward": "보상 거절",
@@ -176,13 +176,14 @@
     "add_button": "추가",
     "save_button": "저장",
     "cancel_button": "취소",
-    "error_total": "가중치 합은 100이어야 합니다."
+    "error_total": "가중치 합은 100이어야 합니다"
   },
   "PostDetails": {
     "edit-button": "수정",
     "wrong_link": "잘못된 링크입니다.",
-    "need_login": "로그인이 필요한 기능입니다.",
-    "translation_error": "번역 실패"
+    "need_login": "로그인이 필요한 기능입니다",
+    "translation_error": "번역 실패",
+    "flagged": "신고되었습니다"
   },
   "ParentPost": {
     "info": "다음은 본 포스팅의 원글입니다.",

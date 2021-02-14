@@ -47,6 +47,7 @@ interface Props {
   handlePressTag: (tag: string) => void;
   handlePressTranslation: () => void;
   handlePressSpeak: () => void;
+  flagPost: () => void;
 }
 const PostDetailsScreen = (props: Props): JSX.Element => {
   //// props
@@ -86,7 +87,7 @@ const PostDetailsScreen = (props: Props): JSX.Element => {
         <Block row space="between">
           <Text size={24}>{post.state.title}</Text>
           <Icon
-            onPress={() => console.log('report')}
+            onPress={props.flagPost}
             style={{margin: 5}}
             size={16}
             color={argonTheme.COLORS.MUTED}

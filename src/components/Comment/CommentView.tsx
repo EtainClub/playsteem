@@ -40,6 +40,7 @@ interface Props {
   handlePressSpeak: () => void;
   handlePressChildren: () => void;
   handleSubmitComment: (text: string) => Promise<boolean>;
+  flagPost: () => void;
   //  handleSubmitComment: (message: string) => void;
   //  updateComment: () => void;
 }
@@ -81,7 +82,7 @@ const CommentView = (props: Props): JSX.Element => {
           <Block row>
             <Text style={{top: 10, marginRight: 20}}>{formatedTime}</Text>
             <Icon
-              onPress={() => console.log('report')}
+              onPress={props.flagPost}
               style={{margin: 5}}
               size={16}
               color={argonTheme.COLORS.MUTED}

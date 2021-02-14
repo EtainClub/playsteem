@@ -53,6 +53,7 @@ const PostDetails = (props: Props): JSX.Element => {
     getPostDetails,
     fetchDatabaseState,
     appendTag,
+    flagPost,
   } = useContext(PostsContext);
   const postIndex = postsState[postsState.postsType].index;
   const {setToastMessage, speakBody} = useContext(UIContext);
@@ -309,6 +310,12 @@ const PostDetails = (props: Props): JSX.Element => {
     setSpeaking(!speaking);
   };
 
+  //// flag a post
+  const _flagPost = () => {
+    if (authState.loggedIn)
+      flagPost(postDetails.url, authState.currentCredentials.username);
+  };
+
   return postDetails ? (
     <PostDetailsScreen
       post={postDetails}
@@ -323,6 +330,7 @@ const PostDetails = (props: Props): JSX.Element => {
       handlePressTag={_handlePressTag}
       handlePressTranslation={_translateLanguage}
       handlePressSpeak={_speakBody}
+      flagPost={_flagPost}
     />
   ) : (
     <View style={{top: 20}}>

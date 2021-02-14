@@ -46,7 +46,9 @@ const CommentContainer = (props: Props): JSX.Element => {
   //// contexts
   const {authState} = useContext(AuthContext);
   const {setToastMessage, speakBody} = useContext(UIContext);
-  const {postsState, submitPost, updatePost} = useContext(PostsContext);
+  const {postsState, submitPost, flagPost, updatePost} = useContext(
+    PostsContext,
+  );
   const {settingsState} = useContext(SettingsContext);
   //// stats
   const [originalPost, setOriginalPost] = useState(null);
@@ -202,6 +204,12 @@ const CommentContainer = (props: Props): JSX.Element => {
     setEditMode(false);
   };
 
+  //// flag a post
+  const _flagPost = () => {
+    if (authState.loggedIn)
+      flagPost(comment.url, authState.currentCredentials.username);
+  };
+
   return (
     <View>
       {!editMode ? (
@@ -216,6 +224,7 @@ const CommentContainer = (props: Props): JSX.Element => {
           handlePressSpeak={_handlePressSpeak}
           handleSubmitComment={_handleSubmitComment}
           handlePressChildren={_handlePressChildren}
+          flagPost={_flagPost}
         />
       ) : (
         <Editor

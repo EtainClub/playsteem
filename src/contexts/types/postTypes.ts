@@ -466,6 +466,8 @@ export interface PostsContextType {
   setNeedToFetch: (needing: boolean) => void;
   // set community index for posting
   setCommunityIndex: (index: number, username?: string) => void;
+  // flag a post or a comment
+  flagPost: (url: string, reporter: string) => void;
 }
 
 export type PostsAction =

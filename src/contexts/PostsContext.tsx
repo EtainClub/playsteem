@@ -873,6 +873,19 @@ const PostsProvider = ({children}: Props) => {
     return favorites;
   };
 
+  //// flag a post or comment
+  const flagPost = async (url: string, reporter: string) => {
+    // get the firebase reports ref
+    const reportsRef = firestore().collection('reports');
+    // add a new doc
+    reportsRef.add({
+      url,
+      reporter,
+      createdAt: new Date(),
+    });
+    setToastMessage(intl.formatMessage({id: 'PostDetails.flagged'}));
+  };
+
   //// check if the author is in the favorite list
   const isFavoriteAuthor = async (username: string, author: string) => {
     console.log('[isFavorite] username, author', username, author);
@@ -931,6 +944,7 @@ const PostsProvider = ({children}: Props) => {
         updatePost,
         bookmarkPost,
         fetchBookmarks,
+        flagPost,
         fetchDatabaseState,
         updateFavoriteAuthor,
         fetchFavorites,

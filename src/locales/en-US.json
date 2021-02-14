@@ -180,7 +180,8 @@
     "edit-button": "Edit Post",
     "wrong_link": "The link is broken",
     "need_login": "You need to login to use this",
-    "translation_error": "Failed to translate"
+    "translation_error": "Failed to translate",
+    "flagged": "Reported"
   },
   "ParentPost": {
     "info": "You are seeing the single post of the following:",
@@ -248,7 +249,7 @@
     "fill_transfer_from_savings": "Savings Executed",
     "fill_vesting_withdraw": "PowerDown executed",
 
-    "reward_blurt": "Reward: {what} Blurt",
+    "reward_steem": "Reward: {what} STEEM",
     "claim_ok": "Claimed Successfully",
     "claim_error": "Error on claiming rewards",
     "keys_header": "Keys and Permissions",
@@ -328,6 +329,8 @@
     "msg_restart": "You need to restart the app to make the effect",
     "rate_app": "Rate App",
     "app_version": "App Version",
+    "version_body": "This is the lastest vesion",
+    "version_update": "Update v{what} exists. Update?",
     "terms": "Terms of Use",
     "privacy": "Privacy Policy",
     "share": "Share this App",
