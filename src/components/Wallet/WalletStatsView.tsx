@@ -83,12 +83,11 @@ const WalletStatsView = (props: Props): JSX.Element => {
     needToClaim = true;
     // build text for rewards
     if (parseFloat(rewardSteem) >= 0.001)
-      rewardText += `${rewardSteem} STEEM, `;
-    if (parseFloat(rewardSBD) >= 0.001) rewardText += `${rewardSteem} SBD, `;
-    if (parseFloat(rewardVesting) >= 0.001) rewardText += `${rewardVesting} SP`;
-    rewardSteem = putComma(rewardSteem);
-    rewardSBD = putComma(rewardSBD);
-    rewardVesting = putComma(rewardVesting);
+      rewardText += `${putComma(rewardSteem)} STEEM, `;
+    if (parseFloat(rewardSBD) >= 0.001)
+      rewardText += `${putComma(rewardSBD)} SBD, `;
+    if (parseFloat(rewardVesting) >= 0.001)
+      rewardText += `${putComma(rewardVesting)} SP`;
   }
 
   const _onRefresh = async () => {

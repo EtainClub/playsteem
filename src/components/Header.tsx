@@ -316,11 +316,11 @@ const Header = (props: Props): JSX.Element => {
         );
       case 'Posting':
         postsState.communityList.forEach((item) => tagOptions.push(item[1]));
-        // console.log(
-        //   '[Header] postsState community list',
-        //   postsState.communityList,
-        // );
-        // console.log('[Header] settingsState ui', settingsState.ui);
+        console.log(
+          '[Header] postsState community list',
+          postsState.communityList,
+        );
+        console.log('[Header] settingsState ui', settingsState.ui);
         let postingTag = null;
         const {communityIndex} = settingsState.ui;
         if (postsState.communityList.length > 0)

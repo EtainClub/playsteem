@@ -78,7 +78,17 @@ const CommentView = (props: Props): JSX.Element => {
             textSize={12}
             truncate={false}
           />
-          <Text style={{top: 10, marginRight: 20}}>{formatedTime}</Text>
+          <Block row>
+            <Text style={{top: 10, marginRight: 20}}>{formatedTime}</Text>
+            <Icon
+              onPress={() => console.log('report')}
+              style={{margin: 5}}
+              size={16}
+              color={argonTheme.COLORS.MUTED}
+              name="flag-outline"
+              family="ionicon"
+            />
+          </Block>
         </Block>
         <PostBody body={comment.body} commentDepth={comment.depth} />
         <Block row>

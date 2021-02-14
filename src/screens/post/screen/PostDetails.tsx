@@ -86,6 +86,7 @@ const PostDetailsScreen = (props: Props): JSX.Element => {
         <Block row space="between">
           <Text size={24}>{post.state.title}</Text>
           <Icon
+            onPress={() => console.log('report')}
             style={{margin: 5}}
             size={16}
             color={argonTheme.COLORS.MUTED}
