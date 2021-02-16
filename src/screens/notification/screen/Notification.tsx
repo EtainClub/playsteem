@@ -88,6 +88,11 @@ const NotificationScreen = (props: Props): JSX.Element => {
         iconFamily = 'material-community';
         text = intl.formatMessage({id: 'Notifications.reply'});
         break;
+      case 'reply_comment':
+        iconName = 'message-reply-text';
+        iconFamily = 'material-community';
+        text = intl.formatMessage({id: 'Notifications.reply_comment'});
+        break;
       case 'mention':
         iconName = 'at';
         iconFamily = 'font-awesome';

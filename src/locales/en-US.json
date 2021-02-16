@@ -133,6 +133,7 @@
   "Notifications": {
     "follow": " started following you",
     "reply": " replied to your post",
+    "reply_comment": "replied to your comment",
     "mention": "mentioned you in this post",
     "transfer": "transferred {what} to you",
     "reblog": "reblogged your post",

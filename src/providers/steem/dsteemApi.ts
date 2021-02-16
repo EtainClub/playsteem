@@ -1305,7 +1305,7 @@ export const broadcastProfileUpdate = async (
   params: {},
 ) => {
   // verify the key, require active or above
-  const account = await verifyPassoword(username, password);
+  const {account} = await verifyPassoword(username, password);
   if (!account) {
     return {success: false, message: 'the password is invalid'};
   }
@@ -1320,9 +1320,10 @@ export const broadcastProfileUpdate = async (
         'account_update',
         {
           account: username,
+          memo_key: account.memo_key,
           json_metadata: jsonStringify({profile: params}),
-          posting_json_metadata: jsonStringify({profile: params}),
-          extensions: [],
+          // posting_json_metadata: jsonStringify({profile: params}),
+          // extensions: [],
         },
       ],
     ];

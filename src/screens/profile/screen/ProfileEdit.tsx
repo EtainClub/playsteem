@@ -149,7 +149,7 @@ const ProfileEditForm = (props: Props): JSX.Element => {
                 style={{
                   padding: 0,
                   width: 100,
-                  backgroundColor: argonTheme.COLORS.ERROR,
+                  backgroundColor: argonTheme.COLORS.STEEM,
                 }}>
                 {intl.formatMessage({id: 'Profile.update_button'})}
               </Button>

@@ -282,8 +282,11 @@ const WalletStatsView = (props: Props): JSX.Element => {
             </Button>
           </Block>
         ) : null}
-        <Block style={styles.notification}>
+        <Block style={styles.transaction}>
           <FlatList
+            contentContainerStyle={{
+              marginBottom: 0,
+            }}
             data={transactions}
             refreshing={reloading}
             onRefresh={_onRefresh}
@@ -299,7 +302,7 @@ const WalletStatsView = (props: Props): JSX.Element => {
 export {WalletStatsView};
 
 const styles = StyleSheet.create({
-  notification: {
+  transaction: {
     paddingVertical: theme.SIZES.BASE / 3,
   },
   title: {

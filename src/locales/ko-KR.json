@@ -133,6 +133,7 @@
   "Notifications": {
     "follow": "팔로잉",
     "reply": "글에 답글",
+    "reply_comment": "댓글에 답글",
     "mention": "포스트에서 멘션",
     "transfer": "{what}를 전송",
     "reblog": "당신의 글을 공유",
