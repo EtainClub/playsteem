@@ -173,8 +173,9 @@ const Posting = (props: Props): JSX.Element => {
 
   //// handle press post
   const _handlePressPostSubmit = async () => {
-    // get community index from settings
-    const {communityIndex} = settingsState.ui;
+    // get community index from postsState
+    const {communityIndex} = postsState;
+
     // check sanity: title, body
     if (!body || !title) {
       setToastMessage(intl.formatMessage({id: 'Posting.missing'}));
@@ -317,6 +318,7 @@ const Posting = (props: Props): JSX.Element => {
         payoutIndex: rewardIndex,
       };
       updateSettingSchema(StorageSchema.UI, postingSetting);
+
       // set tag to all
       setTagAndFilter(
         communityIndex !== 0 ? communityIndex + 1 : 1, // community : all

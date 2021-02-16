@@ -163,7 +163,9 @@
     "tag_error": "some of tags are not correct",
     "powerup_100": "Power Up 100%",
     "powerup_50": "SP 50%, SBD 50%",
-    "no_reward": "Decline Payout"
+    "no_reward": "Decline Payout",
+    "confirm_title": "Confirm Posting",
+    "community": "Posting to: {what}"
   },
   "Beneficiary": {
     "header": "Beneficiary Setting",
