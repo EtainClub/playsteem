@@ -36,7 +36,7 @@ interface Props {
   imageServer: string;
   handlePressItem: (
     author: string,
-    parent_permlink: string,
+    parent_permlink?: string,
     root?: boolean,
   ) => void;
   handleRefresh: () => void;
@@ -111,23 +111,22 @@ const NotificationScreen = (props: Props): JSX.Element => {
     }
 
     return (
-      <TouchableWithoutFeedback
-        onPress={() => props.handlePressItem(author, permlink)}>
-        <Block
-          flex
-          row
-          space="between"
-          style={{
-            marginBottom: 5,
-            padding: 5,
-            backgroundColor:
-              BACKGROUND_COLORS[index % BACKGROUND_COLORS.length],
-          }}>
+      <Block
+        flex
+        row
+        space="between"
+        style={{
+          marginBottom: 5,
+          padding: 5,
+          backgroundColor: BACKGROUND_COLORS[index % BACKGROUND_COLORS.length],
+        }}>
+        <Block row middle>
+          <Block left middle with={20}>
+            <Icon size={20} name={iconName} family={iconFamily} />
+          </Block>
           <Block row middle>
-            <Block left middle with={20}>
-              <Icon size={20} name={iconName} family={iconFamily} />
-            </Block>
-            <Block row middle>
+            <TouchableWithoutFeedback
+              onPress={() => props.handlePressItem(actor)}>
               <Block center width={100}>
                 <Image
                   source={{
@@ -137,14 +136,17 @@ const NotificationScreen = (props: Props): JSX.Element => {
                 />
                 {<Text size={10}>{actor}</Text>}
               </Block>
-            </Block>
+            </TouchableWithoutFeedback>
+          </Block>
+          <TouchableWithoutFeedback
+            onPress={() => props.handlePressItem(author, permlink)}>
             <Block middle>
               <Text>{text}</Text>
             </Block>
-          </Block>
-          <Block middle>{<Text>{getTimeFromNow(item.date)}</Text>}</Block>
+          </TouchableWithoutFeedback>
         </Block>
-      </TouchableWithoutFeedback>
+        <Block middle>{<Text>{getTimeFromNow(item.date)}</Text>}</Block>
+      </Block>
     );
   };
 
