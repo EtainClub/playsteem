@@ -64,6 +64,11 @@ const Profile = ({navigation}): JSX.Element => {
   const [showSecureKey, setShowSecureKey] = useState(false);
   const [profileParams, setProfileParams] = useState(null);
 
+  const [name, setName] = useState('');
+  const [about, setAbout] = useState('');
+  const [location, setLocation] = useState('');
+  const [website, setWebsite] = useState('');
+
   // useFocusEffect(
   //   useCallback(() => {
   //     if (authState.loggedIn && !fetching) {
@@ -89,13 +94,13 @@ const Profile = ({navigation}): JSX.Element => {
     }
   }, [authState.currentCredentials]);
 
-  //// edit event
-  useEffect(() => {
-    if (!editMode && profileData && !fetching) {
-      const {username} = authState.currentCredentials;
-      _getUserProfileData(username);
-    }
-  }, [editMode]);
+  // //// edit event
+  // useEffect(() => {
+  //   if (!editMode && profileData && !fetching) {
+  //     const {username} = authState.currentCredentials;
+  //     _getUserProfileData(username);
+  //   }
+  // }, [editMode]);
 
   const _getUserProfileData = async (author: string) => {
     setFetching(true);
@@ -109,6 +114,14 @@ const Profile = ({navigation}): JSX.Element => {
     }
     // set profile data
     setProfileData(_profileData);
+
+    // update the profile inputs
+    const {metadata} = _profileData.profile;
+    setName(metadata.name);
+    setAbout(metadata.about);
+    setLocation(metadata.location);
+    setWebsite(metadata.website);
+
     // build summaries of blogs
     if (_profileData) {
       setAvatarUrl(_profileData.profile.metadata.profile_image);
@@ -178,19 +191,20 @@ const Profile = ({navigation}): JSX.Element => {
   };
 
   //// update the profile
-  const _handlePressUpdate = async (_params: any) => {
+  const _handlePressProfileUpdate = async () => {
     if (authState.loggedIn) {
       // set updating
       setUpdating(true);
       const {username, password, type} = authState.currentCredentials;
 
       const params = {
-        ..._params,
+        name,
+        about,
+        location,
+        website,
         profile_image: avatarUrl,
         cover_image: profileData.profile.metadata.cover_image,
       };
-
-      console.log('after _handlePressUpdate. params', params);
 
       // set profile params
       setProfileParams(params);
@@ -353,6 +367,24 @@ const Profile = ({navigation}): JSX.Element => {
     setRefreshing(false);
   };
 
+  //////// edit
+  ////
+  const _handleNameChange = (_name: string) => {
+    setName(_name);
+  };
+  ////
+  const _handleAboutChange = (_about: string) => {
+    setAbout(_about);
+  };
+  ////
+  const _handleLocationChange = (_location: string) => {
+    setLocation(_location);
+  };
+  ////
+  const _handleWebsiteChange = (_website: string) => {
+    setWebsite(_website);
+  };
+
   if (!authState.loggedIn) return <View></View>;
 
   return !editMode ? (
@@ -384,11 +416,18 @@ const Profile = ({navigation}): JSX.Element => {
   ) : !showSecureKey ? (
     profileData && (
       <ProfileEditForm
-        profileData={profileData}
+        name={name}
+        about={about}
+        location={location}
+        website={website}
         uploading={uploading}
         updating={updating}
         avatarUrl={avatarUrl}
-        handlePressUpdate={_handlePressUpdate}
+        handleNameChange={_handleNameChange}
+        handleAboutChange={_handleAboutChange}
+        handleLocationChange={_handleLocationChange}
+        handleWebsiteChange={_handleWebsiteChange}
+        handlePressUpdate={_handlePressProfileUpdate}
         handlePressCancel={_handlePressCancelUpdate}
         handleUploadedImageURL={_handleUploadedImageURL}
       />

@@ -38,37 +38,27 @@ import {PostData, PostRef, PostsTypes, ProfileData} from '~/contexts/types';
 
 //// props
 interface Props {
-  profileData: ProfileData;
+  name: string;
+  about: string;
+  location: string;
+  website: string;
   uploading: boolean;
   updating: boolean;
   avatarUrl: string;
-  handlePressUpdate: (profile: any) => void;
+  handleNameChange: (name: string) => void;
+  handleAboutChange: (about: string) => void;
+  handleLocationChange: (location: string) => void;
+  handleWebsiteChange: (website: string) => void;
+  handlePressUpdate: () => void;
   handlePressCancel: () => void;
   handleUploadedImageURL: (url: string) => void;
 }
 //// component with default props
 const ProfileEditForm = (props: Props): JSX.Element => {
   //// props
-  const {profile} = props.profileData;
+  const {name, about, location, website, avatarUrl} = props;
   //// language
   const intl = useIntl();
-  //// contexts
-  //// stats
-  const [name, setName] = useState(profile.metadata.name);
-  const [about, setAbout] = useState(profile.metadata.about);
-  const [location, setLocation] = useState(profile.metadata.location);
-  const [website, setWebsite] = useState(profile.metadata.website);
-
-  ////
-  const _handlePressUpdate = () => {
-    const profile = {
-      name,
-      about,
-      location,
-      website,
-    };
-    props.handlePressUpdate(profile);
-  };
 
   return (
     <Block flex style={styles.profileScreen}>
@@ -84,7 +74,7 @@ const ProfileEditForm = (props: Props): JSX.Element => {
               <Block row>
                 <Image
                   source={{
-                    uri: props.avatarUrl || null,
+                    uri: avatarUrl || null,
                   }}
                   style={[styles.avatar, {left: 10}]}
                 />
@@ -108,8 +98,8 @@ const ProfileEditForm = (props: Props): JSX.Element => {
               autoCorrect={false}
               bgColor="transparent"
               style={[styles.input, styles.inputActive]}
-              defaultValue={profile.metadata.name}
-              onChangeText={(text: string) => setName(text)}
+              defaultValue={name}
+              onChangeText={props.handleNameChange}
             />
             <Input
               borderless
@@ -118,8 +108,8 @@ const ProfileEditForm = (props: Props): JSX.Element => {
               placeholderTextColor={theme.COLORS.PLACEHOLDER}
               bgColor="transparent"
               style={[styles.input, styles.inputActive]}
-              defaultValue={profile.metadata.about}
-              onChangeText={(text: string) => setAbout(text)}
+              defaultValue={about}
+              onChangeText={props.handleAboutChange}
             />
             <Input
               borderless
@@ -128,8 +118,8 @@ const ProfileEditForm = (props: Props): JSX.Element => {
               placeholderTextColor={theme.COLORS.PLACEHOLDER}
               bgColor="transparent"
               style={[styles.input, styles.inputActive]}
-              defaultValue={profile.metadata.location}
-              onChangeText={(text: string) => setLocation(text)}
+              defaultValue={location}
+              onChangeText={props.handleLocationChange}
             />
             <Input
               borderless
@@ -138,12 +128,12 @@ const ProfileEditForm = (props: Props): JSX.Element => {
               placeholderTextColor={theme.COLORS.PLACEHOLDER}
               bgColor="transparent"
               style={[styles.input, styles.inputActive]}
-              defaultValue={profile.metadata.website}
-              onChangeText={(text: string) => setWebsite(text)}
+              defaultValue={website}
+              onChangeText={props.handleWebsiteChange}
             />
             <Block row space="around">
               <Button
-                onPress={_handlePressUpdate}
+                onPress={props.handlePressUpdate}
                 loading={props.updating}
                 center
                 style={{
@@ -155,7 +145,6 @@ const ProfileEditForm = (props: Props): JSX.Element => {
               </Button>
               <Button
                 onPress={props.handlePressCancel}
-                loading={props.updating}
                 center
                 style={{
                   padding: 0,

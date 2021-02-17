@@ -38,14 +38,12 @@ import {
 import {
   NUM_FETCH_POSTS,
   TRUNCATE_BODY_LENGTH,
-  TAG_ENDPOINT,
   PRICE_ENDPOINT,
   RPC_SERVERS,
   IMAGE_SERVERS,
   CHAIN_ID,
   CHAIN_PREFIX,
   CHAIN_TIMEOUT,
-  NOTIFICATIONS_ENDPOINT,
   NUM_FETCH_COMMENTS,
 } from '~/constants/blockchain';
 
@@ -730,13 +728,6 @@ export const isFollowing = async (username: string, author: string) => {
   }
 };
 
-//// blurt tags
-export const fetchTagList = async () => {
-  const {data} = await axios.get(TAG_ENDPOINT, {timeout: 5000});
-  console.log('[fetchTagList] data', data);
-  return data;
-};
-
 //// steem price
 export const fetchPrice = async () => {
   try {
@@ -1322,12 +1313,11 @@ export const broadcastProfileUpdate = async (
           account: username,
           memo_key: account.memo_key,
           json_metadata: jsonStringify({profile: params}),
-          // posting_json_metadata: jsonStringify({profile: params}),
-          // extensions: [],
+          //          posting_json_metadata: jsonStringify({profile: params}),
+          //          extensions: [],
         },
       ],
     ];
-    console.log('[broadcastProfileUpdate] opArray', opArray);
     try {
       const result = await client.broadcast.sendOperations(opArray, privateKey);
       return result;

@@ -72,7 +72,7 @@ const SecureKeyView = (props: Props): JSX.Element => {
           loading={loading}
           size="small"
           shadowless
-          color={argonTheme.COLORS.ERROR}
+          color={argonTheme.COLORS.STEEM}
           onPress={props.handlePressConfirm}>
           {intl.formatMessage({id: 'SecureKey.confirm_button'})}
         </Button>
