@@ -81,8 +81,9 @@ const AuthorListView = (props: Props): JSX.Element => {
   };
 
   const _handleTextChange = (text: string) => {
-    console.log('search text222', searchText);
-    // // filter
+    // set text
+    setSearchText(text);
+    // filtering
     if (text === '') {
       setSearchedItems(authors);
     } else {
@@ -91,8 +92,6 @@ const AuthorListView = (props: Props): JSX.Element => {
       );
       setSearchedItems(_filterdItems);
     }
-    // set text
-    setSearchText(text);
   };
 
   const _renderHeader = () => {
@@ -216,7 +215,7 @@ export {AuthorListView};
 const styles = StyleSheet.create({
   container: {
     width: width * 0.6,
-    height: 'auto',
+    height: height * 0.3,
     backgroundColor: argonTheme.COLORS.TWITTER,
     paddingVertical: 10,
     marginHorizontal: 70,
