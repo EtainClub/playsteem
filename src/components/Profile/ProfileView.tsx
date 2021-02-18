@@ -116,7 +116,10 @@ const ProfileView: React.FC<Props> = ({
                     />
                   )}
                 </Block>
-                <Text>{profile.metadata ? profile.metadata.name : ''}</Text>
+                <Text>
+                  {profile.metadata ? profile.metadata.name : ''}(
+                  {profile.reputation.toFixed(2)})
+                </Text>
                 <Text color="orange">@{profile.name}</Text>
               </Block>
             )}
