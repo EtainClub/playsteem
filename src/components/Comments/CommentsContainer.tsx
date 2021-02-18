@@ -33,15 +33,16 @@ const CommentsContainer = (props: Props): JSX.Element => {
   const [comments, setComments] = useState<CommentData[]>([]);
   //// effects
   // effect: mount
-  useEffect(() => {
-    _fetchComments();
-  }, []);
+  // useEffect(() => {
+  //   _fetchComments();
+  // }, []);
   // event: comments prop
   useEffect(() => {
     // fetch comments if no comments are given
     if (props.comments) {
       setComments(props.comments);
     } else {
+      // TODO: check if there are comments
       _fetchComments();
     }
   }, [props.comments]);

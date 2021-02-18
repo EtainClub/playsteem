@@ -164,6 +164,7 @@ const postsReducer = (state: PostsState, action: PostsAction) => {
         tagList: action.payload.tagList,
         tagIndex: action.payload.tagIndex,
         filterIndex: action.payload.filterIndex,
+        needToFetch: true,
       };
     case PostsActionTypes.SET_FILTER_INDEX:
       return {...state, filterIndex: action.payload, needToFetch: true};
@@ -289,7 +290,8 @@ const PostsProvider = ({children}: Props) => {
     let filterIndex = 2;
     // append a tag
     if (!tagList.includes(tag)) {
-      tagList.push(tag);
+      const _tag = [tag, tag, '', ''];
+      tagList.push(_tag);
       tagIndex = tagList.length - 1;
       filterIndex = 1;
     } else {

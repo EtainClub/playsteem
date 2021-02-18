@@ -75,13 +75,13 @@ const PostDetails = (props: Props): JSX.Element => {
   const [speaking, setSpeaking] = useState(false);
   //////// events
   //// event: mount
-  useEffect(() => {
-    _fetchPostDetailsEntry();
-    // update vote amount
-    if (authState.loggedIn) {
-      updateVoteAmount(authState.currentCredentials.username);
-    }
-  }, []);
+  // useEffect(() => {
+  //   _fetchPostDetailsEntry();
+  //   // update vote amount
+  //   if (authState.loggedIn) {
+  //     updateVoteAmount(authState.currentCredentials.username);
+  //   }
+  // }, []);
   //// event: new post ref set
   useEffect(() => {
     if (postsState.postRef.author || postsState.postRef.permlink) {
@@ -325,7 +325,6 @@ const PostDetails = (props: Props): JSX.Element => {
       index={postIndex}
       comments={comments}
       handleRefresh={_onRefresh}
-      fetchComments={_fetchComments}
       handleSubmitComment={_onSubmitComment}
       handlePressTag={_handlePressTag}
       handlePressTranslation={_translateLanguage}

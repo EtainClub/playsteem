@@ -42,7 +42,6 @@ interface Props {
   index: number;
   comments: CommentData[];
   handleRefresh: () => void;
-  fetchComments: () => void;
   handleSubmitComment: (text: string) => Promise<boolean>;
   handlePressTag: (tag: string) => void;
   handlePressTranslation: () => void;
