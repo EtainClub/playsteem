@@ -1216,8 +1216,6 @@ export const reblog = async (
   password: string,
   author: string,
   permlink: string,
-  operationFlatFee: number,
-  bandwidthKbytesFee: number,
 ) => {
   // verify the key
   const {account} = await verifyPassoword(username, password);
@@ -1235,9 +1233,6 @@ export const reblog = async (
       id: 'follow',
       json: JSON.stringify(json),
     };
-    let opSize = JSON.stringify(operation).replace(/[\[\]\,\"]/g, '').length;
-    let bwFee = Math.max(0.001, (opSize / 1024) * bandwidthKbytesFee);
-    let fee = (operationFlatFee + bwFee).toFixed(3);
     try {
       const result = await client.broadcast.json(operation, privateKey);
       return result;

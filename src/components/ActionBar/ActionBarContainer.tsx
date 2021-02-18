@@ -221,17 +221,8 @@ const ActionBarContainer = (props: Props): JSX.Element => {
     const {username, password} = authState.currentCredentials;
     const {author, permlink} = postState.post_ref;
     const {chainProps} = userState.globalProps;
-    const op_fee = parseFloat(chainProps.operation_flat_fee.split(' ')[0]);
-    const bw_fee = parseFloat(chainProps.bandwidth_kbytes_fee.split(' ')[0]);
     // submit reblog transaction
-    const result = await reblog(
-      username,
-      password,
-      author,
-      permlink,
-      op_fee,
-      bw_fee,
-    );
+    const result = await reblog(username, password, author, permlink);
     // handle the result
     if (result) {
       setToastMessage(intl.formatMessage({id: 'Actionbar.reblogged'}));
