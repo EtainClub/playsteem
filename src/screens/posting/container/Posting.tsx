@@ -248,35 +248,37 @@ const Posting = (props: Props): JSX.Element => {
       postingContent.permlink = originalPost.state.post_ref.permlink;
       postingContent.parent_permlink = originalPost.state.parent_ref.permlink;
       console.log('[updatePost] postingContent', postingContent);
+      // TODO: update the post
+      _submitPost(postingContent, communityIndex, options, username, password);
+    } else {
+      //// show confirm modal
+      Alert.alert(
+        intl.formatMessage({id: 'Posting.confirm_title'}),
+        intl.formatMessage(
+          {id: 'Posting.community'},
+          {what: postsState.communityList[communityIndex][1]},
+        ),
+        [
+          {
+            text: intl.formatMessage({id: 'no'}),
+            onPress: () => {},
+            style: 'cancel',
+          },
+          {
+            text: intl.formatMessage({id: 'yes'}),
+            onPress: () =>
+              _submitPost(
+                postingContent,
+                communityIndex,
+                options,
+                username,
+                password,
+              ),
+          },
+        ],
+        {cancelable: true},
+      );
     }
-
-    //// show confirm modal
-    Alert.alert(
-      intl.formatMessage({id: 'Posting.confirm_title'}),
-      intl.formatMessage(
-        {id: 'Posting.community'},
-        {what: postsState.communityList[communityIndex][1]},
-      ),
-      [
-        {
-          text: intl.formatMessage({id: 'no'}),
-          onPress: () => {},
-          style: 'cancel',
-        },
-        {
-          text: intl.formatMessage({id: 'yes'}),
-          onPress: () =>
-            _submitPost(
-              postingContent,
-              communityIndex,
-              options,
-              username,
-              password,
-            ),
-        },
-      ],
-      {cancelable: true},
-    );
   };
 
   const _submitPost = async (

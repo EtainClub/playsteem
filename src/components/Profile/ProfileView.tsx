@@ -141,7 +141,7 @@ const ProfileView: React.FC<Props> = ({
                   style={{
                     padding: 0,
                     width: 100,
-                    backgroundColor: argonTheme.COLORS.ERROR,
+                    backgroundColor: argonTheme.COLORS.STEEM,
                   }}>
                   {props.favoriteState
                     ? intl.formatMessage({id: 'Profile.unfavorite_button'})

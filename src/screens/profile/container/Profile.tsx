@@ -209,9 +209,9 @@ const Profile = ({navigation}): JSX.Element => {
       // set profile params
       setProfileParams(params);
 
-      //// this action requires active key or above
+      //// this action requires posting key or above
       // check the key level
-      if (type < KeyTypes.ACTIVE) {
+      if (type < KeyTypes.POSTING) {
         // show key input modal
         setShowSecureKey(true);
         return;
