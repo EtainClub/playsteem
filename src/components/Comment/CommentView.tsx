@@ -98,6 +98,7 @@ const CommentView = (props: Props): JSX.Element => {
             postsType={PostsTypes.FEED}
             postIndex={-1}
             postState={comment.state}
+            ttsText={comment.markdownBody}
             handlePressReply={props.handlePressReply}
             handlePressEditComment={props.handlePressEditComment}
             handlePressTranslation={props.handlePressTranslation}

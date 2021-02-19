@@ -203,27 +203,27 @@ const UIProvider = ({children}: Props) => {
   };
 
   ////
-  const setTTSRate = (speed: number) => {
+  const setTTSRate = (rate: number) => {
     // change rate
-    TTS.setDefaultRate(0.5);
+    TTS.setDefaultRate(rate);
 
-    // dispatch action
-    dispatch({
-      type: UIActionTypes.SET_TTS_RATE,
-      payload: speed,
-    });
+    // // dispatch action
+    // dispatch({
+    //   type: UIActionTypes.SET_TTS_RATE,
+    //   payload: rate,
+    // });
   };
 
   ////
   const setTTSPitch = (pitch: number) => {
     // change pitch
-    TTS.setDefaultPitch(1);
+    TTS.setDefaultPitch(pitch);
 
-    // dispatch action
-    dispatch({
-      type: UIActionTypes.SET_TTS_PITCH,
-      payload: pitch,
-    });
+    // // dispatch action
+    // dispatch({
+    //   type: UIActionTypes.SET_TTS_PITCH,
+    //   payload: pitch,
+    // });
   };
 
   ////
@@ -231,20 +231,25 @@ const UIProvider = ({children}: Props) => {
     // change default language
     TTS.setDefaultLanguage(uiState.availableVoices[index]);
     // dispatch action
-    dispatch({
-      type: UIActionTypes.SET_TTS_LANGUAGE_INDEX,
-      payload: index,
-    });
+    //   dispatch({
+    //     type: UIActionTypes.SET_TTS_LANGUAGE_INDEX,
+    //     payload: index,
+    //   });
   };
 
   ///
-  const pauseTTS = () => {};
+  const pauseTTS = () => {
+    TTS.setDefaultLanguage('.');
+  };
 
   /// resume TTS
   const resumeTTS = () => {};
 
   ////
-  const cancelTTS = () => {};
+  const stopTTS = () => {
+    TTS.stop();
+  };
+
   return (
     <UIContext.Provider
       value={{
@@ -263,7 +268,7 @@ const UIProvider = ({children}: Props) => {
         speakBody,
         pauseTTS,
         resumeTTS,
-        cancelTTS,
+        stopTTS,
       }}>
       {children}
     </UIContext.Provider>

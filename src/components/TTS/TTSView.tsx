@@ -22,6 +22,8 @@ interface Props {
   handlePitchComplete: (pitch: number) => void;
   handleLanguageChange: (index: number, value: string) => void;
   handleSpeakPress: () => void;
+  handlePausePress?: () => void;
+  handleStopPress?: () => void;
   cancelModal: () => void;
 }
 const TTSView = (props: Props): JSX.Element => {
@@ -67,13 +69,13 @@ const TTSView = (props: Props): JSX.Element => {
               family="antdesign"
               onPress={props.handleSpeakPress}
             />
-            <Icon
+            {/* <Icon
               style={{margin: 10}}
               size={50}
               color={argonTheme.COLORS.BLACK}
               name="pause"
               family="antdesign"
-              onPress={props.handleSpeakPress}
+              onPress={props.handlePausePress}
             />
             <Icon
               style={{margin: 10}}
@@ -81,8 +83,8 @@ const TTSView = (props: Props): JSX.Element => {
               color={argonTheme.COLORS.ERROR}
               name="close"
               family="antdesign"
-              onPress={props.handleSpeakPress}
-            />
+              onPress={props.handleStopPress}
+            /> */}
           </Block>
           <Block row center space="between">
             <Text>{intl.formatMessage({id: 'TTS.speed'})}</Text>

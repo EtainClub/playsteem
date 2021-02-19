@@ -26,6 +26,9 @@ const TTSContainer = (props: Props): JSX.Element => {
     setTTSPitch,
     setTTSLanguageIndex,
     speakBody,
+    pauseTTS,
+    resumeTTS,
+    stopTTS,
   } = useContext(UIContext);
   const {settingsState} = useContext(SettingsContext);
   //// states
@@ -63,7 +66,15 @@ const TTSContainer = (props: Props): JSX.Element => {
 
   ////
   const _handleSpeakPress = () => {
+    // dimiss modal
+    setShowModal(false);
     speakBody(text);
+  };
+  const _handlePausePress = () => {
+    pauseTTS();
+  };
+  const _handleStopPress = () => {
+    stopTTS();
   };
 
   const _cancelModal = () => {
@@ -78,6 +89,8 @@ const TTSContainer = (props: Props): JSX.Element => {
       handleSpeedComplete={_handleSpeedComplete}
       handlePitchComplete={_handlePitchComplete}
       handleSpeakPress={_handleSpeakPress}
+      handlePausePress={_handlePausePress}
+      handleStopPress={_handleStopPress}
       cancelModal={_cancelModal}
     />
   );

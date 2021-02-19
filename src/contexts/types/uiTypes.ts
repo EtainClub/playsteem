@@ -143,8 +143,8 @@ export interface UIContextType {
   pauseTTS: () => void;
   // resuem tts
   resumeTTS: () => void;
-  // cancel tts
-  cancelTTS: () => void;
+  // stop tts
+  stopTTS: () => void;
 }
 
 export type UIAction =
