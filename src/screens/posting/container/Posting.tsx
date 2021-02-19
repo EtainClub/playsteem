@@ -1,5 +1,7 @@
 import React, {useState, useContext, useEffect} from 'react';
 import {Alert} from 'react-native';
+//// storage
+import AsyncStorage from '@react-native-community/async-storage';
 import {useIntl} from 'react-intl';
 import ImagePicker, {ImageOrVideo} from 'react-native-image-crop-picker';
 import {
@@ -86,6 +88,8 @@ const Posting = (props: Props): JSX.Element => {
     // get following
     if (authState.loggedIn) {
       const {username} = authState.currentCredentials;
+      // get draft only if not edit mode
+      if (!uiState.editMode) _getDraftFromStorage();
       // get following list
       _getFollowingList(username);
       // initialize beneficiaries
@@ -96,7 +100,7 @@ const Posting = (props: Props): JSX.Element => {
   }, []);
   //// event: edit mode
   useEffect(() => {
-    //
+    console.log('[Posting] edit event. uiState', uiState);
     if (uiState.editMode) {
       const {postDetails} = postsState;
       // check if original post exists
@@ -126,7 +130,20 @@ const Posting = (props: Props): JSX.Element => {
       // reset edit mode before go back
       if (uiState.editMode) {
         setEditMode(false);
+        // clear all
+        _clearAll();
       }
+    });
+    return unsubscribe;
+  }, [navigation]);
+
+  //// on focus event
+  useEffect(() => {
+    if (!authState.loggedIn) return;
+    const unsubscribe = navigation.addListener('focus', () => {
+      console.log('[Posting] focus event. uiState', uiState);
+      // load draft only if not edit mode
+      if (!uiState.editMode) _getDraftFromStorage();
     });
     return unsubscribe;
   }, [navigation]);
@@ -360,6 +377,8 @@ const Posting = (props: Props): JSX.Element => {
   const _handleTitleChange = (text: string) => {
     // check validity: max-length
     setTitle(text);
+    // initiate savig draft
+    _saveTimedDraft();
   };
 
   const _handleBodyChange = (_body: string) => {
@@ -368,6 +387,8 @@ const Posting = (props: Props): JSX.Element => {
     // set preview
     const _preview = renderPostBody(_body, true);
     setPreviewBody(_preview);
+    // initiate savig draft
+    _saveTimedDraft();
   };
 
   const _handleTagsChange = (_tags: string) => {
@@ -377,6 +398,8 @@ const Posting = (props: Props): JSX.Element => {
     let cats = tagString.split(' ');
     // validate
     _validateTags(cats);
+    // initiate savig draft
+    _saveTimedDraft();
   };
 
   //// handle reward option chnage
@@ -408,8 +431,49 @@ const Posting = (props: Props): JSX.Element => {
     }
   };
 
+  //// save draft
+  const _saveTimedDraft = () => {
+    setTimeout(() => {
+      _saveDraft();
+    }, 300);
+  };
+
+  const _saveDraft = () => {
+    console.log('_saveDraft');
+    const data = {
+      title,
+      body,
+      tags,
+    };
+    _setItemToStorage(StorageSchema.DRAFT, data);
+  };
+
+  const _setItemToStorage = async (key: string, data: any) => {
+    console.log('_setItemToStorage. key, data', key, data);
+    // stringify the data
+    const dataString = JSON.stringify(data);
+    try {
+      await AsyncStorage.setItem(key, dataString);
+    } catch (error) {
+      console.log('failed to save draft item in storage', error);
+    }
+  };
+
+  //// get a single item from storage
+  const _getDraftFromStorage = async () => {
+    const _data = await AsyncStorage.getItem(StorageSchema.DRAFT);
+    if (_data) {
+      const data = JSON.parse(_data);
+      console.log('_getDraftFromStorage. data', data);
+      // update
+      setTitle(data.title);
+      setBody(data.body);
+      setTags(data.tags);
+    }
+  };
+
   //// clear contents
-  const _handleClearAll = () => {
+  const _clearAll = () => {
     console.log('handleClearAll');
     // clear title
     setTitle('');
@@ -426,14 +490,14 @@ const Posting = (props: Props): JSX.Element => {
     // clear body of editor
     setClearBody(true);
     // clear original post
-    setOriginalPost('');
+    setOriginalPost(null);
   };
 
   const _handleCancelEditing = () => {
     // reset edit mode
     setEditMode(false);
     // clear contents
-    _handleClearAll();
+    _clearAll();
     // go back
     navigation.goBack();
   };
@@ -444,10 +508,10 @@ const Posting = (props: Props): JSX.Element => {
         title={title}
         body={body}
         tags={tags}
+        editMode={uiState.editMode}
         previewBody={previewBody}
         rewardIndex={rewardIndex}
         tagMessage={tagMessage}
-        originalPost={originalPost}
         uploading={uploading}
         uploadedImage={uploadedImage}
         posting={posting}
@@ -459,7 +523,7 @@ const Posting = (props: Props): JSX.Element => {
         handlePressPostSubmit={_handlePressPostSubmit}
         followingList={filteredFollowings}
         handlePressBeneficiary={_handlePressBeneficiary}
-        handleClearAll={_handleClearAll}
+        handleClearAll={_clearAll}
         handleCancelEditing={_handleCancelEditing}
       />
       {showBeneficiaryModal && (

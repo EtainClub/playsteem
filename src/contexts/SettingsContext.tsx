@@ -18,7 +18,6 @@ import {
   LanguageTypes,
   UITypes,
 } from './types';
-import {SettingsScreen} from '~/screens/settings/screen/Settings';
 import {UIContext} from '~/contexts';
 
 //// initial settings state

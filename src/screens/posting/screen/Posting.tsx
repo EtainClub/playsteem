@@ -21,10 +21,10 @@ import {PostBody, Editor} from '~/components';
 interface Props {
   title: string;
   body: string;
+  editMode: boolean;
   previewBody: string;
   rewardIndex: number;
   tagMessage: string;
-  originalPost?: PostData;
   uploading: boolean;
   uploadedImage: {};
   posting: boolean;
@@ -47,14 +47,12 @@ const PostingScreen = (props: Props): JSX.Element => {
     title,
     body,
     tags,
+    editMode,
     previewBody,
     rewardIndex,
     tagMessage,
-    originalPost,
     clearBody,
   } = props;
-  let markdownBody = '';
-  if (originalPost) markdownBody = originalPost.markdownBody;
   //// language
   const intl = useIntl();
   //// states
@@ -105,10 +103,16 @@ const PostingScreen = (props: Props): JSX.Element => {
               bgColor="transparent"
               style={[styles.input, styles.inputDefault]}
             />
+            {/* <Icon
+              name="trash"
+              family="font-awesome"
+              iconSize={24}
+              color={argonTheme.COLORS.SWITCH_ON}
+            /> */}
           </Block>
           <Editor
             isComment={false}
-            originalBody={markdownBody}
+            originalBody={body}
             clearBody={clearBody}
             handleBodyChange={props.handleBodyChange}
           />
@@ -156,11 +160,11 @@ const PostingScreen = (props: Props): JSX.Element => {
               loading={props.posting}
               lodingSize="large"
               color={argonTheme.COLORS.ERROR}>
-              {props.originalPost
+              {editMode
                 ? intl.formatMessage({id: 'Posting.update_button'})
                 : intl.formatMessage({id: 'Posting.post_button'})}
             </Button>
-            {props.originalPost ? (
+            {editMode ? (
               <Button
                 onPress={props.handleCancelEditing}
                 shadowless

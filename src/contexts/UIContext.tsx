@@ -196,27 +196,37 @@ const UIProvider = ({children}: Props) => {
   };
 
   ////
-  const setTTSRate = (rate: number) => {
+  const setTTSRate = async (rate: number) => {
     // change rate
-    TTS.setDefaultRate(rate);
+    try {
+      await TTS.setDefaultRate(rate);
+    } catch (error) {
+      console.log('failed to set tts rate', error);
+    }
   };
 
   ////
-  const setTTSPitch = (pitch: number) => {
+  const setTTSPitch = async (pitch: number) => {
     // change pitch
-    TTS.setDefaultPitch(pitch);
+    try {
+      await TTS.setDefaultPitch(pitch);
+    } catch (error) {
+      console.log('failed to set tts pitch', error);
+    }
   };
 
   ////
-  const setTTSLanguageIndex = (index: number) => {
+  const setTTSLanguageIndex = async (index: number) => {
     // change default language
-    TTS.setDefaultLanguage(uiState.availableVoices[index]);
+    try {
+      await TTS.setDefaultLanguage(uiState.availableVoices[index]);
+    } catch (error) {
+      console.log('failed to set tts language', error);
+    }
   };
 
   ///
-  const pauseTTS = () => {
-    TTS.setDefaultLanguage('.');
-  };
+  const pauseTTS = () => {};
 
   /// resume TTS
   const resumeTTS = () => {};

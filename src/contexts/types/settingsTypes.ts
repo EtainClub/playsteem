@@ -1,9 +1,4 @@
-import {
-  RPC_SERVERS,
-  CHAIN_ID,
-  CHAIN_PREFIX,
-  IMAGE_SERVERS,
-} from '~/constants/blockchain';
+import {RPC_SERVERS, IMAGE_SERVERS} from '~/constants/blockchain';
 
 //// storage schema
 export enum StorageSchema {
@@ -14,7 +9,7 @@ export enum StorageSchema {
   LANGUAGES = 'languages', // menu language (locale, e.g. en-US), translation language (e.g. EN)
   UI = 'ui', // dark theme, font size,
   DRAFT = 'draft', // title, body, tag, beneficiaries
-  TEMPLATE = 'template', // posting template, beneficiaries, powerup, ...
+  // TEMPLATE = 'template', // posting template, beneficiaries, powerup, ...
 }
 
 //// blockchain types
@@ -49,6 +44,22 @@ export type UITypes = {
   communityIndex: number;
   payoutIndex: number;
 };
+
+//// draft types
+// export type DraftTypes = {
+//   title: string;
+//   body: string;
+//   tags: string;
+//   beneficiaries?: string[];
+// };
+
+// // //// template types
+// export type TemplateTypes = {
+//   title: string;
+//   body: string;
+//   tags: string;
+//   beneficiaries?: string[];
+// };
 
 // settings state
 export interface SettingsState {
@@ -93,6 +104,12 @@ export const INITIAL_SETTINGS: SettingsState = {
     communityIndex: 0,
     payoutIndex: 0,
   },
+  // [StorageSchema.DRAFT]: {
+  //   title: '',
+  //   body: '',
+  //   tags: '',
+  //   beneficiaries: [],
+  // },
 };
 
 //// settings action types
@@ -106,6 +123,7 @@ export enum SettingsActionTypes {
   SET_DND_TIMES,
   SET_UI,
   SET_STORAGE,
+  //  SET_DRAFT,
 }
 
 //// actions
