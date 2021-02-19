@@ -299,17 +299,6 @@ const PostDetails = (props: Props): JSX.Element => {
     }
   };
 
-  ////
-  const _speakBody = () => {
-    if (speaking) {
-      speakBody(postDetails.markdownBody, true);
-    } else {
-      speakBody(postDetails.markdownBody, false);
-    }
-    // toggle the state
-    setSpeaking(!speaking);
-  };
-
   //// flag a post
   const _flagPost = () => {
     if (authState.loggedIn)
@@ -328,7 +317,6 @@ const PostDetails = (props: Props): JSX.Element => {
       handleSubmitComment={_onSubmitComment}
       handlePressTag={_handlePressTag}
       handlePressTranslation={_translateLanguage}
-      handlePressSpeak={_speakBody}
       flagPost={_flagPost}
     />
   ) : (

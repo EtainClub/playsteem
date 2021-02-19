@@ -23,7 +23,6 @@ interface Props {
   handlePressEditComment?: () => void;
   handlePressReply?: () => void;
   handlePressTranslation?: (showOriginal: boolean) => void;
-  handlePressSpeak?: () => void;
 }
 
 const ActionBarContainer = (props: Props): JSX.Element => {
@@ -272,13 +271,6 @@ const ActionBarContainer = (props: Props): JSX.Element => {
     setShowTTSModal(!showTTSModal);
   };
 
-  //// handle press speak
-  const _handlePressSpeak = () => {
-    //    setShowTTSModal(!showTTSModal);
-    // call parent function
-    props.handlePressSpeak();
-  };
-
   return (
     <ActionBarView
       actionBarStyle={actionBarStyle}
@@ -313,7 +305,6 @@ const ActionBarContainer = (props: Props): JSX.Element => {
       handlePressTranslation={_handlePressTranslation}
       handlePressShare={_handlePressShare}
       handlePressSpeakIcon={_handlePressSpeakIcon}
-      handlePressSpeak={_handlePressSpeak}
     />
   );
 };

@@ -37,7 +37,6 @@ interface Props {
   handlePressReply: () => void;
   handlePressEditComment: () => void;
   handlePressTranslation: () => void;
-  handlePressSpeak: () => void;
   handlePressChildren: () => void;
   handleSubmitComment: (text: string) => Promise<boolean>;
   flagPost: () => void;
@@ -102,7 +101,6 @@ const CommentView = (props: Props): JSX.Element => {
             handlePressReply={props.handlePressReply}
             handlePressEditComment={props.handlePressEditComment}
             handlePressTranslation={props.handlePressTranslation}
-            handlePressSpeak={props.handlePressSpeak}
           />
           {comment.children > 0 && (
             <TouchableWithoutFeedback onPress={props.handlePressChildren}>

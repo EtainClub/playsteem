@@ -181,17 +181,6 @@ const CommentContainer = (props: Props): JSX.Element => {
     }
   };
 
-  //// handle press speaker
-  const _handlePressSpeak = () => {
-    if (speaking) {
-      speakBody(comment.markdownBody, true);
-    } else {
-      speakBody(comment.markdownBody, false);
-    }
-    // toggle the state
-    setSpeaking(!speaking);
-  };
-
   //// fetch children comments
   const _handlePressChildren = async () => {
     // toggle
@@ -221,7 +210,6 @@ const CommentContainer = (props: Props): JSX.Element => {
           handlePressReply={_handlePressReply}
           handlePressEditComment={_handlePressEditComment}
           handlePressTranslation={_handlePressTranslation}
-          handlePressSpeak={_handlePressSpeak}
           handleSubmitComment={_handleSubmitComment}
           handlePressChildren={_handlePressChildren}
           flagPost={_flagPost}

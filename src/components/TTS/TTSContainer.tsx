@@ -14,7 +14,6 @@ import {TTSView} from './TTSView';
 
 interface Props {
   text: string;
-  speak: () => void;
 }
 const TTSContainer = (props: Props): JSX.Element => {
   //// props

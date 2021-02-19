@@ -18,9 +18,6 @@ const initialState = {
   translateLanguages: [],
   selectedLanguage: 'en',
   availableVoices: [],
-  ttsRate: 0.6,
-  ttsPitch: 1.5,
-  ttsLanguageIndex: 0,
   ttsState: 'ready',
 };
 
@@ -48,12 +45,6 @@ const uiReducer = (state: UIState, action: UIAction) => {
       return {...state, selectedLanguage: action.payload};
     case UIActionTypes.SET_AVAILABLE_VOICES:
       return {...state, availableVoices: action.payload};
-    case UIActionTypes.SET_TTS_RATE:
-      return {...state, ttsRate: action.payload};
-    case UIActionTypes.SET_TTS_PITCH:
-      return {...state, ttsPitch: action.payload};
-    case UIActionTypes.SET_TTS_LANGUAGE_INDEX:
-      return {...state, ttsLanguageIndex: action.payload};
     default:
       return state;
   }
@@ -137,7 +128,7 @@ const UIProvider = ({children}: Props) => {
   const initTTS = async (locale: string) => {
     TTS.setDucking(true);
     TTS.setDefaultRate(0.5);
-    TTS.setDefaultPitch(1);
+    TTS.setDefaultPitch(1.0);
     try {
       const result = await TTS.getInitStatus();
       console.log('init tts result', result);
@@ -206,35 +197,18 @@ const UIProvider = ({children}: Props) => {
   const setTTSRate = (rate: number) => {
     // change rate
     TTS.setDefaultRate(rate);
-
-    // // dispatch action
-    // dispatch({
-    //   type: UIActionTypes.SET_TTS_RATE,
-    //   payload: rate,
-    // });
   };
 
   ////
   const setTTSPitch = (pitch: number) => {
     // change pitch
     TTS.setDefaultPitch(pitch);
-
-    // // dispatch action
-    // dispatch({
-    //   type: UIActionTypes.SET_TTS_PITCH,
-    //   payload: pitch,
-    // });
   };
 
   ////
   const setTTSLanguageIndex = (index: number) => {
     // change default language
     TTS.setDefaultLanguage(uiState.availableVoices[index]);
-    // dispatch action
-    //   dispatch({
-    //     type: UIActionTypes.SET_TTS_LANGUAGE_INDEX,
-    //     payload: index,
-    //   });
   };
 
   ///

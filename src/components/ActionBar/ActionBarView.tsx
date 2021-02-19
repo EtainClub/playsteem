@@ -54,7 +54,6 @@ interface Props {
   handlePressReblog?: () => void;
   handlePressTranslation?: () => void;
   handlePressSpeakIcon?: () => void;
-  handlePressSpeak?: () => void;
 }
 
 const ActionBarView = (props: Props): JSX.Element => {
@@ -131,7 +130,7 @@ const ActionBarView = (props: Props): JSX.Element => {
 
   //// render tts modal
   const _renderTTSModal = () => {
-    return <TTS text={ttsText} speak={props.handlePressSpeak} />;
+    return <TTS text={ttsText} />;
   };
 
   //// render voting modal

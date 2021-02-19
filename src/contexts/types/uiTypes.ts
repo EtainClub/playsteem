@@ -10,9 +10,6 @@ export enum UIActionTypes {
   SET_TRANSLATE_LANGUAGES,
   SET_LANGUAGE_PARAM,
   SET_AVAILABLE_VOICES,
-  SET_TTS_RATE,
-  SET_TTS_PITCH,
-  SET_TTS_LANGUAGE_INDEX,
   SET_TTS_STATE,
 }
 
@@ -42,9 +39,6 @@ export interface UIState {
   selectedLanguage: string;
   // available voices for tts
   availableVoices: string[];
-  ttsRate: number;
-  ttsPitch: number;
-  ttsLanguageIndex: number;
   ttsState: string;
 }
 
@@ -88,21 +82,6 @@ interface SetLanguageParamAction {
 interface SetAvailableVoicesAction {
   type: UIActionTypes.SET_AVAILABLE_VOICES;
   payload: string[];
-}
-//
-interface SetTTSRateAction {
-  type: UIActionTypes.SET_TTS_RATE;
-  payload: number;
-}
-//
-interface SetTTSPitchAction {
-  type: UIActionTypes.SET_TTS_PITCH;
-  payload: number;
-}
-//
-interface SetTTSLanguageIndexAction {
-  type: UIActionTypes.SET_TTS_LANGUAGE_INDEX;
-  payload: number;
 }
 //
 interface SetTTSStateAction {
@@ -156,7 +135,4 @@ export type UIAction =
   | SetTranslateLanguagesAction
   | SetLanguageParamAction
   | SetAvailableVoicesAction
-  | SetTTSRateAction
-  | SetTTSPitchAction
-  | SetTTSLanguageIndexAction
   | SetTTSStateAction;
