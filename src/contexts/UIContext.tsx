@@ -179,6 +179,8 @@ const UIProvider = ({children}: Props) => {
         // .replace(/^###/gim, '')
         // .replace(/^##/gim, '')
         // .replace(/^#/gim, '')
+        .replace(/[a-zA-Z0-9_]*.(jpg|png)/gim, '')
+        .replace(/%[a-zA-Z0-9]+/gim, '')
         .replace(/^#+/gim, '')
         .replace(/!\[(.*?)\]/gim, '')
         .replace(/^\> (.*$)/gim, '')
