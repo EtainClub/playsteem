@@ -17,6 +17,11 @@ const initialState = {
   authorList: [],
   translateLanguages: [],
   selectedLanguage: 'en',
+  availableVoices: [],
+  ttsRate: 0.6,
+  ttsPitch: 1.5,
+  ttsLanguageIndex: 0,
+  ttsState: 'ready',
 };
 
 // create ui context
@@ -41,6 +46,14 @@ const uiReducer = (state: UIState, action: UIAction) => {
       return {...state, translateLanguages: action.payload};
     case UIActionTypes.SET_LANGUAGE_PARAM:
       return {...state, selectedLanguage: action.payload};
+    case UIActionTypes.SET_AVAILABLE_VOICES:
+      return {...state, availableVoices: action.payload};
+    case UIActionTypes.SET_TTS_RATE:
+      return {...state, ttsRate: action.payload};
+    case UIActionTypes.SET_TTS_PITCH:
+      return {...state, ttsPitch: action.payload};
+    case UIActionTypes.SET_TTS_LANGUAGE_INDEX:
+      return {...state, ttsLanguageIndex: action.payload};
     default:
       return state;
   }
@@ -122,6 +135,7 @@ const UIProvider = ({children}: Props) => {
 
   //// initialize tts
   const initTTS = async (locale: string) => {
+    TTS.setDucking(true);
     TTS.setDefaultRate(0.5);
     TTS.setDefaultPitch(1);
     try {
@@ -134,9 +148,24 @@ const UIProvider = ({children}: Props) => {
 
     TTS.setDefaultLanguage(locale);
 
-    // TTS.addEventListener('tts-start', (event) => console.log('start', event));
-    // TTS.addEventListener('tts-finish', (event) => console.log('finish', event));
-    // TTS.addEventListener('tts-cancel', (event) => console.log('cancel', event));
+    TTS.addEventListener('tts-start', (event) => console.log('start', event));
+    TTS.addEventListener('tts-finish', (event) => console.log('finish', event));
+    TTS.addEventListener('tts-cancel', (event) => console.log('cancel', event));
+
+    //// get available vocies
+    const voices = await TTS.voices();
+    const availableVoices = voices
+      .filter((v) => !v.networkConnectionRequired && !v.notInstalled)
+      .map((v) => {
+        return v.language;
+        //        return {id: v.id, name: v.name, language: v.language};
+      });
+    // set available voices
+    console.log('[uiContext] available voices', availableVoices);
+    dispatch({
+      type: UIActionTypes.SET_AVAILABLE_VOICES,
+      payload: availableVoices,
+    });
   };
 
   ////
@@ -173,6 +202,49 @@ const UIProvider = ({children}: Props) => {
     }
   };
 
+  ////
+  const setTTSRate = (speed: number) => {
+    // change rate
+    TTS.setDefaultRate(0.5);
+
+    // dispatch action
+    dispatch({
+      type: UIActionTypes.SET_TTS_RATE,
+      payload: speed,
+    });
+  };
+
+  ////
+  const setTTSPitch = (pitch: number) => {
+    // change pitch
+    TTS.setDefaultPitch(1);
+
+    // dispatch action
+    dispatch({
+      type: UIActionTypes.SET_TTS_PITCH,
+      payload: pitch,
+    });
+  };
+
+  ////
+  const setTTSLanguageIndex = (index: number) => {
+    // change default language
+    TTS.setDefaultLanguage(uiState.availableVoices[index]);
+    // dispatch action
+    dispatch({
+      type: UIActionTypes.SET_TTS_LANGUAGE_INDEX,
+      payload: index,
+    });
+  };
+
+  ///
+  const pauseTTS = () => {};
+
+  /// resume TTS
+  const resumeTTS = () => {};
+
+  ////
+  const cancelTTS = () => {};
   return (
     <UIContext.Provider
       value={{
@@ -185,7 +257,13 @@ const UIProvider = ({children}: Props) => {
         setTranslateLanguages,
         setLanguageParam,
         initTTS,
+        setTTSRate,
+        setTTSPitch,
+        setTTSLanguageIndex,
         speakBody,
+        pauseTTS,
+        resumeTTS,
+        cancelTTS,
       }}>
       {children}
     </UIContext.Provider>

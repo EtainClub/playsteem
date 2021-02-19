@@ -19,6 +19,7 @@ import {argonTheme} from '~/constants/argonTheme';
 import {ActionBarStyle} from '~/constants/actionBarTypes';
 import {PostState} from '~/contexts/types';
 import ModalDropdown from 'react-native-modal-dropdown';
+import {TTS} from '~/components';
 
 //// props
 interface Props {
@@ -29,6 +30,8 @@ interface Props {
   isUser: boolean;
   showVotingModal: boolean;
   showDownvoting: boolean;
+  showTTSModal: boolean;
+  ttsText?: string;
   voting: boolean;
   downvoting: boolean;
   voteAmount: number;
@@ -50,6 +53,7 @@ interface Props {
   handlePressVoter?: (voter: string) => void;
   handlePressReblog?: () => void;
   handlePressTranslation?: () => void;
+  handlePressSpeakIcon?: () => void;
   handlePressSpeak?: () => void;
 }
 
@@ -60,6 +64,8 @@ const ActionBarView = (props: Props): JSX.Element => {
     postState,
     showDownvoting,
     showVotingModal,
+    showTTSModal,
+    ttsText,
     voting,
     downvoting,
   } = props;
@@ -122,6 +128,11 @@ const ActionBarView = (props: Props): JSX.Element => {
       </Text>
     </View>
   );
+
+  //// render tts modal
+  const _renderTTSModal = () => {
+    return <TTS text={ttsText} speak={props.handlePressSpeak} />;
+  };
 
   //// render voting modal
   const _renderDownvotingModal = () => {
@@ -323,7 +334,7 @@ const ActionBarView = (props: Props): JSX.Element => {
             name="sound"
             family="antdesign"
             style={{paddingHorizontal: 5}}
-            onPress={props.handlePressSpeak}
+            onPress={props.handlePressSpeakIcon}
           />
         )}
         {actionBarStyle.bookmark && props.isUser && (
@@ -357,6 +368,7 @@ const ActionBarView = (props: Props): JSX.Element => {
       </Block>
       {showVotingModal && _renderVotingModal()}
       {showDownvoting && _renderDownvotingModal()}
+      {showTTSModal && _renderTTSModal()}
     </Block>
   );
 };

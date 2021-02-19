@@ -19,6 +19,7 @@ import {PostsListView} from './PostsList';
 import {ProfileContainer} from './Profile';
 import {SecureKey} from './SecureKey';
 import {TokenTransfer} from './TokenTransfer';
+import {TTS} from './TTS';
 import {WalletStatsView, WalletKeyView} from './Wallet';
 
 export {
@@ -42,6 +43,7 @@ export {
   ProfileContainer,
   SecureKey,
   TokenTransfer,
+  TTS,
   WalletStatsView,
   WalletKeyView,
   ParentPost,

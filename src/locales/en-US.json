@@ -191,6 +191,11 @@
     "title": "Title",
     "parent_button": "See the full post"
   },
+  "TTS": {
+    "speed": "Speed",
+    "pitch": "Pitch",
+    "language": "Language"
+  },
   "Profile": {
     "follow_button": "Follow",
     "unfollow_button": "Unfollow",

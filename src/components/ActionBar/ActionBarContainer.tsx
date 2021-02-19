@@ -18,6 +18,7 @@ interface Props {
   postUrl?: string;
   postsType: PostsTypes;
   postIndex: number;
+  ttsText?: string;
   handlePressComments?: () => void;
   handlePressEditComment?: () => void;
   handlePressReply?: () => void;
@@ -27,6 +28,7 @@ interface Props {
 
 const ActionBarContainer = (props: Props): JSX.Element => {
   //// props
+  const {actionBarStyle, postUrl, postsType, postIndex, ttsText} = props;
   //// language
   const intl = useIntl();
   //// contexts
@@ -44,6 +46,7 @@ const ActionBarContainer = (props: Props): JSX.Element => {
   const [votingDollar, setVotingDollar] = useState<string>('0');
   const [showVotingModal, setShowVotingModal] = useState(false);
   const [showDownvoting, setShowDownvoting] = useState(false);
+  const [showTTSModal, setShowTTSModal] = useState(false);
   const [showOriginal, setShowOriginal] = useState(true);
   //// events
 
@@ -102,8 +105,8 @@ const ActionBarContainer = (props: Props): JSX.Element => {
       setVoting(true);
       // submit upvote transaction
       results = await upvote(
-        props.postsType,
-        props.postIndex,
+        postsType,
+        postIndex,
         postState.isComment,
         postState.post_ref,
         username,
@@ -115,8 +118,8 @@ const ActionBarContainer = (props: Props): JSX.Element => {
       // set loading
       setDownvoting(true);
       results = await upvote(
-        props.postsType,
-        props.postIndex,
+        postsType,
+        postIndex,
         postState.isComment,
         postState.post_ref,
         username,
@@ -240,7 +243,7 @@ const ActionBarContainer = (props: Props): JSX.Element => {
   //// handle press the share button
   const _handlePressShare = () => {
     // open sharing ui
-    const message = `${BASE_URL}${props.postUrl}`;
+    const message = `${BASE_URL}${postUrl}`;
     console.log('_handlePressShare. message', message);
     Share.share({
       title: intl.formatMessage({id: 'title'}),
@@ -263,9 +266,22 @@ const ActionBarContainer = (props: Props): JSX.Element => {
     setShowDownvoting(false);
   };
 
+  //// handle press speak
+  const _handlePressSpeakIcon = () => {
+    // show modal
+    setShowTTSModal(!showTTSModal);
+  };
+
+  //// handle press speak
+  const _handlePressSpeak = () => {
+    //    setShowTTSModal(!showTTSModal);
+    // call parent function
+    props.handlePressSpeak();
+  };
+
   return (
     <ActionBarView
-      actionBarStyle={props.actionBarStyle}
+      actionBarStyle={actionBarStyle}
       postState={postState}
       postIndex={props.postIndex}
       username={authState.currentCredentials.username}
@@ -274,6 +290,8 @@ const ActionBarContainer = (props: Props): JSX.Element => {
       }
       showVotingModal={showVotingModal}
       showDownvoting={showDownvoting}
+      showTTSModal={showTTSModal}
+      ttsText={ttsText}
       voting={voting}
       downvoting={downvoting}
       votingDollar={votingDollar}
@@ -294,7 +312,8 @@ const ActionBarContainer = (props: Props): JSX.Element => {
       handlePressReblog={_handlePressReblog}
       handlePressTranslation={_handlePressTranslation}
       handlePressShare={_handlePressShare}
-      handlePressSpeak={props.handlePressSpeak}
+      handlePressSpeakIcon={_handlePressSpeakIcon}
+      handlePressSpeak={_handlePressSpeak}
     />
   );
 };

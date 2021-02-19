@@ -191,6 +191,11 @@
     "title": "제목",
     "parent_button": "원글 보기"
   },
+  "TTS": {
+    "speed": "속도",
+    "pitch": "피치",
+    "language": "언어"
+  },
   "Profile": {
     "follow_button": "팔로우",
     "unfollow_button": "팔로우 취소",

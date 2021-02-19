@@ -9,6 +9,20 @@ export enum UIActionTypes {
   SET_SEARCH_PARAM,
   SET_TRANSLATE_LANGUAGES,
   SET_LANGUAGE_PARAM,
+  SET_AVAILABLE_VOICES,
+  SET_TTS_RATE,
+  SET_TTS_PITCH,
+  SET_TTS_LANGUAGE_INDEX,
+  SET_TTS_STATE,
+}
+
+//// TTS states
+export enum TTSStates {
+  NON_INIT,
+  INIT,
+  STARTED,
+  FINISHED,
+  CANCELED,
 }
 
 // ui state
@@ -26,6 +40,12 @@ export interface UIState {
   // supported translated languages;
   translateLanguages: string[];
   selectedLanguage: string;
+  // available voices for tts
+  availableVoices: string[];
+  ttsRate: number;
+  ttsPitch: number;
+  ttsLanguageIndex: number;
+  ttsState: string;
 }
 
 //// actions
@@ -64,6 +84,32 @@ interface SetLanguageParamAction {
   type: UIActionTypes.SET_LANGUAGE_PARAM;
   payload: string;
 }
+//
+interface SetAvailableVoicesAction {
+  type: UIActionTypes.SET_AVAILABLE_VOICES;
+  payload: string[];
+}
+//
+interface SetTTSRateAction {
+  type: UIActionTypes.SET_TTS_RATE;
+  payload: number;
+}
+//
+interface SetTTSPitchAction {
+  type: UIActionTypes.SET_TTS_PITCH;
+  payload: number;
+}
+//
+interface SetTTSLanguageIndexAction {
+  type: UIActionTypes.SET_TTS_LANGUAGE_INDEX;
+  payload: number;
+}
+//
+interface SetTTSStateAction {
+  type: UIActionTypes.SET_TTS_STATE;
+  payload: TTSStates;
+}
+
 // ui context type
 export interface UIContextType {
   // ui state
@@ -87,6 +133,18 @@ export interface UIContextType {
   initTTS: (locale: string) => void;
   //
   speakBody: (markdown: string, stop?: boolean) => void;
+  //
+  setTTSRate: (rate: number) => void;
+  //
+  setTTSPitch: (pitch: number) => void;
+  //
+  setTTSLanguageIndex: (index: number) => void;
+  // pause tts
+  pauseTTS: () => void;
+  // resuem tts
+  resumeTTS: () => void;
+  // cancel tts
+  cancelTTS: () => void;
 }
 
 export type UIAction =
@@ -96,4 +154,9 @@ export type UIAction =
   | SetEditModeAction
   | SetSearchParamAction
   | SetTranslateLanguagesAction
-  | SetLanguageParamAction;
+  | SetLanguageParamAction
+  | SetAvailableVoicesAction
+  | SetTTSRateAction
+  | SetTTSPitchAction
+  | SetTTSLanguageIndexAction
+  | SetTTSStateAction;
