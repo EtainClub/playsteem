@@ -283,6 +283,7 @@ export const parseComment = async (comment: Discussion, username: string) => {
     markdownBody: '',
     summary: '',
     image: '',
+    url: comment.url,
     // comment
     comments: [],
     // children
@@ -335,7 +336,6 @@ export const parseComment = async (comment: Discussion, username: string) => {
       // comments
       isComment: true,
     },
-    url: '',
   };
 
   try {

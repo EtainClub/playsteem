@@ -15,3 +15,4 @@ export {StatusHeight, HeaderHeight, iPhoneX};
 export const POST_TITLE_LENGTH = 45;
 export const LIST_TITLE_LENGTH = 30;
 export const MIN_EDITOR_HEIGHT = 50;
+export const MAX_ACTIVE_VOTERS = 20;

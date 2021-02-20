@@ -6,7 +6,7 @@ import {UIActionTypes, UIState, UIContextType, UIAction} from './types/uiTypes';
 
 // steem api
 import {fetchCommunityList} from '~/providers/steem/dsteemApi';
-import {PostsTypes} from './types';
+import {PostsTypes, TTSStates} from './types';
 
 const initialState = {
   toastMessage: '',
@@ -18,7 +18,7 @@ const initialState = {
   translateLanguages: [],
   selectedLanguage: 'en',
   availableVoices: [],
-  ttsState: 'ready',
+  ttsState: TTSStates.NON_INIT,
 };
 
 // create ui context
@@ -139,9 +139,9 @@ const UIProvider = ({children}: Props) => {
 
     TTS.setDefaultLanguage(locale);
 
-    TTS.addEventListener('tts-start', (event) => console.log('start', event));
-    TTS.addEventListener('tts-finish', (event) => console.log('finish', event));
-    TTS.addEventListener('tts-cancel', (event) => console.log('cancel', event));
+    // TTS.addEventListener('tts-start', (event) => console.log('start', event));
+    // TTS.addEventListener('tts-finish', (event) => console.log('finish', event));
+    // TTS.addEventListener('tts-cancel', (event) => console.log('cancel', event));
 
     //// get available vocies
     const voices = await TTS.voices();

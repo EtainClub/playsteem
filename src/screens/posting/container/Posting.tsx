@@ -348,7 +348,7 @@ const Posting = (props: Props): JSX.Element => {
       // clear posting flag
       setPosting(false);
       // clear all
-      _handleClearAll();
+      _clearAll();
       // navigate feed
       navigate({name: 'Feed'});
       return;

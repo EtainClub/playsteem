@@ -39,7 +39,7 @@ export interface UIState {
   selectedLanguage: string;
   // available voices for tts
   availableVoices: string[];
-  ttsState: string;
+  ttsState: TTSStates;
 }
 
 //// actions

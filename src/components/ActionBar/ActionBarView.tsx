@@ -19,6 +19,7 @@ import {argonTheme} from '~/constants/argonTheme';
 import {ActionBarStyle} from '~/constants/actionBarTypes';
 import {PostState} from '~/contexts/types';
 import ModalDropdown from 'react-native-modal-dropdown';
+import {MAX_ACTIVE_VOTERS} from '~/constants';
 import {TTS} from '~/components';
 
 //// props
@@ -71,12 +72,15 @@ const ActionBarView = (props: Props): JSX.Element => {
   // language
   const intl = useIntl();
 
+  // show only limited number of voters
   const _limitVoters = () => {
     let voters = postState.voters;
     // // limit the number of items
-    if (postState.voters.length > 20) {
-      voters = postState.voters.slice(0, 20);
-      voters[20] = `and ${postState.voters.length - 20} more`;
+    if (postState.voters.length > MAX_ACTIVE_VOTERS) {
+      voters = postState.voters.slice(0, MAX_ACTIVE_VOTERS);
+      voters[MAX_ACTIVE_VOTERS] = `and ${
+        postState.voters.length - MAX_ACTIVE_VOTERS
+      } more`;
     }
     return voters;
   };

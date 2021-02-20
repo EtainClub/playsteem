@@ -60,6 +60,9 @@ const AuthorProfile = (props: Props): JSX.Element => {
       '[AuthorProfileContainer] selected author',
       uiState.selectedAuthor,
     );
+    // clear profile, blogs
+    setBlogs(null);
+    setProfileData(null);
     // start to fetch author profile
     setProfileFetched(false);
     _getAuthorProfile(uiState.selectedAuthor);
@@ -113,27 +116,17 @@ const AuthorProfile = (props: Props): JSX.Element => {
 
   const _refreshWallet = async () => {};
 
-  return profileFetched ? (
-    profileData && (
-      <AuthorProfileScreen
-        profileData={profileData}
-        blogs={blogs}
-        walletData={walletStats}
-        refreshing={refreshing}
-        refreshPosts={_refreshPosts}
-        refreshWallet={_refreshWallet}
-      />
-    )
+  return profileData ? (
+    <AuthorProfileScreen
+      profileData={profileData}
+      blogs={blogs}
+      walletData={walletStats}
+      refreshing={refreshing}
+      refreshPosts={_refreshPosts}
+      refreshWallet={_refreshWallet}
+    />
   ) : (
-    <View
-      style={{
-        position: 'relative',
-        width: width,
-        height: height,
-        paddingVertical: 20,
-        marginTop: 10,
-        marginBottom: 10,
-      }}>
+    <View style={{top: 20}}>
       <ActivityIndicator color={argonTheme.COLORS.ERROR} size="large" />
     </View>
   );
