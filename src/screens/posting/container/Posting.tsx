@@ -3,7 +3,6 @@ import {Alert} from 'react-native';
 //// storage
 import AsyncStorage from '@react-native-community/async-storage';
 import {useIntl} from 'react-intl';
-import ImagePicker, {ImageOrVideo} from 'react-native-image-crop-picker';
 import {
   AuthContext,
   PostsContext,
@@ -18,9 +17,9 @@ import {PostingContent, StorageSchema} from '~/contexts/types';
 //// navigation
 import {navigate} from '~/navigation/service';
 //// UIs
-import {Block, Icon, Button, Input, Text, theme} from 'galio-framework';
+import {Block} from 'galio-framework';
 //// components
-import {Beneficiary, AuthorList} from '~/components';
+import {Beneficiary} from '~/components';
 import {BeneficiaryItem} from '~/components/Beneficiary/BeneficiaryContainer';
 //// constants
 import {BENEFICIARY_WEIGHT, MAX_NUM_TAGS} from '~/constants';
@@ -120,6 +119,8 @@ const Posting = (props: Props): JSX.Element => {
       const _body = renderPostBody(postDetails.markdownBody, true);
       // set preview
       setPreviewBody(_body);
+    } else {
+      _getDraftFromStorage();
     }
   }, [uiState.editMode]);
 
@@ -128,26 +129,15 @@ const Posting = (props: Props): JSX.Element => {
     const unsubscribe = navigation.addListener('blur', () => {
       console.log('[Posting] blur event. uiState', uiState);
       // reset edit mode before go back
-      if (uiState.editMode) {
-        setEditMode(false);
-        // clear all
-        _clearAll();
-      }
+      setEditMode(false);
     });
     return unsubscribe;
   }, [navigation]);
 
-  //// on focus event
+  //// event: title, body, tags change
   useEffect(() => {
-    if (!authState.loggedIn) return;
-    const unsubscribe = navigation.addListener('focus', () => {
-      console.log('[Posting] focus event. uiState', uiState);
-      // load draft only if not edit mode
-      if (!uiState.editMode) _getDraftFromStorage();
-    });
-    return unsubscribe;
-  }, [navigation]);
-
+    if (title || body || tags) _saveDraft(title, body, tags);
+  }, [title, body, tags]);
   //// event: clear body in editor
   useEffect(() => {
     // toggle the clear body state
@@ -377,8 +367,6 @@ const Posting = (props: Props): JSX.Element => {
   const _handleTitleChange = (text: string) => {
     // check validity: max-length
     setTitle(text);
-    // initiate savig draft
-    _saveTimedDraft();
   };
 
   const _handleBodyChange = (_body: string) => {
@@ -387,8 +375,6 @@ const Posting = (props: Props): JSX.Element => {
     // set preview
     const _preview = renderPostBody(_body, true);
     setPreviewBody(_preview);
-    // initiate savig draft
-    _saveTimedDraft();
   };
 
   const _handleTagsChange = (_tags: string) => {
@@ -398,8 +384,6 @@ const Posting = (props: Props): JSX.Element => {
     let cats = tagString.split(' ');
     // validate
     _validateTags(cats);
-    // initiate savig draft
-    _saveTimedDraft();
   };
 
   //// handle reward option chnage
@@ -432,18 +416,12 @@ const Posting = (props: Props): JSX.Element => {
   };
 
   //// save draft
-  const _saveTimedDraft = () => {
-    setTimeout(() => {
-      _saveDraft();
-    }, 300);
-  };
-
-  const _saveDraft = () => {
+  const _saveDraft = (_title: string, _body: string, _tags: string) => {
     console.log('_saveDraft');
     const data = {
-      title,
-      body,
-      tags,
+      title: _title,
+      body: _body,
+      tags: _tags,
     };
     _setItemToStorage(StorageSchema.DRAFT, data);
   };
@@ -491,6 +469,8 @@ const Posting = (props: Props): JSX.Element => {
     setClearBody(true);
     // clear original post
     setOriginalPost(null);
+    // clear draft
+    _saveDraft('', '', '');
   };
 
   const _handleCancelEditing = () => {
