@@ -156,12 +156,18 @@ const Profile = ({navigation}): JSX.Element => {
     setFavorites(favorites);
   };
 
-  ////
-  const _handlePressFavoriteItem = (author: string) => {
-    // set author param
-    setAuthorParam(author);
-    // navigate
-    navigate({name: 'AuthorProfile'});
+  //// handle press author
+  const _handlePressAuthor = (author: string) => {
+    const {username} = authState.currentCredentials;
+    if (username !== author) {
+      // set author param
+      setAuthorParam(author);
+      // navigate
+      navigate({name: 'AuthorProfile'});
+    } else {
+      // navigate profile
+      navigate({name: 'Profile'});
+    }
   };
 
   ////
@@ -395,7 +401,7 @@ const Profile = ({navigation}): JSX.Element => {
         bookmarks={bookmarks}
         favorites={favorites}
         imageServer={settingsState.blockchains.image}
-        handlePressFavoriteItem={_handlePressFavoriteItem}
+        handlePressAuthor={_handlePressAuthor}
         refreshing={refreshing}
         refreshPosts={_refreshPosts}
         refreshBookmarks={_refreshBookmarks}

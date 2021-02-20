@@ -40,7 +40,7 @@ interface Props {
   favorites: any[];
   imageServer: string;
   refreshing: boolean;
-  handlePressFavoriteItem: (author: string) => void;
+  handlePressAuthor: (author: string) => void;
   handlePressEdit: () => void;
   handlePressBookmark: (postRef: PostRef) => void;
   removeBookmark: (postRef: PostRef, title: string) => void;
@@ -109,9 +109,9 @@ const ProfileScreen = (props: Props): JSX.Element => {
           padding: 5,
           backgroundColor: BACKGROUND_COLORS[index % BACKGROUND_COLORS.length],
         }}>
-        <TouchableWithoutFeedback
-          onPress={() => props.handlePressBookmark(item.postRef)}>
-          <Block row middle style={{left: -20}}>
+        <Block row middle style={{left: -20}}>
+          <TouchableWithoutFeedback
+            onPress={() => props.handlePressAuthor(item.author)}>
             <Block center width={120}>
               <Image
                 source={{
@@ -121,9 +121,12 @@ const ProfileScreen = (props: Props): JSX.Element => {
               />
               <Text size={10}>{item.author}</Text>
             </Block>
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback
+            onPress={() => props.handlePressBookmark(item.postRef)}>
             {<Text>{sliceByByte(item.title, LIST_TITLE_LENGTH)}</Text>}
-          </Block>
-        </TouchableWithoutFeedback>
+          </TouchableWithoutFeedback>
+        </Block>
         <Block center>
           <Icon
             onPress={() => props.removeBookmark(item.postRef, item.title)}
@@ -151,7 +154,7 @@ const ProfileScreen = (props: Props): JSX.Element => {
           backgroundColor: BACKGROUND_COLORS[index % BACKGROUND_COLORS.length],
         }}>
         <TouchableWithoutFeedback
-          onPress={() => props.handlePressFavoriteItem(item.author)}>
+          onPress={() => props.handlePressAuthor(item.author)}>
           <Block row center>
             <Image
               source={{

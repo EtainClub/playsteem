@@ -1,13 +1,17 @@
 export const getNumberStat = (count: number) => {
-  let newCount = count.toString();
+  const _count = count.toString();
   if (count < 1000) {
-    newCount = newCount;
+    return _count;
   } else if (count < 1000000) {
-    newCount = newCount.slice(0, newCount.length - 3) + 'K';
+    return _count.slice(0, _count.length - 3) + ' K';
   } else {
-    newCount = newCount.slice(0, newCount.length - 6) + 'M';
+    return (
+      _count.slice(0, _count.length - 6) +
+      '.' +
+      _count.slice(_count.length - 6, _count.length - 3) +
+      ' M'
+    );
   }
-  return newCount;
 };
 
 export const putComma = (x) => {
