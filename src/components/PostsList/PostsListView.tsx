@@ -55,7 +55,7 @@ const PostsListView = (props: Props): JSX.Element => {
   //// language
   const intl = useIntl();
   //// contexts
-  const {setPostRef} = useContext(PostsContext);
+  const {setPostRef, setPostDetails} = useContext(PostsContext);
   //// states
   const [loadingMore, setLoadingMore] = useState(false);
 
@@ -74,6 +74,8 @@ const PostsListView = (props: Props): JSX.Element => {
     console.log('onPressPost. postRef');
     // navigate to the post details
     setPostRef(props.posts[index].state.post_ref);
+    // set post data to context
+    setPostDetails(null);
     navigate({name: 'PostDetails'});
   };
 

@@ -48,7 +48,7 @@ const SearchFeed = (props: Props): JSX.Element => {
   //// props
 
   //// contexts
-  const {setPostRef} = useContext(PostsContext);
+  const {setPostRef, setPostDetails} = useContext(PostsContext);
   const {uiState, setToastMessage} = useContext(UIContext);
   const {authState} = useContext(AuthContext);
   const {settingsState} = useContext(SettingsContext);
@@ -189,6 +189,8 @@ const SearchFeed = (props: Props): JSX.Element => {
     console.log('navigateToPost. postRef', searchItems[index]);
     // navigate to the post details
     setPostRef(searchItems[index].postRef);
+    // set post data to context
+    setPostDetails(null);
     navigate({name: 'PostDetails'});
   };
 

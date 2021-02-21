@@ -37,7 +37,7 @@ interface Props {}
 const Notification = (props: Props): JSX.Element => {
   //// props
   //// contexts
-  const {setPostRef} = useContext(PostsContext);
+  const {setPostRef, setPostDetails} = useContext(PostsContext);
   const {getNotifications} = useContext(UserContext);
   const {authState} = useContext(AuthContext);
   const {setAuthorParam} = useContext(UIContext);
@@ -85,6 +85,8 @@ const Notification = (props: Props): JSX.Element => {
     if (permlink) {
       // set post ref
       setPostRef({author, permlink});
+      // set post data to context
+      setPostDetails(null);
       // navigate to the post
       navigate({name: 'PostDetails'});
     } else {

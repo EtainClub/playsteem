@@ -39,11 +39,13 @@ const ParentPostView = (props: Props): JSX.Element => {
   //// language
   const intl = useIntl();
   //// contexts
-  const {setPostRef} = useContext(PostsContext);
+  const {setPostRef, setPostDetails} = useContext(PostsContext);
 
   const _handlePressButton = () => {
     // set post ref
     setPostRef(post.state.post_ref);
+    // set post data to context
+    setPostDetails(post);
     // navigate
     navigate({name: 'PostDetails'});
   };

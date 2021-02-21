@@ -24,7 +24,7 @@ const PostBodyContainer = (props: Props): JSX.Element => {
   //// contexts
   const {setAuthorParam, setToastMessage} = useContext(UIContext);
   const {authState} = useContext(AuthContext);
-  const {setPostRef, appendTag} = useContext(PostsContext);
+  const {setPostRef, appendTag, setPostDetails} = useContext(PostsContext);
   //// states
   const [selectedLink, setSelectedLink] = useState(null);
   const [postImages, setPostImages] = useState([]);
@@ -38,6 +38,8 @@ const PostBodyContainer = (props: Props): JSX.Element => {
     if (permlink) {
       // set post ref
       setPostRef({author, permlink});
+      // set post data to context
+      setPostDetails(null);
       // navigate to the post details screen
       navigate({name: 'PostDetails'});
     }

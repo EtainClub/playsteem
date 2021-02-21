@@ -29,7 +29,7 @@ const Profile = ({navigation}): JSX.Element => {
   const intl = useIntl();
   // contexts
   const {authState} = useContext(AuthContext)!;
-  const {setPostRef} = useContext(PostsContext);
+  const {setPostRef, setPostDetails} = useContext(PostsContext);
   const {
     userState,
     getUserProfileData,
@@ -192,6 +192,8 @@ const Profile = ({navigation}): JSX.Element => {
   const _handlePressBookmark = (postRef: PostRef) => {
     // set post ref
     setPostRef(postRef);
+    // set post data to context
+    setPostDetails(null);
     // navigate to the post details
     navigate({name: 'PostDetails'});
   };
