@@ -118,12 +118,22 @@ const PostDetails = (props: Props): JSX.Element => {
     // remove the parent post
     setParentPost(null);
     setLoading(true);
+    // let details = null;
+    // if (postsState.postDetails) {
+    //   details = postsState.postDetails;
+    // } else {
+    //   // get post details
+    //   details = await getPostDetails(
+    //     postsState.postRef,
+    //     authState.currentCredentials.username,
+    //   );
+    // }
     // get post details
-    // const details = await getPostDetails(
-    //   postsState.postRef,
-    //   authState.currentCredentials.username,
-    // );
-    const details = postsState.postDetails;
+    const details = await getPostDetails(
+      postsState.postRef,
+      authState.currentCredentials.username,
+    );
+
     // set post details
     setPostDetails(details);
     // set original details
