@@ -119,10 +119,16 @@ const PostDetails = (props: Props): JSX.Element => {
     setParentPost(null);
     setLoading(true);
     // get post details
-    const details = await getPostDetails(
-      postsState.postRef,
-      authState.currentCredentials.username,
-    );
+    // const details = await getPostDetails(
+    //   postsState.postRef,
+    //   authState.currentCredentials.username,
+    // );
+    const details = postsState.postDetails;
+    // set post details
+    setPostDetails(details);
+    // set original details
+    setOriginalPostDetails(details);
+    //
     setLoading(false);
     if (!details) return;
     // fetch database
@@ -133,10 +139,7 @@ const PostDetails = (props: Props): JSX.Element => {
       );
       if (bookmarked) details.state.bookmarked = bookmarked;
     }
-    // set post details
-    setPostDetails(details);
-    // set original details
-    setOriginalPostDetails(details);
+
     // fetch comments
     //    _fetchComments();
   };

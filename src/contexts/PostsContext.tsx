@@ -490,6 +490,15 @@ const PostsProvider = ({children}: Props) => {
     return null;
   };
 
+  //// @test
+  const setPostDetails = (post: PostData) => {
+    // dispatch action
+    dispatch({
+      type: PostsActionTypes.SET_POST_DETAILS,
+      payload: post,
+    });
+  };
+
   //// set tag and filter index
   const setTagAndFilter = (
     tagIndex: number,
@@ -936,6 +945,7 @@ const PostsProvider = ({children}: Props) => {
         setPostIndex,
         clearPosts,
         getPostDetails,
+        setPostDetails,
         setTagAndFilter,
         setTagIndex,
         appendTag,

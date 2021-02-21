@@ -15,7 +15,9 @@ interface Props {
 }
 const Post = (props: Props): JSX.Element => {
   // contexts
-  const {postsState, setPostRef, setPostIndex} = useContext(PostsContext);
+  const {postsState, setPostRef, setPostIndex, setPostDetails} = useContext(
+    PostsContext,
+  );
   const {post} = props;
 
   const _handleOnPressAuthor = () => {
@@ -27,6 +29,8 @@ const Post = (props: Props): JSX.Element => {
     setPostRef(post.state.post_ref);
     // set post index
     setPostIndex(postsState.postsType, props.index);
+    // @test: set post data to context
+    setPostDetails(post);
     // navigate
     navigate({name: 'PostDetails'});
   };

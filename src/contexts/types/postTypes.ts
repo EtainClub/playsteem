@@ -389,6 +389,8 @@ export interface PostsContextType {
   clearPosts: (postsType: PostsTypes) => void;
   // get post details
   getPostDetails: (postRef: PostRef, username: string) => Promise<PostData>;
+  // set post details
+  setPostDetails: (post: PostData) => void;
   // upvote
   upvote: (
     postsType: PostsTypes,
