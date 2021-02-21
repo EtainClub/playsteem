@@ -32,9 +32,7 @@ const OTPContainer = (props: Props): JSX.Element => {
   //// states
   const [phoneNumber, setPhoneNumber] = useState('');
   const [smsCode, setSMSCode] = useState('');
-  const [confirmation, setConfirmation] = useState<
-    FirebaseAuthTypes.ConfirmationResult
-  >(null);
+  const [verificationId, setVerificationId] = useState(null);
   const [showModal, setShowModal] = useState(props.showModal);
   const [loading, setLoading] = useState(false);
   const [countryCode, setCountryCode] = useState<CountryCode>('KR');
@@ -117,6 +115,8 @@ const OTPContainer = (props: Props): JSX.Element => {
             case firebase.auth.PhoneAuthState.CODE_SENT:
               console.log('[_verifyPhoneNumber] code sent');
               setPhoneMessage(intl.formatMessage({id: 'OTP.code_sent'}));
+              // set verificationId
+              setVerificationId(phoneAuthSnapshot.verificationId);
               break;
             case firebase.auth.PhoneAuthState.ERROR: // or 'error'
               console.log('verification error', phoneAuthSnapshot.error);
@@ -158,15 +158,34 @@ const OTPContainer = (props: Props): JSX.Element => {
       props.handleOTPResult(valid, _phone);
       return true;
     }
-    let user = null;
+    //// ios login
+    // get credential
+    const credential = firebase.auth.PhoneAuthProvider.credential(
+      verificationId,
+      smsCode,
+    );
+    // try signin
     try {
-      user = await confirmation.confirm(smsCode);
-      console.log('[_confirmOTP] user', user);
+      const user = await firebase.auth().signInWithCredential(credential);
+      console.log('[signInWithCredential] user', user);
       // send back the result
       props.handleOTPResult(true, _phone);
       return true;
+
+      // check new user here
+      // if (user.additionalUserInfo.isNewUser) {
+      //   props.handleOTPResult(true, _phone);
+      //   return true;
+      // } else {
+      //   console.log(
+      //     '[signInWithCredential] not mew user',
+      //     user.additionalUserInfo.isNewUser,
+      //   );
+      //   props.handleOTPResult(false, _phone);
+      //   return false;
+      // }
     } catch (error) {
-      console.log('invalid code', error);
+      console.log('failed to sign in firebase', error);
       // send back the result
       props.handleOTPResult(false, _phone);
       return false;

@@ -46,15 +46,11 @@ const Signup = (props: Props): JSX.Element => {
   const [showAccountScreen, setShowAccountScreen] = useState(false);
   const [password, setPassword] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [
-    confirmation,
-    setConfirmation,
-  ] = useState<FirebaseAuthTypes.ConfirmationResult>(null);
-
   const [copied, setCopied] = useState(false);
   const [keyCopied, setKeyCopied] = useState(false);
   const [finalized, setFinalized] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showOTP, setShowOTP] = useState(false);
 
   useEffect(() => {
     SplashScreen.hide();
@@ -83,6 +79,7 @@ const Signup = (props: Props): JSX.Element => {
       const _password = generateMasterPassword();
       setPassword(_password);
       setShowSignupScreen(false);
+      setShowOTP(true);
     } else {
       setUsernameMsg(intl.formatMessage({id: 'Signup.username_exists'}));
     }
@@ -187,8 +184,11 @@ const Signup = (props: Props): JSX.Element => {
     if (__DEV__ || result) {
       setShowAccountScreen(true);
     } else {
+      setUsernameMsg('');
+      setShowSignupScreen(true);
       setToastMessage(intl.formatMessage({id: 'Signup.otp_error'}));
     }
+    setShowOTP(false);
   };
 
   const _copyPasswordToClipboard = () => {
@@ -207,6 +207,8 @@ const Signup = (props: Props): JSX.Element => {
   const _cancelOTPModal = () => {
     // clear username message
     setUsernameMsg('');
+    //
+    setShowOTP(false);
     // reset account avaliable
     setAccountAvailable(false);
     // show signup screen
@@ -237,11 +239,14 @@ const Signup = (props: Props): JSX.Element => {
       onContinue={_onStartSignup}
     />
   ) : (
-    <OTP
-      checkDuplicatedPhone={_checkDuplicatedPhone}
-      handleOTPResult={_handleOTPResult}
-      cancelModal={_cancelOTPModal}
-    />
+    showOTP && (
+      <OTP
+        showModal={showOTP}
+        checkDuplicatedPhone={_checkDuplicatedPhone}
+        handleOTPResult={_handleOTPResult}
+        cancelModal={_cancelOTPModal}
+      />
+    )
   );
 };
 
