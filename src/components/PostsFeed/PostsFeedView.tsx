@@ -143,7 +143,9 @@ const PostsFeedView = (props: Props): JSX.Element => {
             right
             color="black"
             style={styles.search}
-            autoFocus
+            autoFocus={true}
+            autoCorrect={false}
+            autoCapitalize="none"
             onChangeText={props.handleQueryChange}
             onSubmitEditing={() => {
               searchRef.current?.setModalVisible(false);

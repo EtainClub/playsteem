@@ -1,6 +1,6 @@
 const functions = require('firebase-functions');
 const axios = require('axios');
-const dblurt = require('./dblurt');
+const dsteem = require('@hiveio/dhive');
 
 const MAINNET_OFFICIAL = [
   'https://api.steemit.com',
@@ -8,7 +8,7 @@ const MAINNET_OFFICIAL = [
   'https://api.steemzzang.com',
   'https://api.steem.buzz',
 ];
-const client = new dblurt.Client(MAINNET_OFFICIAL, {
+const client = new dsteem.Client(MAINNET_OFFICIAL, {
   timeout: 5000,
   addressPrefix: 'STM',
   chainId: '0000000000000000000000000000000000000000000000000000000000000000',
@@ -29,7 +29,7 @@ exports.searchRequest = functions.https.onCall(async (data, res) => {
     .get(search)
     .then((response) => {
       result = response.data;
-      //      console.log('response result', result);
+      console.log('response result', result);
     })
     .catch((error) => console.log('failed to search', error));
 
@@ -80,6 +80,9 @@ exports.translationRequest = functions.https.onCall(async (data, context) => {
 
 // proxy for creating blurt account
 exports.createAccountRequest = functions.https.onCall(async (data, context) => {
+  // TODO: setup active key and decide the account to be used, ACT?
+  return null;
+
   const {username, password, creationFee} = data;
 
   // get creator account
@@ -88,12 +91,12 @@ exports.createAccountRequest = functions.https.onCall(async (data, context) => {
   const welcomeBlurt = functions.config().creator.welcome_blurt;
 
   // private active key of creator account
-  const creatorKey = dblurt.PrivateKey.fromString(creatorWif);
+  const creatorKey = dsteem.PrivateKey.fromString(creatorWif);
   // create keys
-  const ownerKey = dblurt.PrivateKey.fromLogin(username, password, 'owner');
-  const activeKey = dblurt.PrivateKey.fromLogin(username, password, 'active');
-  const postingKey = dblurt.PrivateKey.fromLogin(username, password, 'posting');
-  const memoKey = dblurt.PrivateKey.fromLogin(
+  const ownerKey = dsteem.PrivateKey.fromLogin(username, password, 'owner');
+  const activeKey = dsteem.PrivateKey.fromLogin(username, password, 'active');
+  const postingKey = dsteem.PrivateKey.fromLogin(username, password, 'posting');
+  const memoKey = dsteem.PrivateKey.fromLogin(
     username,
     password,
     'memo',
@@ -143,10 +146,10 @@ exports.createAccountRequest = functions.https.onCall(async (data, context) => {
     );
     console.log('create account, result', result);
 
-    //// if successful, transfer 3 blurt to the account
+    //// if successful, transfer 0.01 steem to the account
     if (result) {
       // get privake key from creator active wif
-      const privateKey = dblurt.PrivateKey.from(creatorWif);
+      const privateKey = dsteem.PrivateKey.from(creatorWif);
       // transfer
       if (privateKey) {
         const args = {
