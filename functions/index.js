@@ -3,15 +3,15 @@ const axios = require('axios');
 const dblurt = require('./dblurt');
 
 const MAINNET_OFFICIAL = [
-  'https://rpc.blurt.world',
-  'https://rpc.blurt.buzz',
-  'https://api.blurt.blog',
-  'https://blurtd.privex.io',
+  'https://api.steemit.com',
+  'https://api.steemitdev.com',
+  'https://api.steemzzang.com',
+  'https://api.steem.buzz',
 ];
 const client = new dblurt.Client(MAINNET_OFFICIAL, {
   timeout: 5000,
-  addressPrefix: 'BLT',
-  chainId: 'cd8d90f29ae273abec3eaa7731e25934c63eb654d55080caff2ebb7f5df6381f',
+  addressPrefix: 'STM',
+  chainId: '0000000000000000000000000000000000000000000000000000000000000000',
 });
 
 // proxy for google custom search

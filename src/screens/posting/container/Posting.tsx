@@ -350,6 +350,7 @@ const Posting = (props: Props): JSX.Element => {
   };
 
   const _handlePressBeneficiary = () => {
+    console.log('_handlePressBeneficiary');
     setShowBeneficiaryModal(true);
   };
 
