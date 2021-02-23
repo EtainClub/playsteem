@@ -117,6 +117,7 @@ const SearchFeed = (props: Props): JSX.Element => {
   };
 
   const _fetchSearch = async (text: string) => {
+    console.log('[_fetchSearch] text', text);
     // need to log in to search
     if (!authState.loggedIn) {
       console.log('you need to log in to search posts');
@@ -128,7 +129,7 @@ const SearchFeed = (props: Props): JSX.Element => {
         query: text,
         startAt: startIndex,
         num: 10,
-        sort: '',
+        sort: 'date',
       });
       console.log('search results', response);
     } catch (error) {

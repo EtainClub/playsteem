@@ -16,18 +16,19 @@ const client = new dsteem.Client(MAINNET_OFFICIAL, {
 
 // proxy for google custom search
 exports.searchRequest = functions.https.onCall(async (data, res) => {
-  //  console.log('input data', data);
-  const {query, startAt = 1, num = 10, sort = ''} = data;
-
+  console.log('input data', data);
+  const {query, startAt = 1, num = 10, sort = 'date'} = data;
+  const encoding = 'utf8';
   const key = functions.config().search.key;
   const cx = functions.config().search.cx;
-  const search = `https://www.googleapis.com/customsearch/v1?key=${key}&cx=${cx}&q=${query}&num=${num}&start=${startAt}&sort=${sort}`;
+  const search = `https://www.googleapis.com/customsearch/v1?key=${key}&cx=${cx}&q=${query}&ie=${encoding}&oe=${encoding}&num=${num}&start=${startAt}&sort=${sort}`;
+  console.log('search', search);
 
-  //    const response = await axios.get(search);
   let result = null;
   await axios
     .get(search)
     .then((response) => {
+      console.log('response', response);
       result = response.data;
       console.log('response result', result);
     })
