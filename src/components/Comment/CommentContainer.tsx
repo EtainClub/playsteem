@@ -69,7 +69,8 @@ const CommentContainer = (props: Props): JSX.Element => {
   const [speaking, setSpeaking] = useState(false);
   const reputation = props.comment.state.reputation.toFixed(0);
 
-  const formatedTime = props.comment && getTimeFromNow(comment.state.createdAt);
+  const formatedTime =
+    props.comment && getTimeFromNow(props.comment.state.createdAt);
 
   const _handleSubmitComment = async (_text: string) => {
     // check sanity

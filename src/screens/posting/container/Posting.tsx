@@ -331,7 +331,7 @@ const Posting = (props: Props): JSX.Element => {
       // set tag to all
       setTagAndFilter(
         communityIndex !== 0 ? communityIndex + 1 : 1, // community : all
-        1, // created
+        0, // created
         PostsTypes.FEED,
         authState.currentCredentials.username,
       );
