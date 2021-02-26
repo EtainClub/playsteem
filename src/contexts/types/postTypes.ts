@@ -27,6 +27,15 @@ export enum PostsActionTypes {
   APPEND_TAG,
 }
 
+// filter types
+export enum FilterTypes {
+  CREATED = 'created',
+  HOT = 'hot',
+  TRENDING = 'trending',
+  FEED = 'feed',
+  BLOG = 'blog',
+}
+
 // post meta data
 export interface MetaData {
   image: string[];
@@ -232,7 +241,11 @@ export interface PostingContent {
 }
 
 // default filter list
-export const INIT_FILTER_LIST = ['created', 'hot', 'trending'];
+export const INIT_FILTER_LIST = [
+  FilterTypes.CREATED,
+  FilterTypes.HOT,
+  FilterTypes.TRENDING,
+];
 // initial tag item for friends posts of feed posts
 export const INIT_FRIENDS_TAG = ['Friends', '', ''];
 // initial tag item for my posts of feed posts

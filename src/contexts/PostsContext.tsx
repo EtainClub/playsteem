@@ -37,6 +37,7 @@ import {
   INIT_FRIENDS_TAG,
   INIT_FILTER_LIST,
   INIT_ALL_TAG,
+  FilterTypes,
 } from '~/contexts/types';
 import {defaults, filter} from 'lodash';
 
@@ -341,15 +342,15 @@ const PostsProvider = ({children}: Props) => {
             // but not followings
             if (noFollowings) {
               tag = '';
-              filter = 'trending';
+              filter = FilterTypes.TRENDING;
             } else {
               tag = username;
-              filter = 'feed';
+              filter = FilterTypes.FEED;
             }
           } // not logged in
           else {
             tag = '';
-            filter = 'trending';
+            filter = FilterTypes.TRENDING;
           }
         } else if (postsState.tagList[tagIndex][1] === 'All') {
           tag = '';
@@ -369,7 +370,7 @@ const PostsProvider = ({children}: Props) => {
         }
         break;
       case PostsTypes.AUTHOR:
-        filter = 'blog';
+        filter = FilterTypes.BLOG;
         tag = author;
         limit = NUM_FETCH_BLOG_POSTS;
         break;
@@ -490,7 +491,7 @@ const PostsProvider = ({children}: Props) => {
     return null;
   };
 
-  //// @test
+  ////
   const setPostDetails = (post: PostData) => {
     // dispatch action
     dispatch({

@@ -180,6 +180,9 @@ const Posting = (props: Props): JSX.Element => {
 
   //// handle press post
   const _handlePressPostSubmit = async () => {
+    // check logged in
+    if (!authState.loggedIn) return;
+
     // get community index from postsState
     const {communityIndex} = postsState;
 

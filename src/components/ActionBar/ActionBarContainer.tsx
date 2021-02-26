@@ -39,6 +39,7 @@ const ActionBarContainer = (props: Props): JSX.Element => {
   );
   //// states
   const [postState, setPostState] = useState<PostState>(props.postState);
+  console.log('[ActoinBarContainer] post state', props.postState);
   const [voting, setVoting] = useState(false);
   const [downvoting, setDownvoting] = useState(false);
   const [votingWeight, setVotingWeight] = useState(100);
@@ -49,17 +50,20 @@ const ActionBarContainer = (props: Props): JSX.Element => {
   const [showOriginal, setShowOriginal] = useState(true);
   //// events
 
-  // // event: post state changes
-  // useEffect(() => {
-  //   // only for post
-  //   if (!postState.isComment) {
-  //     // update voted flag
-  //     const _state = {...postState, voted: }
-  //     setVoted(postState.voted);
-  //     // update payout
-  //     setVotingDollar(postState.payout);
-  //   }
-  // }, [postState]);
+  // event: post state changes
+  useEffect(() => {
+    if (props.postState) {
+      setPostState(props.postState);
+    }
+    // // only for post
+    // if (!postState.isComment) {
+    //   // update voted flag
+    //   const _state = {...postState, voted: }
+    //   setVoted(postState.voted);
+    //   // update payout
+    //   setVotingDollar(postState.payout);
+    // }
+  }, [props.postState]);
 
   const _updateVoteAmount = () => {
     console.log('user state', userState);

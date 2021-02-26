@@ -109,7 +109,7 @@ const PostDetails = (props: Props): JSX.Element => {
     return unsubscribe;
   }, [navigation]);
 
-  const _fetchPostDetailsEntry = async () => {
+  const _fetchPostDetailsEntry = async (refresh?: boolean) => {
     console.log('_fetchPostDetailsEntry post state', postsState.postRef);
     // check sanity
     if (!postsState.postRef.author) return;
@@ -118,21 +118,24 @@ const PostDetails = (props: Props): JSX.Element => {
     // remove the parent post
     setParentPost(null);
     setLoading(true);
-    // let details = null;
-    // if (postsState.postDetails) {
-    //   details = postsState.postDetails;
-    // } else {
-    //   // get post details
-    //   details = await getPostDetails(
-    //     postsState.postRef,
-    //     authState.currentCredentials.username,
-    //   );
-    // }
+
+    let details = null;
+    if (!refresh && postsState.postDetails) {
+      details = postsState.postDetails;
+      console.log('[Post] post details exits', details);
+    } else {
+      // get post details
+      details = await getPostDetails(
+        postsState.postRef,
+        authState.currentCredentials.username,
+      );
+    }
+
     // get post details
-    const details = await getPostDetails(
-      postsState.postRef,
-      authState.currentCredentials.username,
-    );
+    // const details = await getPostDetails(
+    //   postsState.postRef,
+    //   authState.currentCredentials.username,
+    // );
 
     // set post details
     setPostDetails(details);
@@ -201,7 +204,8 @@ const PostDetails = (props: Props): JSX.Element => {
   // };
 
   const _onRefresh = async () => {
-    await _fetchPostDetailsEntry();
+    // get fresh post details
+    await _fetchPostDetailsEntry(true);
     console.log('[PostDetails] refreshed, comments', comments);
   };
 
