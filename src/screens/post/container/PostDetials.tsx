@@ -144,7 +144,7 @@ const PostDetails = (props: Props): JSX.Element => {
     setLoading(true);
 
     let details = null;
-    if (!refresh && postsState.postDetails.body) {
+    if (!refresh && postsState.postDetails && postsState.postDetails.body) {
       details = postsState.postDetails;
       console.log('[Post] post details exits', details);
       // fetch details
