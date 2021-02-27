@@ -137,9 +137,12 @@ const postsReducer = (state: PostsState, action: PostsAction) => {
       return {...state, postRef: action.payload};
 
     case PostsActionTypes.CLEAR_POSTS:
-      console.log('[postReducer] clearing action payload', action.payload);
+      console.log('[postsReducer] clearing posts. type', action.payload);
       return {
-        ...initialState,
+        ...state,
+        // update the meta posts of the given posts type
+        [action.payload]: INIT_POSTS_DATA,
+        // keep the other state
         tagList: state.tagList,
         tagIndex: state.tagIndex,
         filterList: state.filterList,
@@ -388,12 +391,19 @@ const PostsProvider = ({children}: Props) => {
     if (result.length > 0) {
       _posts = result;
     } else {
-      //      setToastMessage(intl.formatMessage({id: 'fetch_error'}));
-      return {
-        // return the current posts
-        fetchedPosts: postsState[postsType].posts,
-        fetchedAll: true,
-      };
+      if (postsType === PostsTypes.FEED) {
+        return {
+          // return the current posts for the feed type
+          fetchedPosts: postsState[postsType].posts,
+          fetchedAll: true,
+        };
+      } else {
+        // other than feed, return empty, which is temp workaround
+        return {
+          fetchedPosts: [],
+          fetchedAll: true,
+        };
+      }
     }
 
     // TODO need to check if the fetched posts is fewer than limit + 1 -> nothing to fetch more

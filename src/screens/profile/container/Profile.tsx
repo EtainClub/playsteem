@@ -92,7 +92,7 @@ const Profile = ({navigation}): JSX.Element => {
       _fetchBookmarks(username);
       _fetchFavorites(username);
     }
-  }, [authState.currentCredentials]);
+  }, [authState.currentCredentials.username]);
 
   // //// edit event
   // useEffect(() => {
@@ -103,6 +103,9 @@ const Profile = ({navigation}): JSX.Element => {
   // }, [editMode]);
 
   const _getUserProfileData = async (author: string) => {
+    // clear author posts
+    clearPosts(PostsTypes.AUTHOR);
+    // start fetching
     setFetching(true);
     // fetch user profile data
     const _profileData = await getUserProfileData(author);
