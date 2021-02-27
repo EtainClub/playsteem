@@ -356,7 +356,7 @@ const PostDetails = (props: Props): JSX.Element => {
     <PostDetailsScreen
       post={postDetails}
       loading={loading}
-      parentPost={postDetails}
+      parentPost={parentPost}
       postsType={postsState.postsType}
       index={postIndex}
       comments={comments}

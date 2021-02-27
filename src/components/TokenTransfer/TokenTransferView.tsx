@@ -13,6 +13,7 @@ const {width, height} = Dimensions.get('window');
 //// coponents
 
 interface Props {
+  isSBD: boolean;
   title: string;
   showModal: boolean;
   username: string;
@@ -44,6 +45,7 @@ const TokenTransferView = (props: Props): JSX.Element => {
   //// props
   const {
     showModal,
+    isSBD,
     title,
     username,
     recipient,
@@ -137,10 +139,15 @@ const TokenTransferView = (props: Props): JSX.Element => {
             </Block>
             <TouchableOpacity onPress={() => props.handleAmountChange(balance)}>
               <Text color={argonTheme.COLORS.FACEBOOK} style={{left: 80}}>
-                {intl.formatMessage(
-                  {id: 'TokenTransfer.balance'},
-                  {what: balance},
-                )}
+                {isSBD
+                  ? intl.formatMessage(
+                      {id: 'TokenTransfer.sbd_balance'},
+                      {what: balance},
+                    )
+                  : intl.formatMessage(
+                      {id: 'TokenTransfer.steem_balance'},
+                      {what: balance},
+                    )}
               </Text>
             </TouchableOpacity>
             <Text color="red">{amountMessage}</Text>

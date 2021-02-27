@@ -35,7 +35,7 @@ interface Props {
 const ParentPostView = (props: Props): JSX.Element => {
   //// props
   const {post} = props;
-  console.log('[ParentPostView] post', post);
+  //  console.log('[ParentPostView] post', post);
   //// language
   const intl = useIntl();
   //// contexts

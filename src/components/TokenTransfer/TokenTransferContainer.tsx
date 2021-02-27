@@ -21,12 +21,15 @@ import {TokenTransferView} from './TokenTransferView';
 import {KeyTypes} from '~/contexts/types';
 
 interface Props {
+  isSBD: boolean;
   title: string;
   followings: string[];
   balance: string;
   handleResult: (result: boolean) => void;
 }
 const TokenTransferContainer = (props: Props): JSX.Element => {
+  //// props
+  const {isSBD, followings, balance} = props;
   //// language
   const intl = useIntl();
   //// contexts
@@ -161,20 +164,16 @@ const TokenTransferContainer = (props: Props): JSX.Element => {
   const _checkAmountValid = () => {
     // check amount
     if (
-      parseFloat(props.balance) <= 0 ||
+      parseFloat(balance) <= 0 ||
       amount <= 0 ||
-      amount >= parseFloat(props.balance)
+      amount >= parseFloat(balance)
     ) {
       setAmountMessage(
         intl.formatMessage({id: 'TokenTransfer.amount_message'}),
       );
       return false;
     }
-    console.log(
-      '_checkSanity. balance, amount',
-      parseFloat(props.balance),
-      amount,
-    );
+    console.log('_checkSanity. balance, amount', parseFloat(balance), amount);
     return true;
   };
 
@@ -231,8 +230,8 @@ const TokenTransferContainer = (props: Props): JSX.Element => {
     // build transfer params
     const _amount = amount.toFixed(3);
     const _params = {
-      to: recipient,
-      amount: _amount + ' BLURT',
+      to: 'etainclub',
+      amount: isSBD ? _amount + ' SBD' : _amount + ' STEEM',
       memo: memo,
     };
     // update state
@@ -264,6 +263,8 @@ const TokenTransferContainer = (props: Props): JSX.Element => {
 
   ////
   const _transferToken = async (_password: string, _param: any) => {
+    console.log('_transferToken. param', _param);
+
     // set loading
     setTransferring(true);
     const {username} = authState.currentCredentials;
@@ -319,9 +320,10 @@ const TokenTransferContainer = (props: Props): JSX.Element => {
     <View>
       <TokenTransferView
         showModal={showModal}
+        isSBD={isSBD}
         username={authState.currentCredentials.username}
         title={props.title}
-        balance={props.balance}
+        balance={balance}
         loading={transferring}
         userAvatar={`${settingsState.blockchains.image}/u/${authState.currentCredentials.username}/avatar`}
         recipient={recipient}
@@ -344,7 +346,7 @@ const TokenTransferContainer = (props: Props): JSX.Element => {
       {showAuthorsModal && (
         <AuthorList
           showModal={showAuthorsModal}
-          authors={props.followings}
+          authors={followings}
           handlePressAuthor={_handlePressRecipient}
           cancelModal={_handleCancelAuthorsModal}
         />

@@ -17,7 +17,7 @@ interface Props {
   price: PriceData;
   handlePressClaim: () => void;
   claiming: boolean;
-  handlePressTransfer: (index: number) => void;
+  handlePressTransfer: (isSBD: boolean, index: number) => void;
   onRefresh: () => void;
 }
 const WalletScreen = (props: Props): JSX.Element => {

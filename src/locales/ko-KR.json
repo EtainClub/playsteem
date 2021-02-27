@@ -276,7 +276,8 @@
     "change_master": "마스터 암호 변경하기 (비활성화)",
     "from": "송신자",
     "to": "수신자",
-    "token_transfer_title": "계정에 송금",
+    "steem_transfer_title": "STEEM 송금",
+    "sbd_transfer_title": "SBD 송금",
     "need_higher_key": "상위의 키로 로그인 해주세요."
   },
   "Transaction": {
@@ -296,11 +297,12 @@
     "empty_recipient": "수신자를 입력해야 합니다.",
     "amount_message": "금액을 확인하세요.",
     "error": "오류가 발생했습니다. 메시지를 확인하세요.",
-    "balance": "잔고 {what} STEEM",
+    "steem_balance": "Balance: {what} STEEM",
+    "sbd_balance": "Balance: {what} SBD",
     "amount": "금액",
     "memo": "메모",
     "memo_message": "이 메모는 누구나 볼 수 있습니다.",
-    "invaild_pass": "키가 올바르지 않습니다.",
+    "invalid_pass": "키가 올바르지 않습니다.",
     "need_higher_key": "상위의 키가 필요합니다.",
     "success": "송금되었습니다.",
     "fail": "송금 실패"

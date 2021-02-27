@@ -29,7 +29,7 @@ interface Props {
   claiming?: boolean;
   showTransactions?: boolean;
   price?: PriceData;
-  handlePressTransfer?: (index: number) => void;
+  handlePressTransfer?: (isSBD: boolean, index: number) => void;
   onRefresh: () => void;
 }
 const WalletStatsView = (props: Props): JSX.Element => {
@@ -52,7 +52,9 @@ const WalletStatsView = (props: Props): JSX.Element => {
   const {setToastMessage} = useContext(UIContext);
   //// states
   const [powerIndex, setPowerIndex] = useState(0);
-  const [blurtIndex, setBlurtIndex] = useState(0);
+  const [steemIndex, setSteemIndex] = useState(0);
+  const [sbdIndex, setSBDIndex] = useState(0);
+
   const [savingsIndex, setSavingsIndex] = useState(0);
   const [reloading, setReloading] = useState(false);
   //// constants
@@ -60,11 +62,17 @@ const WalletStatsView = (props: Props): JSX.Element => {
     intl.formatMessage({id: 'Wallet.dropdown_powerdown'}),
     intl.formatMessage({id: 'Wallet.dropdown_delegate'}),
   ];
-  const blurtOptions = [
+  const steemOptions = [
     intl.formatMessage({id: 'Wallet.dropdown_transfer'}),
     intl.formatMessage({id: 'Wallet.dropdown_transfer2savings'}),
     intl.formatMessage({id: 'Wallet.dropdown_powerup'}),
   ];
+  const sbdOptions = [
+    intl.formatMessage({id: 'Wallet.dropdown_transfer'}),
+    intl.formatMessage({id: 'Wallet.dropdown_transfer2savings'}),
+    intl.formatMessage({id: 'Wallet.dropdown_powerup'}),
+  ];
+
   const savingsOptions = [intl.formatMessage({id: 'Wallet.dropdown_withdraw'})];
 
   // put commas in reward
@@ -140,14 +148,18 @@ const WalletStatsView = (props: Props): JSX.Element => {
     </Block>
   );
 
-  const _onSelectBlurtOption = (index: number, value: string) => {
-    console.log('[_onSelectBlurtOption] index, value', index, value);
-    props.handlePressTransfer(index);
+  const _onSelectSteemOption = (index: number, value: string) => {
+    console.log('[_onSelectSteemOption] index, value', index, value);
+    props.handlePressTransfer(false, index);
   };
 
   const _onSelectPowerOption = (index: number, value: string) => {
     console.log('[_onSelectPowerOption] index, value', index, value);
     setToastMessage('Not supported yet');
+  };
+  const _onSelectSBDOption = (index: number, value: string) => {
+    console.log('[_onSelectSBDOption] index, value', index, value);
+    props.handlePressTransfer(true, index);
   };
 
   const _onSelectSavingsOption = (index: number, value: string) => {
@@ -171,8 +183,8 @@ const WalletStatsView = (props: Props): JSX.Element => {
               <Text>STEEM</Text>
               <Block row middle>
                 <DropdownModal
-                  key={blurtIndex}
-                  options={blurtOptions}
+                  key={steemIndex}
+                  options={steemOptions}
                   defaultText={`${balance} STEEM`}
                   dropdownButtonStyle={styles.dropdownButtonStyle}
                   selectedOptionIndex={-1}
@@ -180,7 +192,7 @@ const WalletStatsView = (props: Props): JSX.Element => {
                   style={styles.dropdown}
                   dropdownStyle={styles.dropdownStyle}
                   textStyle={styles.dropdownText}
-                  onSelect={_onSelectBlurtOption}
+                  onSelect={_onSelectSteemOption}
                 />
               </Block>
             </Block>
@@ -219,7 +231,7 @@ const WalletStatsView = (props: Props): JSX.Element => {
               <Text>STEEM DOLLARS</Text>
               <Block row middle>
                 <DropdownModal
-                  key={powerIndex}
+                  key={sbdIndex}
                   defaultText={`$${balanceSBD}`}
                   dropdownButtonStyle={styles.dropdownButtonStyle}
                   selectedOptionIndex={-1}
@@ -227,8 +239,8 @@ const WalletStatsView = (props: Props): JSX.Element => {
                   style={styles.dropdown}
                   dropdownStyle={styles.dropdownStyle}
                   textStyle={styles.dropdownText}
-                  options={powerOptions}
-                  onSelect={_onSelectPowerOption}
+                  options={sbdOptions}
+                  onSelect={_onSelectSBDOption}
                 />
               </Block>
             </Block>

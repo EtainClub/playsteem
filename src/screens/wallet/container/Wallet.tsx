@@ -39,6 +39,7 @@ const Wallet = (props: Props): JSX.Element => {
   const [price, setPrice] = useState<PriceData>();
   const [showTransferModal, setShowTransferModal] = useState(false);
   const [followingList, setFollowingList] = useState([]);
+  const [isSBD, setIsSBD] = useState(false);
   //////// events
   //// event: mount
   useEffect(() => {
@@ -124,8 +125,9 @@ const Wallet = (props: Props): JSX.Element => {
   };
 
   ////
-  const _handlePressTransfer = (index: number) => {
-    console.log('_handlePressTransfer', index);
+  const _handlePressTransfer = (_isSBD: boolean, index: number) => {
+    console.log('_handlePressTransfer. sdb?', _isSBD, index);
+    setIsSBD(_isSBD);
     if (index > 0) {
       setToastMessage('Not supported yet');
       return;
@@ -145,9 +147,14 @@ const Wallet = (props: Props): JSX.Element => {
 
   return showTransferModal ? (
     <TokenTransfer
-      title={intl.formatMessage({id: 'Wallet.token_transfer_title'})}
+      isSBD={isSBD}
+      title={
+        isSBD
+          ? intl.formatMessage({id: 'Wallet.sbd_transfer_title'})
+          : intl.formatMessage({id: 'Wallet.steem_transfer_title'})
+      }
       followings={followingList}
-      balance={walletData.balance}
+      balance={isSBD ? walletData.balanceSBD : walletData.balance}
       handleResult={_handleTransferResult}
     />
   ) : (

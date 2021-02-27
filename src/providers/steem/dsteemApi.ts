@@ -1481,7 +1481,7 @@ export enum TransactionReturnCodes {
   'TRANSACTION_SUCCESS',
 }
 
-//// transfer token
+//// transfer token (sbd or steem)
 export const transferToken = async (
   username: string,
   password: string,
@@ -1511,10 +1511,14 @@ export const transferToken = async (
       amount: get(params, 'amount'),
       memo: get(params, 'memo'),
     };
-    const result = await client.broadcast.transfer(args, privateKey);
-    console.log('[transferToken] result', result);
-    if (result) return TransactionReturnCodes.TRANSACTION_SUCCESS;
-    else return TransactionReturnCodes.TRANSACTION_ERROR;
+    try {
+      const result = await client.broadcast.transfer(args, privateKey);
+      console.log('[transferToken] result', result);
+      if (result) return TransactionReturnCodes.TRANSACTION_SUCCESS;
+      else return TransactionReturnCodes.TRANSACTION_ERROR;
+    } catch (error) {
+      console.log('failed to send token', error);
+    }
   }
   return TransactionReturnCodes.INVALID_PASSWORD;
 };
