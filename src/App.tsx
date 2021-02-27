@@ -64,25 +64,30 @@ const App = () => {
     // detect default language
     let _locale = RNLocalize.getLocales()[0].languageTag;
     // check if there is a preferred language stored in the storage
-    const _languages = await AsyncStorage.getItem('languages');
-    if (_languages) {
-      const languages = JSON.parse(_languages);
-      _locale = languages.locale;
-    } else {
-      // check if the preferred language is supported by tha app
-      if (!SUPPORTED_LOCALES.find((locale) => locale.locale === _locale)) {
-        console.log(
-          'the preferred language is not supported. preferred langage',
-          _locale,
-        );
+    let _languages = null;
+    try {
+      _languages = await AsyncStorage.getItem('languages');
+      if (_languages) {
+        const languages = JSON.parse(_languages);
+        _locale = languages.locale;
       } else {
-        // store the locale and translation in the storage
-        const _languages = {
-          locale: _locale,
-          translation: _locale.split('-')[0].toUpperCase(),
-        };
-        AsyncStorage.setItem('languages', JSON.stringify(_languages));
+        // check if the preferred language is supported by tha app
+        if (!SUPPORTED_LOCALES.find((locale) => locale.locale === _locale)) {
+          console.log(
+            'the preferred language is not supported. preferred langage',
+            _locale,
+          );
+        } else {
+          // store the locale and translation in the storage
+          const _languages = {
+            locale: _locale,
+            translation: _locale.split('-')[0].toUpperCase(),
+          };
+          AsyncStorage.setItem('languages', JSON.stringify(_languages));
+        }
       }
+    } catch (error) {
+      console.log('failed to get languages from storage', error);
     }
     console.log('[App] locale', _locale);
     setLocale(_locale);

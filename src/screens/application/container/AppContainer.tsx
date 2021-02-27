@@ -75,6 +75,8 @@ export const AppContainer = (props: Props): JSX.Element => {
   ): void => {
     console.log('_handleRemoteMessages. message', message);
 
+    debugger;
+
     // get notification data
     const msgData = message.data;
     // sanity check

@@ -112,6 +112,8 @@ const PostDetails = (props: Props): JSX.Element => {
         console.log('need fetching details response');
         // set details
         setPostDetails(details);
+        // set original details
+        setOriginalPostDetails(details);
         // clear flag
         setNeedFetching(false);
       });
@@ -131,6 +133,8 @@ const PostDetails = (props: Props): JSX.Element => {
     console.log('_fetchPostDetailsEntry post state', postsState.postRef);
     // check sanity
     if (!postsState.postRef.author) return;
+    // clear translation
+    setTranslatedPostDetails(null);
     // clear comments
     setComments(null);
     // clear the previous post
