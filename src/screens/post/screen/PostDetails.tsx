@@ -51,7 +51,6 @@ const PostDetailsScreen = (props: Props): JSX.Element => {
   //// props
   const {post, comments} = props;
   const {state} = post;
-  console.log('[PostDetailsScreen] post state', state);
   const {nickname} = state;
   const {tags} = post.metadata;
   const reputation = state.reputation.toFixed(0);
@@ -167,9 +166,11 @@ const PostDetailsScreen = (props: Props): JSX.Element => {
               />
             </Block>
           </Block>
-          <Block style={{marginBottom: 100}}>
-            <Comments postRef={post.state.post_ref} comments={comments} />
-          </Block>
+          {comments && (
+            <Block style={{marginBottom: 100}}>
+              <Comments postRef={post.state.post_ref} comments={comments} />
+            </Block>
+          )}
         </ScrollView>
       </Block>
     </KeyboardAvoidingView>

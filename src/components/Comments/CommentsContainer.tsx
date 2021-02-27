@@ -33,9 +33,9 @@ const CommentsContainer = (props: Props): JSX.Element => {
   const [comments, setComments] = useState<CommentData[]>([]);
   //// effects
   // effect: mount
-  useEffect(() => {
-    _fetchComments();
-  }, []);
+  // useEffect(() => {
+  //   _fetchComments();
+  // }, []);
   // event: comments prop
   useEffect(() => {
     // fetch comments if no comments are given

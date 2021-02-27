@@ -71,10 +71,9 @@ const PostDetails = (props: Props): JSX.Element => {
   const [comments, setComments] = useState<CommentData[]>(null);
   const [submitted, setSubmitted] = useState(false);
   const [parentPost, setParentPost] = useState<PostData>(null);
-  // tts
-  const [speaking, setSpeaking] = useState(false);
+  const [needFetching, setNeedFetching] = useState(false);
   //////// events
-  //// event: mount
+  // event: mount
   // useEffect(() => {
   //   _fetchPostDetailsEntry();
   //   // update vote amount
@@ -88,6 +87,10 @@ const PostDetails = (props: Props): JSX.Element => {
       // fetch post
       _fetchPostDetailsEntry();
     }
+    // update the vote amount
+    if (authState.loggedIn) {
+      updateVoteAmount(authState.currentCredentials.username);
+    }
   }, [postsState.postRef.author, postsState.postRef.permlink]);
 
   //// event: parent post exists
@@ -98,7 +101,22 @@ const PostDetails = (props: Props): JSX.Element => {
       _fetchParentPost(postDetails.state.parent_ref);
     }
   }, [postDetails]);
-
+  //// event: need to fetch details
+  useEffect(() => {
+    if (needFetching) {
+      // get post details
+      getPostDetails(
+        postsState.postRef,
+        authState.currentCredentials.username,
+      ).then((details) => {
+        console.log('need fetching details response');
+        // set details
+        setPostDetails(details);
+        // clear flag
+        setNeedFetching(false);
+      });
+    }
+  }, [needFetching]);
   //// event: on blur
   useEffect(() => {
     const unsubscribe = navigation.addListener('blur', () => {
@@ -113,6 +131,8 @@ const PostDetails = (props: Props): JSX.Element => {
     console.log('_fetchPostDetailsEntry post state', postsState.postRef);
     // check sanity
     if (!postsState.postRef.author) return;
+    // clear comments
+    setComments(null);
     // clear the previous post
     setPostDetails(null);
     // remove the parent post
@@ -123,6 +143,8 @@ const PostDetails = (props: Props): JSX.Element => {
     if (!refresh && postsState.postDetails) {
       details = postsState.postDetails;
       console.log('[Post] post details exits', details);
+      // fetch details
+      setNeedFetching(true);
     } else {
       // get post details
       details = await getPostDetails(
@@ -130,12 +152,6 @@ const PostDetails = (props: Props): JSX.Element => {
         authState.currentCredentials.username,
       );
     }
-
-    // get post details
-    // const details = await getPostDetails(
-    //   postsState.postRef,
-    //   authState.currentCredentials.username,
-    // );
 
     // set post details
     setPostDetails(details);
@@ -153,8 +169,10 @@ const PostDetails = (props: Props): JSX.Element => {
       if (bookmarked) details.state.bookmarked = bookmarked;
     }
 
-    // fetch comments
-    //    _fetchComments();
+    // fetch comments only if they exist
+    if (details.children > 0) {
+      _fetchComments();
+    }
   };
 
   const _fetchParentPost = async (postRef: PostRef) => {

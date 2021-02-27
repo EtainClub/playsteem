@@ -72,8 +72,6 @@ const ActionBarView = (props: Props): JSX.Element => {
   // language
   const intl = useIntl();
 
-  console.log('[ActionBarView] post state', postState);
-
   // show only limited number of voters
   const _limitVoters = () => {
     let voters = postState.voters;

@@ -431,7 +431,6 @@ const Posting = (props: Props): JSX.Element => {
   };
 
   const _setItemToStorage = async (key: string, data: any) => {
-    console.log('_setItemToStorage. key, data', key, data);
     // stringify the data
     const dataString = JSON.stringify(data);
     try {
@@ -443,14 +442,19 @@ const Posting = (props: Props): JSX.Element => {
 
   //// get a single item from storage
   const _getDraftFromStorage = async () => {
-    const _data = await AsyncStorage.getItem(StorageSchema.DRAFT);
-    if (_data) {
-      const data = JSON.parse(_data);
-      console.log('_getDraftFromStorage. data', data);
-      // update
-      setTitle(data.title);
-      setBody(data.body);
-      setTags(data.tags);
+    let _data = null;
+    try {
+      _data = await AsyncStorage.getItem(StorageSchema.DRAFT);
+      if (_data) {
+        const data = JSON.parse(_data);
+        console.log('_getDraftFromStorage. data', data);
+        // update
+        setTitle(data.title);
+        setBody(data.body);
+        setTags(data.tags);
+      }
+    } catch (error) {
+      console.log('failed to get draft from storage', error);
     }
   };
 

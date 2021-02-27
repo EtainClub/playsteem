@@ -39,7 +39,6 @@ const ActionBarContainer = (props: Props): JSX.Element => {
   );
   //// states
   const [postState, setPostState] = useState<PostState>(props.postState);
-  console.log('[ActoinBarContainer] post state', props.postState);
   const [voting, setVoting] = useState(false);
   const [downvoting, setDownvoting] = useState(false);
   const [votingWeight, setVotingWeight] = useState(100);
