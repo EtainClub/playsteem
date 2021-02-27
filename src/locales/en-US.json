@@ -59,7 +59,7 @@
     "msg2": "Easier and safer on Mobiles",
     "msg3": "Play Steem!",
     "button": "Get Started",
-    "logged_in": "{what}로 로그인 되었습니다.",
+    "logged_in": "Logged in as {what}",
     "not_loggedin": "You are not logged in."
   },
   "Signup": {

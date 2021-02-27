@@ -1315,6 +1315,7 @@ export const broadcastProfileUpdate = async (
     ];
     try {
       const result = await client.broadcast.sendOperations(opArray, privateKey);
+      console.log('broadcastProfileUpdate. result', result);
       return result;
     } catch (error) {
       console.log('failed to broadcast profile update', error);
@@ -1511,6 +1512,7 @@ export const transferToken = async (
       amount: get(params, 'amount'),
       memo: get(params, 'memo'),
     };
+    console.log('transferToken. username, args', username, args);
     try {
       const result = await client.broadcast.transfer(args, privateKey);
       console.log('[transferToken] result', result);
@@ -1518,6 +1520,7 @@ export const transferToken = async (
       else return TransactionReturnCodes.TRANSACTION_ERROR;
     } catch (error) {
       console.log('failed to send token', error);
+      return TransactionReturnCodes.TRANSACTION_ERROR;
     }
   }
   return TransactionReturnCodes.INVALID_PASSWORD;

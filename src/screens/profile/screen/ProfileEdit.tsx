@@ -106,6 +106,8 @@ const ProfileEditForm = (props: Props): JSX.Element => {
               color="white"
               placeholder={intl.formatMessage({id: 'Profile.introduction'})}
               placeholderTextColor={theme.COLORS.PLACEHOLDER}
+              autoCapitalize="none"
+              autoCorrect={false}
               bgColor="transparent"
               style={[styles.input, styles.inputActive]}
               defaultValue={about}
@@ -116,6 +118,8 @@ const ProfileEditForm = (props: Props): JSX.Element => {
               color="white"
               placeholder={intl.formatMessage({id: 'Profile.location'})}
               placeholderTextColor={theme.COLORS.PLACEHOLDER}
+              autoCapitalize="none"
+              autoCorrect={false}
               bgColor="transparent"
               style={[styles.input, styles.inputActive]}
               defaultValue={location}
@@ -126,6 +130,8 @@ const ProfileEditForm = (props: Props): JSX.Element => {
               color="white"
               placeholder={intl.formatMessage({id: 'Profile.website'})}
               placeholderTextColor={theme.COLORS.PLACEHOLDER}
+              autoCapitalize="none"
+              autoCorrect={false}
               bgColor="transparent"
               style={[styles.input, styles.inputActive]}
               defaultValue={website}

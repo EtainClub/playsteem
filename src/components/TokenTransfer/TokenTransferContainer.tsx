@@ -230,7 +230,7 @@ const TokenTransferContainer = (props: Props): JSX.Element => {
     // build transfer params
     const _amount = amount.toFixed(3);
     const _params = {
-      to: 'etainclub',
+      to: recipient,
       amount: isSBD ? _amount + ' SBD' : _amount + ' STEEM',
       memo: memo,
     };
@@ -262,14 +262,14 @@ const TokenTransferContainer = (props: Props): JSX.Element => {
   };
 
   ////
-  const _transferToken = async (_password: string, _param: any) => {
-    console.log('_transferToken. param', _param);
+  const _transferToken = async (_password: string, _params: any) => {
+    console.log('_transferToken. param', _params);
 
     // set loading
     setTransferring(true);
     const {username} = authState.currentCredentials;
     // transfer
-    const resultCode = await transferToken(username, _password, params);
+    const resultCode = await transferToken(username, _password, _params);
     //// show toast message
     // toast message
     let message = '';
