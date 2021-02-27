@@ -144,7 +144,7 @@ const PostDetails = (props: Props): JSX.Element => {
     setLoading(true);
 
     let details = null;
-    if (!refresh && postsState.postDetails) {
+    if (!refresh && postsState.postDetails.body) {
       details = postsState.postDetails;
       console.log('[Post] post details exits', details);
       // fetch details
@@ -356,7 +356,7 @@ const PostDetails = (props: Props): JSX.Element => {
     <PostDetailsScreen
       post={postDetails}
       loading={loading}
-      parentPost={parentPost}
+      parentPost={postDetails}
       postsType={postsState.postsType}
       index={postIndex}
       comments={comments}

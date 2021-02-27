@@ -40,6 +40,8 @@ const ParentPostView = (props: Props): JSX.Element => {
   const intl = useIntl();
   //// contexts
   const {setPostRef, setPostDetails} = useContext(PostsContext);
+  //// states
+  const [hideHeader, setHideHeader] = useState(false);
 
   const _handlePressButton = () => {
     // set post ref
@@ -50,23 +52,45 @@ const ParentPostView = (props: Props): JSX.Element => {
     navigate({name: 'PostDetails'});
   };
 
-  return (
-    <Block
-      card
-      center
-      style={{
-        shadowColor: argonTheme.COLORS.FACEBOOK,
-        marginHorizontal: 20,
-        marginVertical: 10,
-        padding: 20,
-      }}>
-      <Text>{intl.formatMessage({id: 'ParentPost.info'})}</Text>
-      <Text size={20} color="blue" bold>
-        {post.state.title}
-      </Text>
-      <Button onPress={_handlePressButton}>
-        {intl.formatMessage({id: 'ParentPost.parent_button'})}
-      </Button>
+  return hideHeader ? (
+    <Block right>
+      <Icon
+        onPress={() => setHideHeader(!hideHeader)}
+        size={20}
+        name="caretdown"
+        family="antdesign"
+      />
+    </Block>
+  ) : (
+    <Block row>
+      <Block
+        card
+        center
+        style={{
+          shadowColor: argonTheme.COLORS.FACEBOOK,
+          marginHorizontal: 5,
+          marginVertical: 3,
+          padding: 3,
+        }}>
+        {/* <Text>{intl.formatMessage({id: 'ParentPost.info'})}</Text> */}
+        <Text size={14} color="blue" bold>
+          {post.state.title}
+        </Text>
+        <Button
+          onPress={_handlePressButton}
+          color={argonTheme.COLORS.STEEM}
+          size="small">
+          {intl.formatMessage({id: 'ParentPost.parent_button'})}
+        </Button>
+      </Block>
+      <Block center>
+        <Icon
+          onPress={() => setHideHeader(!hideHeader)}
+          size={20}
+          name="caretup"
+          family="antdesign"
+        />
+      </Block>
     </Block>
   );
 };

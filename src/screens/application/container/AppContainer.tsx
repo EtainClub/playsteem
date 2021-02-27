@@ -75,8 +75,6 @@ export const AppContainer = (props: Props): JSX.Element => {
   ): void => {
     console.log('_handleRemoteMessages. message', message);
 
-    debugger;
-
     // get notification data
     const msgData = message.data;
     // sanity check
@@ -120,6 +118,8 @@ export const AppContainer = (props: Props): JSX.Element => {
       default:
         break;
     }
+    // no navigation if route is null
+    if (!route) return;
     // navigate if the app is in background
     if (background) {
       navigate({name: route});
