@@ -307,6 +307,11 @@
     "success": "송금되었습니다.",
     "fail": "송금 실패"
   },
+  "Powerup": {
+    "title": "스팀파워 업",
+    "description": "스팀파워는 교환이 안되는 토큰이며, 교환이 가능한 STEEM으로 바꾸는데 1개월 (4번에 걸쳐) 걸립니다",
+    "button": "파워 업"
+  },
   "SecureKey": {
     "title": "암호 요구",
     "password_placeholder": "패스워드 (Wallet Import Format 또는 마스터 암호)",

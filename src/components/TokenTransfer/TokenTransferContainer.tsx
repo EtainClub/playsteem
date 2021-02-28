@@ -166,7 +166,7 @@ const TokenTransferContainer = (props: Props): JSX.Element => {
     if (
       parseFloat(balance) <= 0 ||
       amount <= 0 ||
-      amount >= parseFloat(balance)
+      amount > parseFloat(balance)
     ) {
       setAmountMessage(
         intl.formatMessage({id: 'TokenTransfer.amount_message'}),

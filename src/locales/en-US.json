@@ -307,6 +307,11 @@
     "success": "Transferred",
     "fail": "Failed to transfer"
   },
+  "Powerup": {
+    "title": "STEEM POWER Up",
+    "description": "STEEM POWER is non-transferable and requires 1 month (4 payments) to convert back to Steem.",
+    "button": "Power Up"
+  },
   "SecureKey": {
     "title": "Password Required",
     "password_placeholder": "Password (Wallet Import Format or Master Password)",

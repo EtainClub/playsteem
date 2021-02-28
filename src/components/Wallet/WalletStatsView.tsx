@@ -29,7 +29,8 @@ interface Props {
   claiming?: boolean;
   showTransactions?: boolean;
   price?: PriceData;
-  handlePressTransfer?: (isSBD: boolean, index: number) => void;
+  handleTransferPress?: (isSBD: boolean, index: number) => void;
+  handlePowerupPress?: () => void;
   onRefresh: () => void;
 }
 const WalletStatsView = (props: Props): JSX.Element => {
@@ -64,13 +65,12 @@ const WalletStatsView = (props: Props): JSX.Element => {
   ];
   const steemOptions = [
     intl.formatMessage({id: 'Wallet.dropdown_transfer'}),
-    intl.formatMessage({id: 'Wallet.dropdown_transfer2savings'}),
     intl.formatMessage({id: 'Wallet.dropdown_powerup'}),
+    intl.formatMessage({id: 'Wallet.dropdown_transfer2savings'}),
   ];
   const sbdOptions = [
     intl.formatMessage({id: 'Wallet.dropdown_transfer'}),
     intl.formatMessage({id: 'Wallet.dropdown_transfer2savings'}),
-    intl.formatMessage({id: 'Wallet.dropdown_powerup'}),
   ];
 
   const savingsOptions = [intl.formatMessage({id: 'Wallet.dropdown_withdraw'})];
@@ -150,16 +150,48 @@ const WalletStatsView = (props: Props): JSX.Element => {
 
   const _onSelectSteemOption = (index: number, value: string) => {
     console.log('[_onSelectSteemOption] index, value', index, value);
-    props.handlePressTransfer(false, index);
+    switch (index) {
+      case 0:
+        props.handleTransferPress(false, index);
+        break;
+      case 1:
+        props.handlePowerupPress();
+        break;
+      case 2:
+        break;
+      default:
+        break;
+    }
   };
 
   const _onSelectPowerOption = (index: number, value: string) => {
     console.log('[_onSelectPowerOption] index, value', index, value);
-    setToastMessage('Not supported yet');
+    switch (index) {
+      case 0:
+        break;
+      case 1:
+        break;
+      case 2:
+        break;
+      default:
+        break;
+    }
   };
+
   const _onSelectSBDOption = (index: number, value: string) => {
     console.log('[_onSelectSBDOption] index, value', index, value);
-    props.handlePressTransfer(true, index);
+    switch (index) {
+      case 0:
+        props.handleTransferPress(false, index);
+        break;
+      case 1:
+        props.handlePowerupPress();
+        break;
+      case 2:
+        break;
+      default:
+        break;
+    }
   };
 
   const _onSelectSavingsOption = (index: number, value: string) => {

@@ -10,7 +10,7 @@ import {WalletData, KeyTypes, PriceData} from '~/contexts/types';
 //// blockchain
 import {claimRewardBalance} from '~/providers/steem/dsteemApi';
 //// components
-import {TokenTransfer} from '~/components';
+//import {TokenTransfer} from '~/components';
 //// vies
 import {WalletScreen} from '../screen/Wallet';
 
@@ -38,6 +38,7 @@ const Wallet = (props: Props): JSX.Element => {
   const [claiming, setClaiming] = useState(false);
   const [price, setPrice] = useState<PriceData>();
   const [showTransferModal, setShowTransferModal] = useState(false);
+  const [showPowerupModal, setShowPowerupModal] = useState(false);
   const [followingList, setFollowingList] = useState([]);
   const [isSBD, setIsSBD] = useState(false);
   //////// events
@@ -124,14 +125,11 @@ const Wallet = (props: Props): JSX.Element => {
     setClaiming(false);
   };
 
+  //////// transfer
   ////
-  const _handlePressTransfer = (_isSBD: boolean, index: number) => {
+  const _handleTransferPress = (_isSBD: boolean, index: number) => {
     console.log('_handlePressTransfer. sdb?', _isSBD, index);
     setIsSBD(_isSBD);
-    if (index > 0) {
-      setToastMessage('Not supported yet');
-      return;
-    }
     setShowTransferModal(true);
   };
 
@@ -145,28 +143,68 @@ const Wallet = (props: Props): JSX.Element => {
     }
   };
 
-  return showTransferModal ? (
-    <TokenTransfer
-      isSBD={isSBD}
-      title={
-        isSBD
-          ? intl.formatMessage({id: 'Wallet.sbd_transfer_title'})
-          : intl.formatMessage({id: 'Wallet.steem_transfer_title'})
-      }
-      followings={followingList}
-      balance={isSBD ? walletData.balanceSBD : walletData.balance}
-      handleResult={_handleTransferResult}
-    />
-  ) : (
+  //////// powerup
+  ////
+  const _handlePowerupPress = () => {
+    // clear sbd flag
+    setIsSBD(false);
+    setShowPowerupModal(true);
+  };
+
+  ////
+  const _handlePowerupResult = (result: boolean) => {
+    // hide powerup modal
+    setShowPowerupModal(false);
+    // refresh wallet if result is successulf
+    if (result) {
+      _getWalletData();
+    }
+  };
+
+  return (
     <WalletScreen
       walletData={walletData}
       handlePressClaim={_handlePressClaim}
       claiming={claiming}
       price={price}
       onRefresh={_getWalletData}
-      handlePressTransfer={_handlePressTransfer}
+      followingList={followingList}
+      showTransfer={showTransferModal}
+      isSBD={isSBD}
+      showPowerup={showPowerupModal}
+      balance={isSBD ? walletData.balanceSBD : walletData.balance}
+      handleTransferPress={_handleTransferPress}
+      handleTransferResult={_handleTransferResult}
+      handlePowerupPress={_handlePowerupPress}
+      handlePowerupResult={_handlePowerupResult}
     />
   );
+
+  // return showTransferModal ? (
+  //   <TokenTransfer
+  //     isSBD={isSBD}
+  //     title={
+  //       isSBD
+  //         ? intl.formatMessage({id: 'Wallet.sbd_transfer_title'})
+  //         : intl.formatMessage({id: 'Wallet.steem_transfer_title'})
+  //     }
+  //     followings={followingList}
+  //     balance={isSBD ? walletData.balanceSBD : walletData.balance}
+  //     handleResult={_handleTransferResult}
+  //   />
+  // ) : (
+  //   <WalletScreen
+  //     walletData={walletData}
+  //     handlePressClaim={_handlePressClaim}
+  //     claiming={claiming}
+  //     price={price}
+  //     onRefresh={_getWalletData}
+  //     showPowerup={showPowerupModal}
+  //     handleTransferPress={_handleTransferPress}
+  //     handlePowerupPress={_handlePowerupPress}
+  //     handlePowerupResult={_handlePowerupResult}
+  //   />
+  // );
 };
 
 export {Wallet};

@@ -16,6 +16,7 @@ import {ParentPost} from './ParentPost';
 import {PostBody} from './PostBody';
 import {PostsFeed} from './PostsFeed';
 import {PostsListView} from './PostsList';
+import {Powerup} from './Powerup';
 import {ProfileContainer} from './Profile';
 import {SecureKey} from './SecureKey';
 import {TokenTransfer} from './TokenTransfer';
@@ -40,6 +41,7 @@ export {
   PostsFeed,
   PostsListView,
   PostBody,
+  Powerup,
   ProfileContainer,
   SecureKey,
   TokenTransfer,

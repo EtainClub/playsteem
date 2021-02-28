@@ -8,7 +8,12 @@ import {useIntl} from 'react-intl';
 import {Block, Icon, Button, Input, Text, theme} from 'galio-framework';
 import {TabView, SceneMap} from 'react-native-tab-view';
 import {argonTheme} from '~/constants';
-import {WalletStatsView, WalletKeyView} from '~/components';
+import {
+  WalletStatsView,
+  WalletKeyView,
+  TokenTransfer,
+  Powerup,
+} from '~/components';
 import {KeyTypes, PriceData} from '~/contexts/types';
 import {WalletData} from '~/contexts/types';
 
@@ -17,7 +22,15 @@ interface Props {
   price: PriceData;
   handlePressClaim: () => void;
   claiming: boolean;
-  handlePressTransfer: (isSBD: boolean, index: number) => void;
+  followingList: string[];
+  showTransfer: boolean;
+  isSBD: boolean;
+  showPowerup?: boolean;
+  balance: string;
+  handleTransferPress: (isSBD: boolean, index: number) => void;
+  handleTransferResult: (result: boolean) => void;
+  handlePowerupPress: () => void;
+  handlePowerupResult: (result: boolean) => void;
   onRefresh: () => void;
 }
 const WalletScreen = (props: Props): JSX.Element => {
@@ -32,17 +45,52 @@ const WalletScreen = (props: Props): JSX.Element => {
     {key: 'keys', title: intl.formatMessage({id: 'Wallet.keys'})},
   ]);
 
-  const WalletStats = () => (
-    <WalletStatsView
-      walletData={props.walletData}
-      isUser
-      handlePressClaim={props.handlePressClaim}
-      claiming={props.claiming}
-      price={props.price}
-      onRefresh={props.onRefresh}
-      handlePressTransfer={props.handlePressTransfer}
-    />
-  );
+  const WalletStats = () => {
+    //// props
+    const {
+      claiming,
+      price,
+      isSBD,
+      showTransfer,
+      showPowerup,
+      followingList,
+      balance,
+    } = props;
+    return (
+      <Block>
+        <WalletStatsView
+          walletData={props.walletData}
+          isUser
+          handlePressClaim={props.handlePressClaim}
+          claiming={claiming}
+          price={price}
+          onRefresh={props.onRefresh}
+          handleTransferPress={props.handleTransferPress}
+          handlePowerupPress={props.handlePowerupPress}
+        />
+        {showTransfer && (
+          <TokenTransfer
+            isSBD={isSBD}
+            title={
+              props.isSBD
+                ? intl.formatMessage({id: 'Wallet.sbd_transfer_title'})
+                : intl.formatMessage({id: 'Wallet.steem_transfer_title'})
+            }
+            followings={followingList}
+            balance={balance}
+            handleResult={props.handleTransferResult}
+          />
+        )}
+        {props.showPowerup && (
+          <Powerup
+            title={intl.formatMessage({id: 'Powerup.title'})}
+            balance={balance}
+            handleResult={props.handlePowerupResult}
+          />
+        )}
+      </Block>
+    );
+  };
 
   const WalletKeys = () => {
     return (

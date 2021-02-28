@@ -1526,6 +1526,52 @@ export const transferToken = async (
   return TransactionReturnCodes.INVALID_PASSWORD;
 };
 
+//// transfer steem to vesting
+export const transferToVesting = async (
+  username: string,
+  password: string,
+  params: {
+    amount: string;
+  },
+): Promise<TransactionReturnCodes> => {
+  // get key type
+  const {account, keyType} = await verifyPassoword(username, password);
+  // check sanity
+  if (!account) {
+    return TransactionReturnCodes.NO_ACCOUNT;
+  }
+  // check key level: active or higher
+  if (keyType < KeyTypes.ACTIVE) {
+    return TransactionReturnCodes.NEED_HIGHER_PASSWORD;
+  }
+  // get privake key from password wif
+  const privateKey = PrivateKey.from(password);
+  // transfer
+  if (privateKey) {
+    const args = [
+      [
+        'transfer_to_vesting',
+        {
+          from: username,
+          to: username,
+          amount: get(params, 'amount'),
+        },
+      ],
+    ];
+    console.log('transferToVesting. username, args', username, args);
+    try {
+      const result = await client.broadcast.sendOperations(args, privateKey);
+      console.log('[transferToVesting] result', result);
+      if (result) return TransactionReturnCodes.TRANSACTION_SUCCESS;
+      else return TransactionReturnCodes.TRANSACTION_ERROR;
+    } catch (error) {
+      console.log('failed to transfer to vesting', error);
+      return TransactionReturnCodes.TRANSACTION_ERROR;
+    }
+  }
+  return TransactionReturnCodes.INVALID_PASSWORD;
+};
+
 //////////////// Utils /////////////////////////////////
 
 export const calculateReputation = (reputation: number) => {
