@@ -1408,6 +1408,7 @@ export const fetchWalletData = async (username: string) => {
       const power = vestToSteem(sumShares);
       // build wallet data
       const walletData: WalletData = {
+        fetched: true,
         balance: balance.split(' ')[0],
         balanceSBD: sbd_balance.split(' ')[0],
         power: power,

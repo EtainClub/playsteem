@@ -25,7 +25,9 @@ const Feed = (props: Props): JSX.Element => {
   } = useContext(PostsContext);
   const {authState} = useContext(AuthContext);
   const {uiState, setToastMessage} = useContext(UIContext);
-  const {userState, getUserProfileData} = useContext(UserContext);
+  const {userState, getUserProfileData, getWalletData} = useContext(
+    UserContext,
+  );
   //// states
   const [username, setUsername] = useState(
     authState.currentCredentials.username,
@@ -47,7 +49,11 @@ const Feed = (props: Props): JSX.Element => {
     _fetchPosts(false);
     // fetch user profile
     if (authState.loggedIn) {
-      getUserProfileData(authState.currentCredentials.username);
+      const {username} = authState.currentCredentials;
+      // get profile data
+      getUserProfileData(username);
+      // get wallet data
+      getWalletData(username);
     }
   }, []);
 

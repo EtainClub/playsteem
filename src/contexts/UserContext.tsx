@@ -60,6 +60,7 @@ const initialState = {
     chainProps: {},
   },
   walletData: {
+    fetched: false,
     balance: '0',
     balanceSBD: '0',
     power: '0',

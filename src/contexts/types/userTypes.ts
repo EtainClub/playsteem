@@ -53,6 +53,8 @@ export interface ProfileData {
 
 //// wallet data
 export interface WalletData {
+  // flag to initially check fetched
+  fetched: boolean;
   // liquid steem
   balance: string;
   // sdb balance

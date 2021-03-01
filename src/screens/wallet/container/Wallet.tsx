@@ -46,8 +46,10 @@ const Wallet = (props: Props): JSX.Element => {
   useEffect(() => {
     if (authState.loggedIn) {
       const {username} = authState.currentCredentials;
-      // fetch user data
-      getWalletData(username);
+      // fetch user data if not fetched
+      if (!userState.walletData.fetched) {
+        getWalletData(username);
+      }
       // fetch price
       getPrice();
       // get following list
