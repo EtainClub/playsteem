@@ -102,13 +102,20 @@ const Profile = ({navigation}): JSX.Element => {
   //   }
   // }, [editMode]);
 
-  const _getUserProfileData = async (author: string) => {
+  const _getUserProfileData = async (author: string, refresh?: boolean) => {
     // clear author posts
     clearPosts(PostsTypes.AUTHOR);
     // start fetching
     setFetching(true);
-    // fetch user profile data
-    const _profileData = await getUserProfileData(author);
+
+    // get if user profile exists, otherwise fetch it
+    let _profileData = null;
+    if (!refresh && userState.profileData.profile.name) {
+      _profileData = userState.profileData;
+    } else {
+      // fetch user profile data
+      _profileData = await getUserProfileData(author);
+    }
     if (!_profileData) {
       console.log('[_getUserProfileData] profile data', profileData);
       setProfileFetched(false);
@@ -356,7 +363,7 @@ const Profile = ({navigation}): JSX.Element => {
     setBlogs(null);
     setRefreshing(true);
     const {username} = authState.currentCredentials;
-    await _getUserProfileData(username);
+    await _getUserProfileData(username, true);
     setRefreshing(false);
   };
 

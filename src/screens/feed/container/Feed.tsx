@@ -7,18 +7,10 @@ import * as Keychain from 'react-native-keychain';
 import {useFocusEffect} from '@react-navigation/native';
 import SplashScreen from 'react-native-splash-screen';
 import {navigate} from '~/navigation/service';
-import {
-  PostRef,
-  PostData,
-  PostsTypes,
-  INIT_FRIENDS_TAG,
-  INIT_MY_TAG,
-  INIT_FILTER_LIST,
-} from '~/contexts/types';
+import {PostRef, PostData, PostsTypes} from '~/contexts/types';
 import {PostsContext, AuthContext, UIContext, UserContext} from '~/contexts';
 
 import {PostsFeed} from '~/components';
-import {NUM_FETCH_POSTS} from '~/constants';
 
 interface Props {}
 
@@ -33,7 +25,7 @@ const Feed = (props: Props): JSX.Element => {
   } = useContext(PostsContext);
   const {authState} = useContext(AuthContext);
   const {uiState, setToastMessage} = useContext(UIContext);
-  const {userState} = useContext(UserContext);
+  const {userState, getUserProfileData} = useContext(UserContext);
   //// states
   const [username, setUsername] = useState(
     authState.currentCredentials.username,
@@ -53,6 +45,10 @@ const Feed = (props: Props): JSX.Element => {
     SplashScreen.hide();
     // initial fetching
     _fetchPosts(false);
+    // fetch user profile
+    if (authState.loggedIn) {
+      getUserProfileData(authState.currentCredentials.username);
+    }
   }, []);
 
   // useEffect(() => {

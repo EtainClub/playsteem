@@ -71,6 +71,7 @@ const ParentPostView = (props: Props): JSX.Element => {
           marginHorizontal: 5,
           marginVertical: 3,
           padding: 3,
+          width: width * 0.8,
         }}>
         {/* <Text>{intl.formatMessage({id: 'ParentPost.info'})}</Text> */}
         <Text size={14} color="blue" bold>
