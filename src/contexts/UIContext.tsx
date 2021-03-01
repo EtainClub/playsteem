@@ -160,37 +160,18 @@ const UIProvider = ({children}: Props) => {
   };
 
   ////
-  const speakBody = (markdown: string, stop?: boolean) => {
+  const speakBody = (_text: string, stop?: boolean) => {
     if (stop) {
       TTS.stop();
       return;
     }
-    if (markdown) {
+    if (_text) {
       TTS.stop();
-      // TODO: handle html too
-      const text = markdown
-        .replace(
-          /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gim,
-          '',
-        )
-        // .replace(/^### (.*$)/gim, '')
-        // .replace(/^## (.*$)/gim, '')
-        // .replace(/^# (.*$)/gim, '')
-        // .replace(/^###/gim, '')
-        // .replace(/^##/gim, '')
-        // .replace(/^#/gim, '')
-        .replace(/[a-zA-Z0-9_]*.(jpg|png)/gim, '')
-        .replace(/%[a-zA-Z0-9]+/gim, '')
-        .replace(/^#+/gim, '')
-        .replace(/!\[(.*?)\]/gim, '')
-        .replace(/^\> (.*$)/gim, '')
-        .replace(/\*\*(.*)\*\*/gim, '')
-        .replace(/\*(.*)\*/gim, '')
-        .replace(/!\[(.*?)\]\((.*?)\)/gim, '')
-        .replace(/\[(.*?)\]\((.*?)\)/gim, '')
-        .replace(/\n$/gim, ' ');
 
-      console.log('tts text', text);
+      const htmlRegex = /(<([^>]+)>)/gm;
+      //      console.log('original text', _text);
+      const text = _text.replace(htmlRegex, ' ');
+      //      console.log('tts text', text);
       TTS.speak(text);
     }
   };

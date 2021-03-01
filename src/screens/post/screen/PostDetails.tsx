@@ -112,7 +112,8 @@ const PostDetailsScreen = (props: Props): JSX.Element => {
             actionBarStyle={ActionBarStylePost}
             postState={state}
             postUrl={post.url}
-            ttsText={post.markdownBody}
+            //            ttsText={post.markdownBody}
+            ttsText={post.body}
             postsType={props.postsType}
             postIndex={props.index}
             handlePressComments={_handlePressComments}
