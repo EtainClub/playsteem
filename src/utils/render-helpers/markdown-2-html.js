@@ -287,31 +287,31 @@ const a = (el, forApp, webp) => {
   }
 
   // TODO: handle blurt post inside the app
-  // If a hive post
-  // const postMatch = href.match(postRegex);
-  // if (postMatch && whiteList.includes(postMatch[1])) {
-  //   el.setAttribute('class', 'markdown-post-link');
+  // If a steemit post
+  const postMatch = href.match(postRegex);
+  if (postMatch && whiteList.includes(postMatch[1])) {
+    el.setAttribute('class', 'markdown-post-link');
 
-  //   const tag = postMatch[2];
-  //   const author = postMatch[3].replace('@', '');
-  //   const permlink = postMatch[4];
-  //   if (el.textContent === href) {
-  //     el.textContent = `@${author}/${permlink}`;
-  //   }
-  //   if (forApp) {
-  //     el.removeAttribute('href');
+    const tag = postMatch[2];
+    const author = postMatch[3].replace('@', '');
+    const permlink = postMatch[4];
+    if (el.textContent === href) {
+      el.textContent = `@${author}/${permlink}`;
+    }
+    if (forApp) {
+      el.removeAttribute('href');
 
-  //     el.setAttribute('data-tag', tag);
-  //     el.setAttribute('data-author', author);
-  //     el.setAttribute('data-permlink', permlink);
-  //   } else {
-  //     const h = `/${tag}/@${author}/${permlink}`;
-  //     el.setAttribute('href', h);
-  //   }
-  //   return;
-  // }
+      el.setAttribute('data-tag', tag);
+      el.setAttribute('data-author', author);
+      el.setAttribute('data-permlink', permlink);
+    } else {
+      const h = `/${tag}/@${author}/${permlink}`;
+      el.setAttribute('href', h);
+    }
+    return;
+  }
 
-  // If a steem user with url
+  // If a steemit user with url
   const mentionMatch = href.match(mentionRegex);
   if (
     mentionMatch &&
@@ -503,73 +503,73 @@ const a = (el, forApp, webp) => {
   }
 
   // Detect 3Speak
-  match = href.match(speakRegex);
-  if (match) {
-    const imgEls = el.getElementsByTagName('img');
+  // match = href.match(speakRegex);
+  // if (match) {
+  //   const imgEls = el.getElementsByTagName('img');
 
-    if (imgEls.length === 1) {
-      const e = speakRegex.exec(href);
-      // e[2] = username, e[3] object id
-      if (e[1]) {
-        el.setAttribute(
-          'class',
-          'markdown-video-link markdown-video-link-speak',
-        );
-        el.removeAttribute('href');
+  //   if (imgEls.length === 1) {
+  //     const e = speakRegex.exec(href);
+  //     // e[2] = username, e[3] object id
+  //     if (e[1]) {
+  //       el.setAttribute(
+  //         'class',
+  //         'markdown-video-link markdown-video-link-speak',
+  //       );
+  //       el.removeAttribute('href');
 
-        const thumbnail = proxifyImageSrc(
-          imgEls[0].getAttribute('src').replace(/\s+/g, ''),
-          0,
-          0,
-          webp ? 'webp' : 'match',
-        );
-        const videoHref = `https://3speak.online/embed?v=${e[1]}`;
+  //       const thumbnail = proxifyImageSrc(
+  //         imgEls[0].getAttribute('src').replace(/\s+/g, ''),
+  //         0,
+  //         0,
+  //         webp ? 'webp' : 'match',
+  //       );
+  //       const videoHref = `https://3speak.online/embed?v=${e[1]}`;
 
-        // el.setAttribute('data-video-href', videoHref);
-        el.setAttribute('data-embed-src', videoHref);
+  //       // el.setAttribute('data-video-href', videoHref);
+  //       el.setAttribute('data-embed-src', videoHref);
 
-        const thumbImg = el.ownerDocument.createElement('img');
-        thumbImg.setAttribute('class', 'no-replace video-thumbnail');
-        thumbImg.setAttribute('itemprop', 'image');
-        thumbImg.setAttribute('src', thumbnail);
+  //       const thumbImg = el.ownerDocument.createElement('img');
+  //       thumbImg.setAttribute('class', 'no-replace video-thumbnail');
+  //       thumbImg.setAttribute('itemprop', 'image');
+  //       thumbImg.setAttribute('src', thumbnail);
 
-        el.appendChild(thumbImg);
+  //       el.appendChild(thumbImg);
 
-        // Remove image.
-        el.removeChild(imgEls[0]);
+  //       // Remove image.
+  //       el.removeChild(imgEls[0]);
 
-        return;
-      }
-    }
-  }
+  //       return;
+  //     }
+  //   }
+  // }
 
-  if (
-    href.indexOf(
-      'https://hivesigner.com/sign/account-witness-vote?witness=',
-    ) === 0
-  ) {
-    if (forApp) {
-      el.setAttribute('class', 'markdown-witnesses-link');
-      el.setAttribute('data-href', href);
-      el.removeAttribute('href');
-      return;
-    }
-  }
+  // if (
+  //   href.indexOf(
+  //     'https://hivesigner.com/sign/account-witness-vote?witness=',
+  //   ) === 0
+  // ) {
+  //   if (forApp) {
+  //     el.setAttribute('class', 'markdown-witnesses-link');
+  //     el.setAttribute('data-href', href);
+  //     el.removeAttribute('href');
+  //     return;
+  //   }
+  // }
 
-  if (
-    href.indexOf('hivesigner.com/sign/update-proposal-votes?proposal_ids') > 0
-  ) {
-    if (forApp) {
-      const m = decodeURI(href).match(/proposal_ids=\[(\d+)]/);
-      if (m) {
-        el.setAttribute('class', 'markdown-proposal-link');
-        el.setAttribute('data-href', href);
-        el.setAttribute('data-proposal', m[1]);
-        el.removeAttribute('href');
-        return;
-      }
-    }
-  }
+  // if (
+  //   href.indexOf('hivesigner.com/sign/update-proposal-votes?proposal_ids') > 0
+  // ) {
+  //   if (forApp) {
+  //     const m = decodeURI(href).match(/proposal_ids=\[(\d+)]/);
+  //     if (m) {
+  //       el.setAttribute('class', 'markdown-proposal-link');
+  //       el.setAttribute('data-href', href);
+  //       el.setAttribute('data-proposal', m[1]);
+  //       el.removeAttribute('href');
+  //       return;
+  //     }
+  //   }
+  // }
 
   // If nothing matched element as external link so it will be opened in external window
   el.setAttribute('class', 'markdown-external-link');
