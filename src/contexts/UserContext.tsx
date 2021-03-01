@@ -80,6 +80,10 @@ const initialState = {
   followings: [],
   followers: [],
   phoneNumber: '',
+  notificationData: {
+    fetched: false,
+    notifications: [],
+  },
 };
 
 // create user context
@@ -111,6 +115,8 @@ const userReducer = (state: UserState, action: UserAction) => {
       return {...state, followers: action.payload};
     case UserActionTypes.SET_PROFILE_DATA:
       return {...state, profileData: action.payload};
+    case UserActionTypes.SET_NOTIFICATIONS:
+      return {...state, notificationData: action.payload};
     default:
       return state;
   }
@@ -238,6 +244,14 @@ const UserProvider = ({children}: Props) => {
 
     console.log('[getNotifications] notifications', notifications);
     if (notifications) {
+      // dispatch action
+      dispatch({
+        type: UserActionTypes.SET_NOTIFICATIONS,
+        payload: {
+          fetched: true,
+          notifications,
+        },
+      });
       return notifications;
     } else {
       setToastMessage(intl.formatMessage({id: 'fetch_error'}));

@@ -1,22 +1,11 @@
 //// react
 import React, {useState, useEffect, useContext, useCallback} from 'react';
 //// react native
-import {
-  View,
-  StyleSheet,
-  Dimensions,
-  FlatList,
-  ActivityIndicator,
-  Animated,
-  Alert,
-} from 'react-native';
 //// react navigation
 import {useFocusEffect} from '@react-navigation/native';
 import {navigate} from '~/navigation/service';
 //// language
-import {useIntl} from 'react-intl';
 //// ui, styles
-import {Block} from 'galio-framework';
 //// contexts
 import {
   PostsContext,
@@ -25,11 +14,8 @@ import {
   UserContext,
   SettingsContext,
 } from '~/contexts';
-import {PostData, PostRef, PostsTypes} from '~/contexts/types';
-//// blockchain
-import {fetchUserProfile, fetchWalletData} from '~/providers/steem/dsteemApi';
 //// etc
-import {get, has} from 'lodash';
+//// screens, views
 import {NotificationScreen} from '../screen/Notification';
 
 interface Props {}
@@ -38,7 +24,7 @@ const Notification = (props: Props): JSX.Element => {
   //// props
   //// contexts
   const {setPostRef, setPostDetails} = useContext(PostsContext);
-  const {getNotifications} = useContext(UserContext);
+  const {userState, getNotifications} = useContext(UserContext);
   const {authState} = useContext(AuthContext);
   const {setAuthorParam} = useContext(UIContext);
   const {settingsState} = useContext(SettingsContext);
@@ -65,11 +51,16 @@ const Notification = (props: Props): JSX.Element => {
     }
   }, [authState.currentCredentials]);
   //// fetch notifications
-  const _fetchNotifications = async (username) => {
+  const _fetchNotifications = async (username: string, refresh?: boolean) => {
     // clear notification
     setNotifications(null);
     setFetching(true);
-    const _notifications = await getNotifications(username);
+    let _notifications = null;
+    if (refresh || !userState.notificationData.fetched) {
+      _notifications = await getNotifications(username);
+    } else {
+      _notifications = userState.notificationData.notifications;
+    }
     setNotifications(_notifications);
     setFetching(false);
   };
@@ -100,7 +91,7 @@ const Notification = (props: Props): JSX.Element => {
   //// handle refresh list
   const _handleRefresh = async () => {
     // fetch notifications
-    _fetchNotifications(username);
+    _fetchNotifications(username, true);
   };
   return (
     <NotificationScreen

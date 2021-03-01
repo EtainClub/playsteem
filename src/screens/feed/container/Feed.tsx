@@ -25,9 +25,12 @@ const Feed = (props: Props): JSX.Element => {
   } = useContext(PostsContext);
   const {authState} = useContext(AuthContext);
   const {uiState, setToastMessage} = useContext(UIContext);
-  const {userState, getUserProfileData, getWalletData} = useContext(
-    UserContext,
-  );
+  const {
+    userState,
+    getUserProfileData,
+    getWalletData,
+    getNotifications,
+  } = useContext(UserContext);
   //// states
   const [username, setUsername] = useState(
     authState.currentCredentials.username,
@@ -40,6 +43,7 @@ const Feed = (props: Props): JSX.Element => {
     permlink: null,
   });
   const [fetchedAll, setFetchedAll] = useState(false);
+  const [initialFetched, setInitialFetched] = useState(false);
 
   //////// effects
   //// hide splash screen
@@ -54,6 +58,8 @@ const Feed = (props: Props): JSX.Element => {
       getUserProfileData(username);
       // get wallet data
       getWalletData(username);
+      // get notifications
+      getNotifications(username);
     }
   }, []);
 
@@ -123,6 +129,19 @@ const Feed = (props: Props): JSX.Element => {
       await clearPosts(postsType);
       setReloading(true);
     }
+
+    // handle intially fetched case
+    if (!initialFetched) {
+      //      debugger;
+      // set posts if exist
+      if (postsState.feed.posts.length > 0) {
+        setPosts(postsState.feed.posts);
+        setInitialFetched(true);
+        setReloading(false);
+        return;
+      }
+    }
+
     //
     const {username} = authState.currentCredentials;
     let tagIndex = postsState.tagIndex;

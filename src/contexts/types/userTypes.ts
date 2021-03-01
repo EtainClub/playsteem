@@ -16,6 +16,7 @@ export enum UserActionTypes {
   SET_PRICE,
   SET_FOLLOWINGS,
   SET_FOLLOWERS,
+  SET_NOTIFICATIONS,
 }
 
 // profile data type
@@ -91,11 +92,18 @@ export interface PriceData {
   };
 }
 
+//// notifications data
+export interface NotificationData {
+  fetched: boolean;
+  notifications: any[];
+}
+
 //// user state
 export interface UserState {
   profileData: ProfileData;
   globalProps: BlockchainGlobalProps;
   walletData: WalletData;
+  notificationData: NotificationData;
   // price in usd
   price?: PriceData;
   followings: string[];
@@ -168,6 +176,11 @@ interface SetFollowersAction {
   type: UserActionTypes.SET_FOLLOWERS;
   payload: string[];
 }
+// set notifications
+interface SetNotificationsAction {
+  type: UserActionTypes.SET_NOTIFICATIONS;
+  payload: NotificationData;
+}
 // user context type
 export interface UserContextType {
   // ui state
@@ -211,4 +224,5 @@ export type UserAction =
   | SetProfileDataAction
   | SetPriceAction
   | SetFollowingsAction
-  | SetFollowersAction;
+  | SetFollowersAction
+  | SetNotificationsAction;

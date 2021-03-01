@@ -20,6 +20,7 @@ import {
 import {TRANSLATION_LANGUAGES} from '~/constants';
 
 import {navigate} from '~/navigation/service';
+import {PostsTypes} from '~/contexts/types';
 
 export const LOGIN_TOKEN = 'loginToken';
 
@@ -32,7 +33,7 @@ export const ResolveAuth = (props) => {
     getFollowings,
     getUserProfileData,
   } = useContext(UserContext);
-  const {getTagList} = useContext(PostsContext);
+  const {getTagList, fetchPosts} = useContext(PostsContext);
   const {setToastMessage, setTranslateLanguages, initTTS} = useContext(
     UIContext,
   );
@@ -83,6 +84,15 @@ export const ResolveAuth = (props) => {
         // console.log('[resolveAuth] profile data', profileData);
         // get followings
         const followings = await getFollowings(username);
+        // fetch initial posts
+        await fetchPosts(
+          PostsTypes.FEED,
+          0,
+          0,
+          username,
+          followings.length === 0 ? true : false,
+          false,
+        );
         // why this???
         if (!followings) navigate({name: 'Drawer'});
         // fetch tags
@@ -97,8 +107,6 @@ export const ResolveAuth = (props) => {
       setUsername(username);
       // retrieve all credentials
       await getCredentials(username);
-      console.log('[resolveAuth] after set credentials');
-
       // set fetched flag
       setFetched(true);
     } else {
