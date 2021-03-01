@@ -79,7 +79,7 @@ exports.translationRequest = functions.https.onCall(async (data, context) => {
   return result;
 });
 
-// proxy for creating blurt account
+// proxy for creating steem account
 exports.createAccountRequest = functions.https.onCall(async (data, context) => {
   // TODO: setup active key and decide the account to be used, ACT?
   return null;

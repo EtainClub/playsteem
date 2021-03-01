@@ -24,9 +24,13 @@ interface Props {}
 
 const Feed = (props: Props): JSX.Element => {
   //// contexts
-  const {postsState, fetchPosts, clearPosts, setPostsType} = useContext(
-    PostsContext,
-  );
+  const {
+    postsState,
+    fetchPosts,
+    setNeedToFetch,
+    clearPosts,
+    setPostsType,
+  } = useContext(PostsContext);
   const {authState} = useContext(AuthContext);
   const {uiState, setToastMessage} = useContext(UIContext);
   const {userState} = useContext(UserContext);
@@ -47,6 +51,8 @@ const Feed = (props: Props): JSX.Element => {
   //// hide splash screen
   useEffect(() => {
     SplashScreen.hide();
+    // initial fetching
+    _fetchPosts(false);
   }, []);
 
   // useEffect(() => {
@@ -57,7 +63,10 @@ const Feed = (props: Props): JSX.Element => {
 
   //// header tag/fiter change event
   useEffect(() => {
-    _fetchPosts(false);
+    if (postsState.needToFetch) {
+      _fetchPosts(false);
+      setNeedToFetch(false);
+    }
   }, [postsState.needToFetch]);
 
   // account change event

@@ -179,32 +179,6 @@ const Wallet = (props: Props): JSX.Element => {
       handlePowerupResult={_handlePowerupResult}
     />
   );
-
-  // return showTransferModal ? (
-  //   <TokenTransfer
-  //     isSBD={isSBD}
-  //     title={
-  //       isSBD
-  //         ? intl.formatMessage({id: 'Wallet.sbd_transfer_title'})
-  //         : intl.formatMessage({id: 'Wallet.steem_transfer_title'})
-  //     }
-  //     followings={followingList}
-  //     balance={isSBD ? walletData.balanceSBD : walletData.balance}
-  //     handleResult={_handleTransferResult}
-  //   />
-  // ) : (
-  //   <WalletScreen
-  //     walletData={walletData}
-  //     handlePressClaim={_handlePressClaim}
-  //     claiming={claiming}
-  //     price={price}
-  //     onRefresh={_getWalletData}
-  //     showPowerup={showPowerupModal}
-  //     handleTransferPress={_handleTransferPress}
-  //     handlePowerupPress={_handlePowerupPress}
-  //     handlePowerupResult={_handlePowerupResult}
-  //   />
-  // );
 };
 
 export {Wallet};

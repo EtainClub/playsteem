@@ -226,6 +226,7 @@ const Header = (props: Props): JSX.Element => {
 
   //// update tag index of uiState
   const _handleOnTagChange = (index: number, value: string) => {
+    console.log('_handleOnTagChange', index);
     // set tag index
     setTagIndex(index, PostsTypes.FEED, authState.currentCredentials.username);
   };

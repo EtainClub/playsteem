@@ -182,10 +182,9 @@ const WalletStatsView = (props: Props): JSX.Element => {
     console.log('[_onSelectSBDOption] index, value', index, value);
     switch (index) {
       case 0:
-        props.handleTransferPress(false, index);
+        props.handleTransferPress(true, index);
         break;
       case 1:
-        props.handlePowerupPress();
         break;
       case 2:
         break;

@@ -126,7 +126,6 @@ const Signup = (props: Props): JSX.Element => {
     const options = {
       username,
       password,
-      creationFee: userState.globalProps.chainProps.account_creation_fee,
     };
     const result = await firebase
       .functions()

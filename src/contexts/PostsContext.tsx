@@ -544,8 +544,6 @@ const PostsProvider = ({children}: Props) => {
       type: PostsActionTypes.SET_TAG_INDEX,
       payload: tagIndex,
     });
-    // fetch with the given tag, empty start ref
-    //    fetchPosts(postsType, tagIndex, postsState.filterIndex, username, false);
   };
 
   //// set filter index

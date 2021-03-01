@@ -308,7 +308,7 @@
     "fail": "Failed to transfer"
   },
   "Powerup": {
-    "title": "STEEM POWER Up",
+    "title": "STEEM POWER UP",
     "description": "STEEM POWER is non-transferable and requires 1 month (4 payments) to convert back to Steem.",
     "button": "Power Up"
   },
