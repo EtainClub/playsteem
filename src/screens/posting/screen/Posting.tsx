@@ -1,7 +1,13 @@
 //// react
 import React, {useState, useEffect, useRef, useContext} from 'react';
 //// react native
-import {View, StyleSheet, Dimensions, ScrollView, Image} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Dimensions,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 //// language
 import {useIntl} from 'react-intl';
 //// UIs
@@ -10,6 +16,7 @@ import ActionSheet from 'react-native-actions-sheet';
 import {DropdownModal} from '~/components/DropdownModal';
 import {argonTheme} from '~/constants/argonTheme';
 import renderPostBody from '~/utils/render-helpers/markdown-2-html';
+import Autocomplete from 'react-native-autocomplete-input';
 const {width, height} = Dimensions.get('screen');
 //// contexts
 import {UserContext} from '~/contexts';
@@ -129,6 +136,17 @@ const PostingScreen = (props: Props): JSX.Element => {
               value={tags}
               onChangeText={props.handleTagsChange}
             />
+            {/* <Autocomplete
+              data={['playstem kr steemit', 'playsteem steemitdev']}
+              defaultValue={''}
+              onChangeText={(text) => console.log('tags change')}
+              renderItem={({item, i}) => (
+                <TouchableOpacity
+                  onPress={() => console.log('onpress tags item')}>
+                  <Text>{item}</Text>
+                </TouchableOpacity>
+              )}
+            /> */}
             <Text color="red">{tagMessage}</Text>
           </Block>
           <Block row>
