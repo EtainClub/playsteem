@@ -60,17 +60,15 @@ export const ResolveAuth = (props) => {
 
   //// resolve auth
   const _resolveEntry = async () => {
-    // get settings from storage
-    await getAllSettingsFromStorage();
-    // fetch global props
-    await fetchBlockchainGlobalProps();
-
     // get user login token from storage
     let username = await AsyncStorage.getItem(LOGIN_TOKEN);
+    // get settings from storage
+    await getAllSettingsFromStorage(username);
+    // fetch global props
+    await fetchBlockchainGlobalProps();
     // get supported translation languages
     const languages = TRANSLATION_LANGUAGES;
     // const languages = await _getSupportedLanguages();
-
     // set languages
     setTranslateLanguages(languages);
     // initialize tts

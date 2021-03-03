@@ -305,6 +305,8 @@ const Posting = (props: Props): JSX.Element => {
     const result = await submitPost(postingContent, password, false, options);
     if (result) {
       console.log('[posting] result', result);
+      // save the posting tags to storage
+      _savePostingTags(tags);
       // TODO: clear the title, body, and tags, beneficiary
       // initialie beneficiaries
       if (username === 'playsteemit') {
@@ -329,6 +331,7 @@ const Posting = (props: Props): JSX.Element => {
         communityIndex,
         payoutIndex: rewardIndex,
       };
+      // TODO: need to use username key
       updateSettingSchema(StorageSchema.UI, postingSetting);
 
       // set tag to all
@@ -355,6 +358,9 @@ const Posting = (props: Props): JSX.Element => {
   const _handlePressBeneficiary = () => {
     console.log('_handlePressBeneficiary');
     setShowBeneficiaryModal(true);
+
+    // @test
+    //_savePostingTags(tags);
   };
 
   const _getBeneficiaries = (_beneficiaries: any[]) => {
@@ -381,13 +387,19 @@ const Posting = (props: Props): JSX.Element => {
     setPreviewBody(_preview);
   };
 
-  const _handleTagsChange = (_tags: string) => {
+  const _handleTagsChange = async (_tags: string) => {
+    // TODO filter ths result
     // check validity: maximum tags, wrong tag, max-length-per-tag
     setTags(_tags);
     const tagString = _tags.replace(/,/g, ' ').replace(/#/g, '');
     let cats = tagString.split(' ');
     // validate
     _validateTags(cats);
+
+    // get history of tags
+    const _history = await _getPostingTagsHistory();
+    console.log('posting tags history', _history);
+    // TODO: show dropdown autocomplete
   };
 
   //// handle reward option chnage
@@ -422,12 +434,39 @@ const Posting = (props: Props): JSX.Element => {
   //// save draft
   const _saveDraft = (_title: string, _body: string, _tags: string) => {
     console.log('_saveDraft');
+    const {username} = authState.currentCredentials;
     const data = {
       title: _title,
       body: _body,
       tags: _tags,
     };
-    _setItemToStorage(StorageSchema.DRAFT, data);
+    _setItemToStorage(`${username}_${StorageSchema.DRAFT}`, data);
+  };
+
+  //// save posting tags
+  const _savePostingTags = async (newTags: string) => {
+    const {username} = authState.currentCredentials;
+    // get the current history
+    const key = `${username}_${StorageSchema.POSTING_TAGS}`;
+
+    // await AsyncStorage.removeItem(key);
+    // return;
+
+    const _history = await _getItemFromStorage(key);
+    console.log('_savePostingTags. key, previous history', key, _history);
+    // await _setItemToStorage(key, 'kr sct');
+    // const result = await _getItemFromStorage(key);
+    // console.log('_savePostingTags. result', result);
+    // debugger;
+    // return;
+
+    // check if the tags is unique
+    if (_history && _history.includes(newTags)) return;
+    // append the new tags
+    const history = [newTags, ..._history];
+    // set
+    _setItemToStorage(key, history);
+    debugger;
   };
 
   const _setItemToStorage = async (key: string, data: any) => {
@@ -440,6 +479,25 @@ const Posting = (props: Props): JSX.Element => {
     }
   };
 
+  const _getItemFromStorage = async (key: string) => {
+    try {
+      const _data = await AsyncStorage.getItem(key);
+      const data = JSON.parse(_data);
+      return data;
+    } catch (error) {
+      console.log('failed to get item from storage', error);
+      return null;
+    }
+  };
+
+  //// get posting tags history from storage
+  const _getPostingTagsHistory = async () => {
+    const {username} = authState.currentCredentials;
+    // get the current history
+    const key = `${username}_${StorageSchema.POSTING_TAGS}`;
+    const history = await _getItemFromStorage(key);
+    return history;
+  };
   //// get a single item from storage
   const _getDraftFromStorage = async () => {
     let _data = null;

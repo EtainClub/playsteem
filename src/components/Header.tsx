@@ -322,7 +322,6 @@ const Header = (props: Props): JSX.Element => {
           authState.loggedIn && (
             <Block row space="between">
               <Block row center style={{left: 100}}>
-                <Text>To: </Text>
                 <Block style={{}}>
                   <DropdownModal
                     key={tagOptions[communityIndex]}

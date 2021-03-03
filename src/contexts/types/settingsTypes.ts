@@ -9,7 +9,8 @@ export enum StorageSchema {
   LANGUAGES = 'languages', // menu language (locale, e.g. en-US), translation language (e.g. EN)
   UI = 'ui', // dark theme, font size,
   DRAFT = 'draft', // title, body, tag, beneficiaries
-  // TEMPLATE = 'template', // posting template, beneficiaries, powerup, ...
+  POSTING_TAGS = 'postingTags', // array of posting tags
+  POSTING_TEMPLATE = 'postingTemplate', // posting template, beneficiaries, powerup, ...
 }
 
 //// blockchain types
@@ -46,20 +47,25 @@ export type UITypes = {
 };
 
 //// draft types
-// export type DraftTypes = {
-//   title: string;
-//   body: string;
-//   tags: string;
-//   beneficiaries?: string[];
-// };
+export type DraftTypes = {
+  title: string;
+  body: string;
+  tags: string;
+  beneficiaries?: string[];
+};
 
-// // //// template types
-// export type TemplateTypes = {
-//   title: string;
-//   body: string;
-//   tags: string;
-//   beneficiaries?: string[];
-// };
+//// posting tags
+export type PostingTagsTypes = {
+  history: string[];
+};
+
+//// posting template types
+export type PostingTemplateTypes = {
+  title: string;
+  body: string;
+  tags: string;
+  beneficiaries?: string[];
+};
 
 // settings state
 export interface SettingsState {
@@ -104,12 +110,6 @@ export const INITIAL_SETTINGS: SettingsState = {
     communityIndex: 0,
     payoutIndex: 0,
   },
-  // [StorageSchema.DRAFT]: {
-  //   title: '',
-  //   body: '',
-  //   tags: '',
-  //   beneficiaries: [],
-  // },
 };
 
 //// settings action types
@@ -152,7 +152,7 @@ export interface SettingsContextType {
   settingsState: SettingsState;
   //// action creators
   // get all settings from storage
-  getAllSettingsFromStorage: () => Promise<SettingsState>;
+  getAllSettingsFromStorage: (username?: string) => Promise<any>;
   //
   getItemFromStorage: (key: string) => Promise<any>;
   // update a single item in schema

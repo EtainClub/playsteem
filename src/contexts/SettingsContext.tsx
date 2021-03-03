@@ -85,7 +85,47 @@ const SettingsProvider = ({children}: Props) => {
   };
 
   //// get all settings from storage
-  const getAllSettingsFromStorage = async () => {
+  const getAllSettingsFromStorage = async (username?: string) => {
+    // get user's settings from storage
+    let _settings = await _getUserSettingsFromStorage(username);
+    console.log(
+      '[getAllSettingsFromStorage] username, _settings',
+      username,
+      _settings,
+    );
+
+    // use default settings if nothing in storage
+    if (!_settings) {
+      _settings = settingsState;
+      debugger;
+
+      // set settings to storage
+      if (username) await _setUserSettingsToStorage(username, _settings);
+    } else {
+      // dispatch actions: set settings state using the storage values
+      console.log('[getAllSettingsFromStorage] _settings', _settings);
+      dispatch({
+        type: SettingsActionTypes.GET_ALL_SETTINGS,
+        payload: _settings as SettingsState,
+      });
+    }
+
+    return _settings;
+
+    // // get default settings
+    // const _settings: SettingsState = {
+    //   [StorageSchema.PUSH_NOTIFICATIONS]: settingsState.pushNotifications,
+    //   [StorageSchema.DND_TIMES]: settingsState.dndTimes,
+    //   [StorageSchema.BLOCKCHAINS]: settingsState.blockchains,
+    //   [StorageSchema.SECURITIES]: settingsState.securities,
+    //   [StorageSchema.LANGUAGES]: settingsState.languages,
+    //   [StorageSchema.UI]: settingsState.ui,
+    //   [StorageSchema.DRAFT]: settingsState.draft,
+    //   [StorageSchema.POSTING_TAGS]: settingsState.postingTags,
+    //   [StorageSchema.POSTING_TEMPLATE]: settingsState.postingTemplate,
+    // };
+    return _settings;
+
     const pushPromise = new Promise((resolve, reject) =>
       resolve(getItemFromStorage(StorageSchema.PUSH_NOTIFICATIONS)),
     );
@@ -273,6 +313,36 @@ const SettingsProvider = ({children}: Props) => {
 };
 
 ////// storage helper functions
+
+//// get user's all settings from storage
+const _getUserSettingsFromStorage = async (username: string) => {
+  // check if the username has settings in storage
+  // await MMKVStorage.indexer.hasKey(username).then(async () => {
+  try {
+    //    const _settings = await MMKV.getMapAsync(username);
+    const _settings = await AsyncStorage.getItem(username);
+    // parse
+    return JSON.parse(_settings);
+  } catch (error) {
+    console.log('failed to get settings from MMKV srorage', error);
+    return null;
+  }
+};
+
+//// set settings of a user to storage
+const _setUserSettingsToStorage = async (username: string, _settings: any) => {
+  try {
+    await AsyncStorage.setItem(username, JSON.stringify(_settings));
+    //    await MMKV.setMapAsync(username, _settings);
+    //    const result = await _getUserSettingsFromStorage(username);
+    //    console.log('_setUserSettingsToStorage. retrieved settings', result);
+    return true;
+  } catch (error) {
+    console.log('failed to set user settings to storage', error);
+    return false;
+  }
+};
+
 //// set a single item or schema to storage
 const _setItemToStorage = async (key: string, data: any) => {
   if (data) {

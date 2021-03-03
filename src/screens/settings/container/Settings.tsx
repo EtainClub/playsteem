@@ -239,6 +239,7 @@ const SettingsContainer = (props: Props): JSX.Element => {
           useOTP: switchStates[SettingUITypes.USE_OTP],
         };
         // update context state and storage
+        // TODO: need to use username key => create a function to handle all the update
         updateSettingSchema(StorageSchema.SECURITIES, _securities);
         break;
       case SettingUITypes.USE_OTP:
