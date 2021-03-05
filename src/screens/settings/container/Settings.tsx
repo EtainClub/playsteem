@@ -240,7 +240,7 @@ const SettingsContainer = (props: Props): JSX.Element => {
         };
         // update context state and storage
         // TODO: need to use username key => create a function to handle all the update
-        updateSettingSchema(StorageSchema.SECURITIES, _securities);
+        updateSettingSchema(username, StorageSchema.SECURITIES, _securities);
         break;
       case SettingUITypes.USE_OTP:
         // build structure
@@ -249,7 +249,7 @@ const SettingsContainer = (props: Props): JSX.Element => {
           useOTP: value,
         };
         // update context state and storage
-        updateSettingSchema(StorageSchema.SECURITIES, _securities);
+        updateSettingSchema(username, StorageSchema.SECURITIES, _securities);
         break;
       // dnd time
       case SettingUITypes.DND_TIMES:
@@ -263,7 +263,7 @@ const SettingsContainer = (props: Props): JSX.Element => {
             _convertTimeToUTC0(endDNDTime),
           ];
           // update time in context state and storage
-          updateSettingSchema(StorageSchema.DND_TIMES, {
+          updateSettingSchema(username, StorageSchema.DND_TIMES, {
             start: _dndTimes[0],
             end: _dndTimes[1],
           });
@@ -290,14 +290,18 @@ const SettingsContainer = (props: Props): JSX.Element => {
           });
         }
         // update in context state
-        updateSettingSchema(StorageSchema.PUSH_NOTIFICATIONS, _notifications);
+        updateSettingSchema(
+          username,
+          StorageSchema.PUSH_NOTIFICATIONS,
+          _notifications,
+        );
         break;
       case SettingUITypes.NSFW:
         debugger;
         // build structure
         const _ui = {...settingsState.ui, nsfw: value};
         // update in context state
-        updateSettingSchema(StorageSchema.UI, _ui);
+        updateSettingSchema(username, StorageSchema.UI, _ui);
         break;
       default:
         break;
@@ -332,7 +336,7 @@ const SettingsContainer = (props: Props): JSX.Element => {
         // build structure
         _blockchains = {rpc: value, image: imageServer};
         // update in context state
-        updateSettingSchema(StorageSchema.BLOCKCHAINS, _blockchains);
+        updateSettingSchema(username, StorageSchema.BLOCKCHAINS, _blockchains);
         // set blockchain client
         const clientResult = await setBlockchainClient(value);
         if (!clientResult) {
@@ -350,7 +354,7 @@ const SettingsContainer = (props: Props): JSX.Element => {
         // build structure
         _blockchains = {rpc: rpcServer, image: value};
         // update in context state
-        updateSettingSchema(StorageSchema.BLOCKCHAINS, _blockchains);
+        updateSettingSchema(username, StorageSchema.BLOCKCHAINS, _blockchains);
         // show guide message
         setToastMessage(intl.formatMessage({id: 'Settings.msg_restart'}));
         break;
@@ -371,7 +375,7 @@ const SettingsContainer = (props: Props): JSX.Element => {
           });
         }
         // update in context state
-        updateSettingSchema(StorageSchema.LANGUAGES, _languages);
+        updateSettingSchema(username, StorageSchema.LANGUAGES, _languages);
         // show guide message
         setToastMessage(intl.formatMessage({id: 'Settings.msg_restart'}));
         break;
@@ -383,7 +387,7 @@ const SettingsContainer = (props: Props): JSX.Element => {
         // build structure
         _languages = {locale: locale, translation: value};
         // update in context state
-        updateSettingSchema(StorageSchema.LANGUAGES, _languages);
+        updateSettingSchema(username, StorageSchema.LANGUAGES, _languages);
         break;
       default:
         break;
@@ -540,7 +544,7 @@ const SettingsContainer = (props: Props): JSX.Element => {
         endTime: endDNDTime,
       };
       // update the data to the storage
-      updateSettingSchema(StorageSchema.DND_TIMES, dndTimes);
+      updateSettingSchema(username, StorageSchema.DND_TIMES, dndTimes);
     } else {
       setShowEndClock(false);
       // set time
@@ -553,7 +557,7 @@ const SettingsContainer = (props: Props): JSX.Element => {
         endTime: timestamp,
       };
       // update the data to the storage
-      updateSettingSchema(StorageSchema.DND_TIMES, dndTimes);
+      updateSettingSchema(username, StorageSchema.DND_TIMES, dndTimes);
     }
     //// update db
     // firebase user doc ref

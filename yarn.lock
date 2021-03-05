@@ -6963,6 +6963,11 @@ react-native-draggable-flatlist@^2.5.0:
   resolved "https://registry.yarnpkg.com/react-native-draggable-flatlist/-/react-native-draggable-flatlist-2.5.4.tgz#31ef421e05a7273495995d11852f5892634ad860"
   integrity sha512-ylnJFB16hTy6G4Z0b7OWJrmgVh5dvm1YvZ7jGBYtOW1tjgC//QhhRO9YhoNKFzPB32UsFsweU6RNGZTASnw0yQ==
 
+react-native-dropdown-autocomplete-textinput@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-dropdown-autocomplete-textinput/-/react-native-dropdown-autocomplete-textinput-1.0.1.tgz#253699d131936b4993dd9b457f8f2c763155d8b2"
+  integrity sha512-jIvzHWY3i92POBzpRbD3mvTc8lzWF+q22kBzAUquXAL6r+cgGd51YPS6E8T4VScS4eLP/j0u4Z+9vblkip1Jdg==
+
 react-native-dropdown-autocomplete@^1.0.18:
   version "1.0.18"
   resolved "https://registry.yarnpkg.com/react-native-dropdown-autocomplete/-/react-native-dropdown-autocomplete-1.0.18.tgz#0f1fecb3a774c7cdec41df17b3b16dee0ea71c2c"
@@ -6980,11 +6985,6 @@ react-native-fab@^1.0.17:
   integrity sha512-1zfjAKrE/wiY2wKxCABNpmCbRX0L4NWEv10cANwVdmI1ZqO+I1Gk0AuMmNPUhUkxO3DZyP2q/GJKFf7+d2Rkbg==
   dependencies:
     prop-types "^15.6.0"
-
-react-native-fast-storage@^0.1.5:
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/react-native-fast-storage/-/react-native-fast-storage-0.1.5.tgz#7a0c52cef10a5eaa1bda6d232cb01dc8a1ed5c28"
-  integrity sha512-qopLSKmai0YJyQMc7i3MaZgmj1/02JNAKYh/mQLEdNhG7YRSrUEBV6skO3SLrUrjjY6K6YqU+N/SVEwvQCqABw==
 
 react-native-gesture-handler@^1.8.0:
   version "1.9.0"
@@ -7051,11 +7051,6 @@ react-native-material-ripple@^0.8.0:
   integrity sha1-uMJOb96iryoh6EaLH0CzVIMBni8=
   dependencies:
     prop-types "^15.5.10"
-
-react-native-mmkv-storage@^0.4.4:
-  version "0.4.4"
-  resolved "https://registry.yarnpkg.com/react-native-mmkv-storage/-/react-native-mmkv-storage-0.4.4.tgz#deafd63857bfed3facd0e406e01e82eb7a76c1b3"
-  integrity sha512-NuLKc9C0xLPgteQpieGMGbkNm8A0ma8rzfErQKZbS4KLD2bWQ8c1rZ71JgGBiJrCffpDy1BNZt86DZtPl7djXw==
 
 react-native-modal-datetime-picker@^9.1.0:
   version "9.1.0"

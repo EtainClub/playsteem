@@ -6,17 +6,16 @@ import {
   StyleSheet,
   Dimensions,
   ScrollView,
+  KeyboardAvoidingView,
   TouchableOpacity,
 } from 'react-native';
 //// language
 import {useIntl} from 'react-intl';
 //// UIs
 import {Block, Icon, Button, Input, Text, theme} from 'galio-framework';
-import ActionSheet from 'react-native-actions-sheet';
 import {DropdownModal} from '~/components/DropdownModal';
 import {argonTheme} from '~/constants/argonTheme';
-import renderPostBody from '~/utils/render-helpers/markdown-2-html';
-import Autocomplete from 'react-native-autocomplete-input';
+import Autocomplete from 'react-native-dropdown-autocomplete-textinput';
 const {width, height} = Dimensions.get('screen');
 //// contexts
 import {UserContext} from '~/contexts';
@@ -36,6 +35,7 @@ interface Props {
   uploadedImage: {};
   posting: boolean;
   tags: string;
+  //  tagsHistory: string[];
   clearBody?: boolean;
   handleTitleChange: (title: string) => void;
   handleBodyChange: (body: string) => void;
@@ -63,6 +63,7 @@ const PostingScreen = (props: Props): JSX.Element => {
   //// language
   const intl = useIntl();
   //// states
+  const [preventScroll, setPreventScroll] = useState(false);
   // this is a workaround to use copy/paste
   const [titleEditable, setTitleEditable] = useState(false);
 
@@ -90,10 +91,26 @@ const PostingScreen = (props: Props): JSX.Element => {
     intl.formatMessage({id: 'Posting.no_reward'}),
   ];
 
+  const DATA = [
+    {tags: 'kr zzn sct xpilar steemit'},
+    {tags: 'playsteem kr'},
+    {tags: 'playsteem steemit steemitdev'},
+    {tags: 'kr zzn sct xpilar steemit2'},
+    {tags: 'playsteem kr2'},
+    {tags: 'playsteem steemit steemitdev2'},
+    {tags: 'kr zzn sct xpilar steemit3'},
+    {tags: 'playsteem kr3'},
+    {tags: 'playsteem steemit steemitdev3'},
+  ];
+
   const defaultOptionText = '';
   return (
     <View>
-      <ScrollView>
+      <ScrollView
+        onKeyboardDidShow={() => setPreventScroll(true)}
+        onKeyboardDidHide={() => setPreventScroll(false)}
+        scrollEnabled={!preventScroll}
+        keyboardShouldPersistTaps="handled">
         <Block flex>
           <Block style={{paddingHorizontal: theme.SIZES.BASE}}>
             <Input
@@ -125,7 +142,7 @@ const PostingScreen = (props: Props): JSX.Element => {
           />
 
           <Block style={{paddingHorizontal: theme.SIZES.BASE}}>
-            <Input
+            {/* <Input
               color="black"
               placeholder={intl.formatMessage({id: 'Posting.tags_placeholder'})}
               placeholderTextColor={argonTheme.COLORS.FACEBOOK}
@@ -135,18 +152,35 @@ const PostingScreen = (props: Props): JSX.Element => {
               style={styles.input}
               value={tags}
               onChangeText={props.handleTagsChange}
-            />
-            {/* <Autocomplete
-              data={['playstem kr steemit', 'playsteem steemitdev']}
-              defaultValue={''}
-              onChangeText={(text) => console.log('tags change')}
-              renderItem={({item, i}) => (
-                <TouchableOpacity
-                  onPress={() => console.log('onpress tags item')}>
-                  <Text>{item}</Text>
-                </TouchableOpacity>
-              )}
             /> */}
+            <KeyboardAvoidingView>
+              <Autocomplete
+                data={DATA}
+                displayKey="tags"
+                onSelect={(value) => console.warn('value', value)}
+                onBlur={() => console.log('autocomplete')}
+                maxHeight={200}
+                autoCapitalize="none"
+                autoCorrect={false}
+                placeholder={intl.formatMessage({
+                  id: 'Posting.tags_placeholder',
+                })}
+                placeholderTextColor={argonTheme.COLORS.FACEBOOK}
+              />
+              {/* <Autocomplete
+                style={styles.tagsInput}
+                data={DATA}
+                displayKey="name"
+                placeholder={intl.formatMessage({
+                  id: 'Posting.tags_placeholder',
+                })}
+                placeholderColor={argonTheme.COLORS.FACEBOOK}
+                autoCorrect={false}
+                autoCapitalize="none"
+                maxHeight={200}
+                onSelect={(value) => console.log('autocomplete value', value)}
+              /> */}
+            </KeyboardAvoidingView>
             <Text color="red">{tagMessage}</Text>
           </Block>
           <Block row>
@@ -298,5 +332,9 @@ const styles = StyleSheet.create({
     flex: 1,
     marginHorizontal: 16,
     marginVertical: 20,
+  },
+  tagsInput: {
+    borderBottomWidth: 1,
+    width: width * 0.8,
   },
 });

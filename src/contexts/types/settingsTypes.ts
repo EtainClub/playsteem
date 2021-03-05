@@ -114,7 +114,7 @@ export const INITIAL_SETTINGS: SettingsState = {
 
 //// settings action types
 export enum SettingsActionTypes {
-  GET_ALL_SETTINGS,
+  SET_ALL_SETTINGS,
   FINALIZE_SETTINGS_TO_STORAGE,
   SET_SCHEMA,
   SET_BLOCKCHAINS,
@@ -127,9 +127,9 @@ export enum SettingsActionTypes {
 }
 
 //// actions
-// get all settings from storage
-interface GetAllSettingsAction {
-  type: SettingsActionTypes.GET_ALL_SETTINGS;
+// set all settings
+interface SetAllSettingsAction {
+  type: SettingsActionTypes.SET_ALL_SETTINGS;
   payload: SettingsState;
 }
 // finalize settings to storage
@@ -156,12 +156,14 @@ export interface SettingsContextType {
   //
   getItemFromStorage: (key: string) => Promise<any>;
   // update a single item in schema
-  updateSettingSchema: (schema: StorageSchema, data: any) => void;
-  // set all state to storage
-  setAllStatesToStorage: () => void;
+  updateSettingSchema: (
+    username: string,
+    schema: StorageSchema,
+    data: any,
+  ) => void;
 }
 
 export type SettingsAction =
-  | GetAllSettingsAction
+  | SetAllSettingsAction
   | FinalizeSettingsToStorageAction
   | SetSchemaAction;

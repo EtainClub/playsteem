@@ -65,6 +65,7 @@
     "react-native-country-picker-modal": "^2.0.0",
     "react-native-draggable-flatlist": "^2.5.0",
     "react-native-dropdown-autocomplete": "^1.0.18",
+    "react-native-dropdown-autocomplete-textinput": "^1.0.1",
     "react-native-fab": "^1.0.17",
     "react-native-gesture-handler": "^1.8.0",
     "react-native-image-crop-picker": "^0.35.1",

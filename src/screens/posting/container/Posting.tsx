@@ -95,6 +95,10 @@ const Posting = (props: Props): JSX.Element => {
       _initBeneficiaries();
       // get community index
       _setCommunityIndex();
+      // get tags history
+      // async () => {
+      //   const history = await _getItemFromStorage(key);
+      // };
     }
   }, []);
   //// event: edit mode
@@ -331,8 +335,8 @@ const Posting = (props: Props): JSX.Element => {
         communityIndex,
         payoutIndex: rewardIndex,
       };
-      // TODO: need to use username key
-      updateSettingSchema(StorageSchema.UI, postingSetting);
+      // update the posting setting
+      updateSettingSchema(username, StorageSchema.UI, postingSetting);
 
       // set tag to all
       setTagAndFilter(
@@ -554,6 +558,7 @@ const Posting = (props: Props): JSX.Element => {
         title={title}
         body={body}
         tags={tags}
+        // tagsHistory={tagsHistory}
         editMode={uiState.editMode}
         previewBody={previewBody}
         rewardIndex={rewardIndex}

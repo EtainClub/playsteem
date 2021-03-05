@@ -50,14 +50,11 @@ const Profile = ({navigation}): JSX.Element => {
   const [profileData, setProfileData] = useState<ProfileData>(null);
   const [profileFetched, setProfileFetched] = useState(false);
   const [fetching, setFetching] = useState(false);
-  const [loaded, setLoaded] = useState(false);
   const [blogs, setBlogs] = useState(null);
   const [bookmarks, setBookmarks] = useState(null);
   const [favorites, setFavorites] = useState(null);
-  const [postsFetching, setPostsFetching] = useState(true);
   const [editMode, setEditMode] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [uploadedImage, setUploadedImage] = useState(null);
   const [updating, setUpdating] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
@@ -85,10 +82,11 @@ const Profile = ({navigation}): JSX.Element => {
 
   //// fetch user state
   useEffect(() => {
-    if (authState.loggedIn && !fetching) {
+    if (authState.loggedIn) {
+      console.log('[Profile] Event. username changed.');
       const {username} = authState.currentCredentials;
       setProfileFetched(false);
-      _getUserProfileData(username);
+      _getUserProfileData(username, true);
       _fetchBookmarks(username);
       _fetchFavorites(username);
     }
@@ -229,7 +227,7 @@ const Profile = ({navigation}): JSX.Element => {
 
       //// this action requires posting key or above
       // check the key level
-      if (type < KeyTypes.POSTING) {
+      if (type < KeyTypes.ACTIVE) {
         // show key input modal
         setShowSecureKey(true);
         return;
