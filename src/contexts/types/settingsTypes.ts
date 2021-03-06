@@ -154,7 +154,7 @@ export interface SettingsContextType {
   // get all settings from storage
   getAllSettingsFromStorage: (username?: string) => Promise<any>;
   //
-  getItemFromStorage: (key: string) => Promise<any>;
+  getItemFromStorage: (username: string, itemKey: string) => Promise<any>;
   // update a single item in schema
   updateSettingSchema: (
     username: string,

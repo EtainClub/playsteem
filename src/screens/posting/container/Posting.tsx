@@ -22,7 +22,7 @@ import {Block} from 'galio-framework';
 import {Beneficiary} from '~/components';
 import {BeneficiaryItem} from '~/components/Beneficiary/BeneficiaryContainer';
 //// constants
-import {BENEFICIARY_WEIGHT, MAX_NUM_TAGS} from '~/constants';
+import {BENEFICIARY_WEIGHT, MAX_NUM_TAGS, MAX_TAGS_HISTORY} from '~/constants';
 // types
 import {PostRef, PostsState, PostsTypes} from '~/contexts/types';
 //// utils
@@ -68,6 +68,8 @@ const Posting = (props: Props): JSX.Element => {
   const [body, setBody] = useState('');
   const [previewBody, setPreviewBody] = useState('');
   const [tags, setTags] = useState('');
+  const [tagsHistory, setTagsHistory] = useState([]);
+  const [hideTagsHistory, setHideTagsHistory] = useState(false);
   const [tagMessage, setTagMessage] = useState('');
   const [rewardIndex, setRewardIndex] = useState(0);
 
@@ -82,7 +84,7 @@ const Posting = (props: Props): JSX.Element => {
   const [showAuthorsModal, setShowAuthorsModal] = useState(false);
   const [clearBody, setClearBody] = useState(false);
 
-  //// event: mount
+  //// event: username change
   useEffect(() => {
     // get following
     if (authState.loggedIn) {
@@ -95,12 +97,11 @@ const Posting = (props: Props): JSX.Element => {
       _initBeneficiaries();
       // get community index
       _setCommunityIndex();
-      // get tags history
-      // async () => {
-      //   const history = await _getItemFromStorage(key);
-      // };
+      // get tags history of the user
+      _getPostingTagsHistory();
     }
-  }, []);
+  }, [authState.currentCredentials]);
+
   //// event: edit mode
   useEffect(() => {
     console.log('[Posting] edit event. uiState', uiState);
@@ -235,7 +236,6 @@ const Posting = (props: Props): JSX.Element => {
         permlink = generatePermlink(title, true);
       }
       // add options such as beneficiaries
-      // TODO: handle reward index
       options = addPostingOptions(
         username,
         permlink,
@@ -391,8 +391,8 @@ const Posting = (props: Props): JSX.Element => {
     setPreviewBody(_preview);
   };
 
-  const _handleTagsChange = async (_tags: string) => {
-    // TODO filter ths result
+  const _handleTagsChange = (_tags: string, _hideList?: boolean) => {
+    // TODO filter the result
     // check validity: maximum tags, wrong tag, max-length-per-tag
     setTags(_tags);
     const tagString = _tags.replace(/,/g, ' ').replace(/#/g, '');
@@ -400,10 +400,9 @@ const Posting = (props: Props): JSX.Element => {
     // validate
     _validateTags(cats);
 
-    // get history of tags
-    const _history = await _getPostingTagsHistory();
-    console.log('posting tags history', _history);
-    // TODO: show dropdown autocomplete
+    // hide tags list
+    if (_hideList) setHideTagsHistory(true);
+    else setHideTagsHistory(false);
   };
 
   //// handle reward option chnage
@@ -458,19 +457,12 @@ const Posting = (props: Props): JSX.Element => {
 
     const _history = await _getItemFromStorage(key);
     console.log('_savePostingTags. key, previous history', key, _history);
-    // await _setItemToStorage(key, 'kr sct');
-    // const result = await _getItemFromStorage(key);
-    // console.log('_savePostingTags. result', result);
-    // debugger;
-    // return;
-
     // check if the tags is unique
     if (_history && _history.includes(newTags)) return;
-    // append the new tags
-    const history = [newTags, ..._history];
+    // append the new tags and limit the number
+    const history = [newTags, ..._history].slice(0, MAX_TAGS_HISTORY);
     // set
     _setItemToStorage(key, history);
-    debugger;
   };
 
   const _setItemToStorage = async (key: string, data: any) => {
@@ -500,8 +492,10 @@ const Posting = (props: Props): JSX.Element => {
     // get the current history
     const key = `${username}_${StorageSchema.POSTING_TAGS}`;
     const history = await _getItemFromStorage(key);
-    return history;
+    if (history) setTagsHistory(history);
+    else setTagsHistory([]);
   };
+
   //// get a single item from storage
   const _getDraftFromStorage = async () => {
     let _data = null;
@@ -558,7 +552,8 @@ const Posting = (props: Props): JSX.Element => {
         title={title}
         body={body}
         tags={tags}
-        // tagsHistory={tagsHistory}
+        tagsHistory={tagsHistory}
+        hideTagsHistory={hideTagsHistory}
         editMode={uiState.editMode}
         previewBody={previewBody}
         rewardIndex={rewardIndex}

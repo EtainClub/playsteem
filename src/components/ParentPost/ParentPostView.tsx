@@ -80,7 +80,7 @@ const ParentPostView = (props: Props): JSX.Element => {
         <Button
           onPress={_handlePressButton}
           color={argonTheme.COLORS.STEEM}
-          size="small">
+          size="large">
           {intl.formatMessage({id: 'ParentPost.parent_button'})}
         </Button>
       </Block>

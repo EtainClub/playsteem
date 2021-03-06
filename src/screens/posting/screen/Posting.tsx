@@ -15,7 +15,8 @@ import {useIntl} from 'react-intl';
 import {Block, Icon, Button, Input, Text, theme} from 'galio-framework';
 import {DropdownModal} from '~/components/DropdownModal';
 import {argonTheme} from '~/constants/argonTheme';
-import Autocomplete from 'react-native-dropdown-autocomplete-textinput';
+//import Autocomplete from 'react-native-dropdown-autocomplete-textinput';
+import Autocomplete from 'react-native-autocomplete-input';
 const {width, height} = Dimensions.get('screen');
 //// contexts
 import {UserContext} from '~/contexts';
@@ -35,11 +36,12 @@ interface Props {
   uploadedImage: {};
   posting: boolean;
   tags: string;
-  //  tagsHistory: string[];
+  tagsHistory: string[];
+  hideTagsHistory: boolean;
   clearBody?: boolean;
   handleTitleChange: (title: string) => void;
   handleBodyChange: (body: string) => void;
-  handleTagsChange: (tags: string) => void;
+  handleTagsChange: (tags: string, hideList?: boolean) => void;
   handleRewardChange: (index: number) => void;
   handlePressPostSubmit: () => void;
   followingList?: string[];
@@ -59,6 +61,8 @@ const PostingScreen = (props: Props): JSX.Element => {
     rewardIndex,
     tagMessage,
     clearBody,
+    tagsHistory,
+    hideTagsHistory,
   } = props;
   //// language
   const intl = useIntl();
@@ -91,26 +95,21 @@ const PostingScreen = (props: Props): JSX.Element => {
     intl.formatMessage({id: 'Posting.no_reward'}),
   ];
 
-  const DATA = [
-    {tags: 'kr zzn sct xpilar steemit'},
-    {tags: 'playsteem kr'},
-    {tags: 'playsteem steemit steemitdev'},
-    {tags: 'kr zzn sct xpilar steemit2'},
-    {tags: 'playsteem kr2'},
-    {tags: 'playsteem steemit steemitdev2'},
-    {tags: 'kr zzn sct xpilar steemit3'},
-    {tags: 'playsteem kr3'},
-    {tags: 'playsteem steemit steemitdev3'},
+  const DATA2 = [
+    'kr zzn sct',
+    'xpilar steemit',
+    'tag1 tag2',
+    'kr zzn sct',
+    'xpilar steemit',
+    'tag1 tag2',
+    'kr zzn sct',
+    'xpilar steemit',
+    'tag1 tag2',
   ];
-
   const defaultOptionText = '';
   return (
     <View>
-      <ScrollView
-        onKeyboardDidShow={() => setPreventScroll(true)}
-        onKeyboardDidHide={() => setPreventScroll(false)}
-        scrollEnabled={!preventScroll}
-        keyboardShouldPersistTaps="handled">
+      <ScrollView>
         <Block flex>
           <Block style={{paddingHorizontal: theme.SIZES.BASE}}>
             <Input
@@ -127,12 +126,6 @@ const PostingScreen = (props: Props): JSX.Element => {
               bgColor="transparent"
               style={[styles.input, styles.inputDefault]}
             />
-            {/* <Icon
-              name="trash"
-              family="font-awesome"
-              iconSize={24}
-              color={argonTheme.COLORS.SWITCH_ON}
-            /> */}
           </Block>
           <Editor
             isComment={false}
@@ -141,48 +134,29 @@ const PostingScreen = (props: Props): JSX.Element => {
             handleBodyChange={props.handleBodyChange}
           />
 
-          <Block style={{paddingHorizontal: theme.SIZES.BASE}}>
-            {/* <Input
-              color="black"
-              placeholder={intl.formatMessage({id: 'Posting.tags_placeholder'})}
-              placeholderTextColor={argonTheme.COLORS.FACEBOOK}
-              bgColor="transparent"
-              autoCapitalize="none"
-              autoCorrect={false}
-              style={styles.input}
-              value={tags}
-              onChangeText={props.handleTagsChange}
-            /> */}
-            <KeyboardAvoidingView>
-              <Autocomplete
-                data={DATA}
-                displayKey="tags"
-                onSelect={(value) => console.warn('value', value)}
-                onBlur={() => console.log('autocomplete')}
-                maxHeight={200}
-                autoCapitalize="none"
-                autoCorrect={false}
-                placeholder={intl.formatMessage({
-                  id: 'Posting.tags_placeholder',
-                })}
-                placeholderTextColor={argonTheme.COLORS.FACEBOOK}
-              />
-              {/* <Autocomplete
-                style={styles.tagsInput}
-                data={DATA}
-                displayKey="name"
-                placeholder={intl.formatMessage({
-                  id: 'Posting.tags_placeholder',
-                })}
-                placeholderColor={argonTheme.COLORS.FACEBOOK}
-                autoCorrect={false}
-                autoCapitalize="none"
-                maxHeight={200}
-                onSelect={(value) => console.log('autocomplete value', value)}
-              /> */}
-            </KeyboardAvoidingView>
-            <Text color="red">{tagMessage}</Text>
-          </Block>
+          <Autocomplete
+            data={tags ? tagsHistory.filter((item) => item.includes(tags)) : []}
+            defaultValue={tags}
+            hideResults={hideTagsHistory}
+            autoCapitalize="none"
+            autoCorrect={false}
+            inputContainerStyle={styles.tagsInput}
+            listContainerStyle={styles.tagsInput}
+            placeholder={intl.formatMessage({id: 'Posting.tags_placeholder'})}
+            placeholderTextColor={argonTheme.COLORS.FACEBOOK}
+            bgColor="transparent"
+            onChangeText={props.handleTagsChange}
+            renderItem={({item, i}) => (
+              <TouchableOpacity
+                onPress={() => props.handleTagsChange(item, true)}>
+                <Text>{item}</Text>
+              </TouchableOpacity>
+            )}
+          />
+          <Text style={{paddingHorizontal: theme.SIZES.BASE}} color="red">
+            {tagMessage}
+          </Text>
+
           <Block row>
             <DropdownModal
               key={rewardOptions[rewardIndex]}
@@ -334,7 +308,15 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   tagsInput: {
-    borderBottomWidth: 1,
-    width: width * 0.8,
+    width: width * 0.9,
+    alignSelf: 'center',
+  },
+  autocompleteContainer: {
+    flex: 1,
+    left: 0,
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    zIndex: 1,
   },
 });
