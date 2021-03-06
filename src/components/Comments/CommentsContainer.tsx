@@ -17,8 +17,6 @@ import {CommentData, PostRef} from '~/contexts/types';
 import {CommentsView} from './CommentsView';
 //// constants
 
-import {View, Text} from 'react-native';
-
 //// props
 interface Props {
   postRef: PostRef;
@@ -58,6 +56,7 @@ const CommentsContainer = (props: Props): JSX.Element => {
     console.log('_fetchComments', _comments);
 
     setComments(_comments);
+    // refresh the parent?
   };
 
   ////

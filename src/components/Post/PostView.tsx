@@ -43,7 +43,7 @@ interface Props {
 const PostView = (props: Props): JSX.Element => {
   const imageStyles = [styles.image, styles.horizontalImage];
   const {post} = props;
-  const reputation = post.state.reputation.toFixed(0);
+  const reputation = Math.floor(post.state.reputation).toFixed(0);
   const {nickname} = post.state;
   const _onPressPost = () => {
     console.log('onPressPost');

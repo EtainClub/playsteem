@@ -93,15 +93,17 @@ const CommentView = (props: Props): JSX.Element => {
           />
           {comment.children > 0 && (
             <TouchableWithoutFeedback onPress={props.handlePressChildren}>
-              <Block row style={{paddingRight: 10}}>
+              <Block row style={{paddingLeft: 5}}>
                 <Icon
-                  size={ActionBarStyleComment.iconSize}
-                  color={theme.COLORS.MUTED}
+                  size={ActionBarStyleComment.iconSize + 5}
+                  color={theme.COLORS.FACEBOOK}
                   name="commenting-o"
                   family="font-awesome"
                   style={{paddingRight: 2}}
                 />
-                <Text size={ActionBarStyleComment.textSize}>
+                <Text
+                  size={ActionBarStyleComment.textSize + 3}
+                  color={theme.COLORS.FACEBOOK}>
                   {comment.children}
                 </Text>
               </Block>

@@ -56,18 +56,20 @@ const CommentContainer = (props: Props): JSX.Element => {
   // reply text
   const [replyText, setReplyText] = useState('');
   // comment body
-  const [comment, setComment] = useState(props.comment);
+  const [comment, setComment] = useState(null);
   const [body, setBody] = useState(props.comment.body);
   const [showOriginal, setShowOriginal] = useState(true);
   const [originalBody, setOriginalBody] = useState(props.comment.body);
   const [translatedBody, setTranslatedBody] = useState(null);
-  // const [showChildComments, setShowChildComments] = useState(
-  //   props.showChildComments || false,
-  // );
   const [showChildComments, setShowChildComments] = useState(false);
-  // tts
-  const [speaking, setSpeaking] = useState(false);
-  const reputation = props.comment.state.reputation.toFixed(0);
+
+  //// reputation
+  const reputation = Math.floor(props.comment.state.reputation).toFixed(0);
+
+  //// event: mount
+  useEffect(() => {
+    setComment(props.comment);
+  }, []);
 
   const formatedTime =
     props.comment && getTimeFromNow(props.comment.state.createdAt);
@@ -182,6 +184,7 @@ const CommentContainer = (props: Props): JSX.Element => {
         ...comment,
         body: translatedBody,
       };
+      console.log('translated comment', newComment);
       setComment(newComment);
     } catch (error) {
       console.log('failed to translate', error);
@@ -212,18 +215,20 @@ const CommentContainer = (props: Props): JSX.Element => {
   return (
     <View>
       {!editMode ? (
-        <CommentView
-          key={comment.id}
-          comment={comment}
-          showChildComments={showChildComments}
-          reputation={reputation}
-          handlePressReply={_handlePressReply}
-          handlePressEditComment={_handlePressEditComment}
-          handlePressTranslation={_handlePressTranslation}
-          handleSubmitComment={_handleSubmitComment}
-          handlePressChildren={_handlePressChildren}
-          flagPost={_flagPost}
-        />
+        comment && (
+          <CommentView
+            key={comment.id}
+            comment={comment}
+            showChildComments={showChildComments}
+            reputation={reputation}
+            handlePressReply={_handlePressReply}
+            handlePressEditComment={_handlePressEditComment}
+            handlePressTranslation={_handlePressTranslation}
+            handleSubmitComment={_handleSubmitComment}
+            handlePressChildren={_handlePressChildren}
+            flagPost={_flagPost}
+          />
+        )
       ) : (
         <Editor
           isComment={true}

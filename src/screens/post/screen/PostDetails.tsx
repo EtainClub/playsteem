@@ -53,7 +53,7 @@ const PostDetailsScreen = (props: Props): JSX.Element => {
   const {state} = post;
   const {nickname} = state;
   const {tags} = post.metadata;
-  const reputation = state.reputation.toFixed(0);
+  const reputation = Math.floor(state.reputation).toFixed(0);
   //// contexts
   //// states
   const [commentY, setCommentY] = useState(0);
@@ -79,7 +79,7 @@ const PostDetailsScreen = (props: Props): JSX.Element => {
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={50}
-      style={{flex: 1}}>
+      style={{flex: 1, marginBottom: 20}}>
       <Block style={{marginHorizontal: 20}}>
         {props.parentPost && <ParentPost post={props.parentPost} />}
         <Block row space="between">

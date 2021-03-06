@@ -73,14 +73,14 @@ const PostDetails = (props: Props): JSX.Element => {
   const [parentPost, setParentPost] = useState<PostData>(null);
   const [needFetching, setNeedFetching] = useState(false);
   //////// events
-  // event: mount
-  // useEffect(() => {
-  //   _fetchPostDetailsEntry();
-  //   // update vote amount
-  //   if (authState.loggedIn) {
-  //     updateVoteAmount(authState.currentCredentials.username);
-  //   }
-  // }, []);
+  // event: account change
+  useEffect(() => {
+    _fetchPostDetailsEntry();
+    // update vote amount
+    if (authState.loggedIn) {
+      updateVoteAmount(authState.currentCredentials.username);
+    }
+  }, [authState.currentCredentials]);
   //// event: new post ref set
   useEffect(() => {
     if (postsState.postRef.author || postsState.postRef.permlink) {

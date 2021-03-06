@@ -113,6 +113,7 @@ const EditorView = (props: Props): JSX.Element => {
           blurOnSubmit={false}
           textAlignVertical="top"
           autoCorrect={false}
+          autoCapitalize="none"
           onContentSizeChange={props.handleContainerHeight}
         />
       </Block>

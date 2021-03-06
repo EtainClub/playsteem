@@ -155,8 +155,8 @@ const ActionBarContainer = (props: Props): JSX.Element => {
           payout: _payout,
           voters: _voters,
         };
-        // cancel loading
-        setVoting(false);
+        // // cancel loading
+        // setVoting(false);
       } else {
         _payout = (
           parseFloat(postState.payout) -
@@ -171,11 +171,14 @@ const ActionBarContainer = (props: Props): JSX.Element => {
           payout: _payout,
           voters: _voters,
         };
-        // cancel loading
-        setDownvoting(false);
+        // // cancel loading
+        // setDownvoting(false);
       }
       setPostState(_state);
     }
+    // cancel vooting
+    setVoting(false);
+    setDownvoting(false);
   };
 
   //// handle press a voter
