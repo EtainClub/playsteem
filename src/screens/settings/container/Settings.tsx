@@ -104,9 +104,7 @@ const SettingsContainer = (props: Props): JSX.Element => {
   const [startDNDTime, setStartDNDTime] = useState(
     settingsState.dndTimes.startTime,
   );
-  const [endDNDTime, setEndDNDTime] = useState(
-    settingsState.dndTimes.startTime,
-  );
+  const [endDNDTime, setEndDNDTime] = useState(settingsState.dndTimes.endTime);
   // dropdowns: rpc server, image server,
   const [rpcServer, setRPCServer] = useState(settingsState.blockchains.rpc);
   const [imageServer, setImageServer] = useState(
@@ -264,8 +262,14 @@ const SettingsContainer = (props: Props): JSX.Element => {
           ];
           // update time in context state and storage
           updateSettingSchema(username, StorageSchema.DND_TIMES, {
-            start: _dndTimes[0],
-            end: _dndTimes[1],
+            startTime: _dndTimes[0],
+            endTime: _dndTimes[1],
+          });
+        } else {
+          // update time in context state and storage
+          updateSettingSchema(username, StorageSchema.DND_TIMES, {
+            startTime: null,
+            endTime: null,
           });
         }
         // update times in firestore
@@ -631,14 +635,14 @@ const SettingsContainer = (props: Props): JSX.Element => {
                   <Block card>
                     {_renderClockButton(
                       intl.formatMessage(
-                        {id: 'Settings.start_clock_header'},
+                        {id: 'Settings.start_clock'},
                         {what: _convertTime(startDNDTime)},
                       ),
                       () => setShowStartClock(true),
                     )}
                     {_renderClockButton(
                       intl.formatMessage(
-                        {id: 'Settings.end_clock_header'},
+                        {id: 'Settings.end_clock'},
                         {what: _convertTime(endDNDTime)},
                       ),
                       () => setShowEndClock(true),

@@ -113,7 +113,6 @@ const SettingsProvider = ({children}: Props) => {
     // use default settings if nothing in storage
     if (!_settings) {
       _settings = settingsState;
-      debugger;
 
       // set settings to storage
       if (username) await _setUserSettingsToStorage(username, _settings);
@@ -145,10 +144,11 @@ const SettingsProvider = ({children}: Props) => {
 
 //// get user's all settings from storage
 const _getUserSettingsFromStorage = async (username: string) => {
-  // check if the username has settings in storage
-  // await MMKVStorage.indexer.hasKey(username).then(async () => {
   try {
-    //    const _settings = await MMKV.getMapAsync(username);
+    // @test
+    // await AsyncStorage.removeItem(username);
+    // return;
+
     const _settings = await AsyncStorage.getItem(username);
     // parse
     return JSON.parse(_settings);
@@ -162,9 +162,6 @@ const _getUserSettingsFromStorage = async (username: string) => {
 const _setUserSettingsToStorage = async (username: string, _settings: any) => {
   try {
     await AsyncStorage.setItem(username, JSON.stringify(_settings));
-    //    await MMKV.setMapAsync(username, _settings);
-    //    const result = await _getUserSettingsFromStorage(username);
-    //    console.log('_setUserSettingsToStorage. retrieved settings', result);
     return true;
   } catch (error) {
     console.log('failed to set user settings to storage', error);
