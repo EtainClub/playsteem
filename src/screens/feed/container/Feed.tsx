@@ -132,7 +132,6 @@ const Feed = (props: Props): JSX.Element => {
 
     // handle intially fetched case
     if (!initialFetched) {
-      //      debugger;
       // set posts if exist
       if (postsState.feed.posts.length > 0) {
         setPosts(postsState.feed.posts);

@@ -163,8 +163,8 @@ const SettingsScreen = (props: Props): JSX.Element => {
       type: 'button',
     },
     {
-      title: intl.formatMessage({id: 'Settings.about'}),
-      id: SettingUITypes.ABOUT,
+      title: intl.formatMessage({id: 'Settings.source_code'}),
+      id: SettingUITypes.SOURCE,
       type: 'button',
     },
   ];

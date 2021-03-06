@@ -47,7 +47,7 @@ const Notification = (props: Props): JSX.Element => {
     if (authState.loggedIn) {
       setUsername(authState.currentCredentials.username);
       // fetch notifications
-      _fetchNotifications(authState.currentCredentials.username);
+      _fetchNotifications(authState.currentCredentials.username, true);
     }
   }, [authState.currentCredentials]);
   //// fetch notifications

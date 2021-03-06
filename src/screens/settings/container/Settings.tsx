@@ -30,7 +30,7 @@ import {AuthContext, SettingsContext, UIContext} from '~/contexts';
 import {SettingsScreen} from '../screen/Settings';
 import {DNDTimes} from '~/components';
 //// constants
-import {RPC_SERVERS, IMAGE_SERVERS} from '~/constants/blockchain';
+import {TERMS_URL, PRIVACY_URL, SOURCE_URL} from '~/constants';
 import {SUPPORTED_LOCALES} from '~/locales';
 
 //// times
@@ -81,6 +81,7 @@ export enum SettingUITypes {
   APP_VERSION = 'app_version',
   SHARE = 'share',
   FEEDBACK = 'feedback',
+  SOURCE = 'source',
   ABOUT = 'about',
 }
 
@@ -91,7 +92,11 @@ const SettingsContainer = (props: Props): JSX.Element => {
   const intl = useIntl();
   //// contexts
   const {authState, processLogout} = useContext(AuthContext);
-  const {settingsState, updateSettingSchema} = useContext(SettingsContext);
+  const {
+    settingsState,
+    updateSettingSchema,
+    getAllSettingsFromStorage,
+  } = useContext(SettingsContext);
   const {uiState, setLanguageParam, setToastMessage} = useContext(UIContext);
   //// states
   const [username, setUsername] = useState(null);
@@ -118,15 +123,19 @@ const SettingsContainer = (props: Props): JSX.Element => {
   // app store, google play link
   const APP_LINK = Platform.OS === 'android' ? GOOGLEPLAY : APPSTORE;
   //// effects
-  // event: mount
+  // event: account changed
   useEffect(() => {
     _getInitialSettings();
-  }, []);
+  }, [authState.currentCredentials]);
 
   //// get initial settings
   const _getInitialSettings = async () => {
     if (authState.loggedIn) {
-      console.log('_getInitialSettings', settingsState);
+      // get settings from storage
+      const _settings = await getAllSettingsFromStorage(
+        authState.currentCredentials.username,
+      );
+      console.log('_getInitialSettings', _settings);
       // get username
       const _username = authState.currentCredentials.username;
       setUsername(_username);
@@ -140,9 +149,19 @@ const SettingsContainer = (props: Props): JSX.Element => {
         languages,
         securities,
         ui,
-      } = settingsState;
+      } = _settings;
       //// switch states
       let _switchStates = switchStates;
+      // clear all push switches
+      _switchStates = {
+        ...switchStates,
+        [SettingUITypes.REPLY]: false,
+        [SettingUITypes.TRANSFER]: false,
+        [SettingUITypes.MENTION]: false,
+        [SettingUITypes.BENEFICIARY]: false,
+        [SettingUITypes.FOLLOW]: false,
+        [SettingUITypes.REBLOG]: false,
+      };
       // push notifications
       pushNotifications.forEach((item: string) => {
         _switchStates = {..._switchStates, [item]: true};
@@ -301,7 +320,6 @@ const SettingsContainer = (props: Props): JSX.Element => {
         );
         break;
       case SettingUITypes.NSFW:
-        debugger;
         // build structure
         const _ui = {...settingsState.ui, nsfw: value};
         // update in context state
@@ -407,6 +425,7 @@ const SettingsContainer = (props: Props): JSX.Element => {
     switch (uiType) {
       case SettingUITypes.NOTICE:
         // get
+        // TODO: get notices and show them
         break;
       case SettingUITypes.APP_VERSION:
         // get app version
@@ -448,17 +467,18 @@ const SettingsContainer = (props: Props): JSX.Element => {
             );
           }
         });
-
         break;
       case SettingUITypes.RATE_APP:
         Linking.openURL(APP_LINK);
         break;
       case SettingUITypes.TERMS:
-        Linking.openURL('https://playsteem.app/terms');
+        Linking.openURL(TERMS_URL);
         break;
       case SettingUITypes.PRIVACY:
-        Linking.openURL('https://playsteem.app/privacy');
+        Linking.openURL(PRIVACY_URL);
         break;
+      case SettingUITypes.SOURCE:
+        Linking.openURL(SOURCE_URL);
       default:
         break;
     }
