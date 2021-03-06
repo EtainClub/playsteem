@@ -129,7 +129,7 @@ const Signup = (props: Props): JSX.Element => {
     };
     const result = await firebase
       .functions()
-      .httpsCallable('createAccountRequest')(options);
+      .httpsCallable('createAccountByACTRequest')(options);
 
     console.log('_createAccount. result', result);
     // check sanity

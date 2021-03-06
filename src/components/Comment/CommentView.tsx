@@ -32,6 +32,7 @@ const {height, width} = Dimensions.get('window');
 // component
 interface Props {
   comment: CommentData;
+  body: string;
   showChildComments: boolean;
   reputation: string;
   handlePressReply: () => void;
@@ -43,7 +44,7 @@ interface Props {
 }
 const CommentView = (props: Props): JSX.Element => {
   //// props
-  const {comment, showChildComments, reputation} = props;
+  const {comment, showChildComments, reputation, body} = props;
   //// language
   const intl = useIntl();
 
@@ -79,7 +80,7 @@ const CommentView = (props: Props): JSX.Element => {
             />
           </Block>
         </Block>
-        <PostBody body={comment.body} commentDepth={comment.depth} />
+        <PostBody body={body} commentDepth={comment.depth} />
         <Block row>
           <ActionBar
             actionBarStyle={ActionBarStyleComment}

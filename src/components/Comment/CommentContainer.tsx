@@ -218,7 +218,8 @@ const CommentContainer = (props: Props): JSX.Element => {
         comment && (
           <CommentView
             key={comment.id}
-            comment={comment}
+            comment={props.comment}
+            body={body}
             showChildComments={showChildComments}
             reputation={reputation}
             handlePressReply={_handlePressReply}

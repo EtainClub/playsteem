@@ -79,18 +79,112 @@ exports.translationRequest = functions.https.onCall(async (data, context) => {
   return result;
 });
 
-// proxy for creating steem account
-exports.createAccountRequest = functions.https.onCall(async (data, context) => {
-  // TODO: setup active key and decide the account to be used, ACT?
-  return null;
-
-  const {username, password, creationFee} = data;
-
+//// only for operator
+// proxy for claim account creation token
+// claim account creation token to create a new account
+// @return success of failure of the claim
+exports.claimACTRequest = functions.https.onCall(async (context) => {
   // get creator account
   const creator = functions.config().creator.account;
   const creatorWif = functions.config().creator.wif;
-  const welcomeBlurt = functions.config().creator.welcome_blurt;
+  const result = await _claimAccountCreationToken(creator, creatorWif);
+  return result;
+});
 
+// proxy for creating steem account
+exports.createAccountByACTRequest = functions.https.onCall(
+  async (data, context) => {
+    // get creator account
+    const creator = functions.config().creator.account;
+    const creatorWif = functions.config().creator.wif;
+
+    const hasACT = await _checkClaimedToken(creator);
+    // in case no ACT, then request to create
+    if (!hasACT) {
+      // reqeust ACT
+      const success = _claimAccountCreationToken(creator, creatorWif);
+      if (!success) {
+        console.log('failed to claim ACT');
+        return null;
+      }
+    }
+
+    /////// now we have ACT to create an account
+    // get account data to be created
+    const {username, password} = data;
+    // private active key of creator account
+    const creatorKey = dsteem.PrivateKey.fromString(creatorWif);
+    // create keys
+    const ownerKey = dsteem.PrivateKey.fromLogin(username, password, 'owner');
+    const activeKey = dsteem.PrivateKey.fromLogin(username, password, 'active');
+    const postingKey = dsteem.PrivateKey.fromLogin(
+      username,
+      password,
+      'posting',
+    );
+    const memoKey = dsteem.PrivateKey.fromLogin(
+      username,
+      password,
+      'memo',
+    ).createPublic(client.addressPrefix);
+
+    const ownerAuth = {
+      weight_threshold: 1,
+      account_auths: [],
+      key_auths: [[ownerKey.createPublic(client.addressPrefix), 1]],
+    };
+    const activeAuth = {
+      weight_threshold: 1,
+      account_auths: [],
+      key_auths: [[activeKey.createPublic(client.addressPrefix), 1]],
+    };
+    const postingAuth = {
+      weight_threshold: 1,
+      account_auths: [],
+      key_auths: [[postingKey.createPublic(client.addressPrefix), 1]],
+    };
+
+    //// send creation operation
+    // operations
+    let operations = [];
+    //create operation to transmit
+    const create_op = [
+      'create_claimed_account',
+      {
+        creator: creator,
+        new_account_name: username,
+        owner: ownerAuth,
+        active: activeAuth,
+        posting: postingAuth,
+        memo_key: memoKey,
+        json_metadata: '',
+        extensions: [],
+      },
+    ];
+    // push the creation operation
+    operations.push(create_op);
+    try {
+      const result = await client.broadcast.sendOperations(
+        operations,
+        creatorKey,
+      );
+      console.log('created account, result', result);
+      if (result) return result;
+      return null;
+    } catch (error) {
+      console.log('failed to create account by ACT', error);
+      return null;
+    }
+  },
+);
+
+// proxy for creating steem account
+exports.createAccountRequest = functions.https.onCall(async (data, context) => {
+  // get creator account
+  const creator = functions.config().creator.account;
+  const creatorWif = functions.config().creator.wif;
+  // get user data
+  const {username, password, creationFee} = data;
   // private active key of creator account
   const creatorKey = dsteem.PrivateKey.fromString(creatorWif);
   // create keys
@@ -134,10 +228,8 @@ exports.createAccountRequest = functions.https.onCall(async (data, context) => {
       posting: postingAuth,
       memo_key: memoKey,
       json_metadata: '',
-      extensions: [],
     },
   ];
-  console.log(create_op);
   // push the creation operation
   operations.push(create_op);
   try {
@@ -146,27 +238,9 @@ exports.createAccountRequest = functions.https.onCall(async (data, context) => {
       creatorKey,
     );
     console.log('create account, result', result);
-
-    //// if successful, transfer 0.01 steem to the account
+    ////
     if (result) {
-      // get privake key from creator active wif
-      const privateKey = dsteem.PrivateKey.from(creatorWif);
-      // transfer
-      if (privateKey) {
-        const args = {
-          from: creator,
-          to: username,
-          amount: welcomeBlurt,
-          memo: 'Welcome Gift. Enjoy Blurt',
-        };
-        const resultTransfer = await client.broadcast.transfer(
-          args,
-          privateKey,
-        );
-        console.log('transfer result', resultTransfer);
-        return resultTransfer;
-      }
-      return null;
+      return result;
     }
     return null;
   } catch (error) {
@@ -174,3 +248,43 @@ exports.createAccountRequest = functions.https.onCall(async (data, context) => {
     return null;
   }
 });
+
+/////// helper functions
+
+// check availabled claimed token
+// @return availabivity of the token
+const _checkClaimedToken = async (creator) => {
+  try {
+    const accounts = await client.database.call('get_accounts', [[creator]]);
+    const numTokens = accounts[0].pending_claimed_accounts;
+    console.log('number of claimed tokens', numTokens);
+    if (numTokens > 0) return true;
+    else return false;
+  } catch (error) {
+    console.log('claimed token error', error);
+    return false;
+  }
+};
+
+const _claimAccountCreationToken = async (creator, activeKey) => {
+  try {
+    const creatorKey = dsteem.PrivateKey.fromString(activeKey);
+    let ops = [];
+    const claim_op = [
+      'claim_account',
+      {
+        creator: creator,
+        fee: '0.000 STEEM',
+        extensions: [],
+      },
+    ];
+    ops.push(claim_op);
+    const result = await client.broadcast.sendOperations(ops, creatorKey);
+    console.log('claim ACT result', result);
+    if (result.block_num > 0) return true;
+    else return false;
+  } catch (error) {
+    console.log('error. claim failed', error);
+    return false;
+  }
+};

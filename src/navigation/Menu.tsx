@@ -37,7 +37,7 @@ function CustomDrawerContent({
               source={{uri: profile.avatar || null}}
               style={styles.avatar}
             />
-            <Text h5 color={'white'}>
+            <Text h6 color={'white'}>
               @{profile.name}
             </Text>
           </Block>
