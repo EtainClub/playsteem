@@ -1,7 +1,14 @@
 //// react
 import React, {useState, useEffect, useContext} from 'react';
 //// react native
-import {FlatList, Animated, StyleSheet, ScrollView, View} from 'react-native';
+import {
+  FlatList,
+  Animated,
+  StyleSheet,
+  ScrollView,
+  Dimensions,
+  View,
+} from 'react-native';
 //// language
 import {useIntl} from 'react-intl';
 //// ui
@@ -16,6 +23,7 @@ import {
 } from '~/components';
 import {KeyTypes, PriceData} from '~/contexts/types';
 import {WalletData} from '~/contexts/types';
+const {height, width} = Dimensions.get('window');
 
 interface Props {
   walletData: WalletData;
@@ -57,7 +65,7 @@ const WalletScreen = (props: Props): JSX.Element => {
       balance,
     } = props;
     return (
-      <Block>
+      <Block style={{height: 300}}>
         <WalletStatsView
           walletData={props.walletData}
           isUser

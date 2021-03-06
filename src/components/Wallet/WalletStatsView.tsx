@@ -328,7 +328,7 @@ const WalletStatsView = (props: Props): JSX.Element => {
         <Block style={styles.transaction}>
           <FlatList
             contentContainerStyle={{
-              marginBottom: 0,
+              paddingBottom: 20,
             }}
             data={transactions}
             refreshing={reloading}

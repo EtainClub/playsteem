@@ -461,6 +461,7 @@ const Posting = (props: Props): JSX.Element => {
     if (_history && _history.includes(newTags)) return;
     // append the new tags and limit the number
     const history = [newTags, ..._history].slice(0, MAX_TAGS_HISTORY);
+    console.log('_savePostingTags. new history', history);
     // set
     _setItemToStorage(key, history);
   };
