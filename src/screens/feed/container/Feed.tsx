@@ -21,6 +21,7 @@ const Feed = (props: Props): JSX.Element => {
     fetchPosts,
     setNeedToFetch,
     clearPosts,
+    getTagList,
     setPostsType,
   } = useContext(PostsContext);
   const {authState} = useContext(AuthContext);
@@ -84,6 +85,8 @@ const Feed = (props: Props): JSX.Element => {
       // // fetch only the user account has been changed
       // if (username != authState.currentCredentials.username) _fetchPosts(false);
       _fetchPosts(false);
+      // get tag list
+      getTagList(authState.currentCredentials.username);
     }
   }, [authState.currentCredentials]);
 
@@ -95,7 +98,6 @@ const Feed = (props: Props): JSX.Element => {
       console.log('Feed. focus event. postsState', postsState);
       // update posts type only
       setPostsType(PostsTypes.FEED);
-      //_fetchPosts(false);
     }, []),
   );
 

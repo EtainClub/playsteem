@@ -84,14 +84,16 @@ const PostDetailsScreen = (props: Props): JSX.Element => {
         {props.parentPost && <ParentPost post={props.parentPost} />}
         <Block row space="between">
           <Text size={24}>{post.state.title}</Text>
-          <Icon
-            onPress={props.flagPost}
-            style={{margin: 5}}
-            size={16}
-            color={argonTheme.COLORS.MUTED}
-            name="flag-outline"
-            family="ionicon"
-          />
+          {!props.parentPost && (
+            <Icon
+              onPress={props.flagPost}
+              style={{margin: 5}}
+              size={16}
+              color={argonTheme.COLORS.MUTED}
+              name="flag-outline"
+              family="ionicon"
+            />
+          )}
         </Block>
         <Block row space="between">
           <Avatar

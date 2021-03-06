@@ -189,7 +189,7 @@
   "ParentPost": {
     "info": "You are seeing the single post of the following:",
     "title": "Title",
-    "parent_button": "See the full post"
+    "parent_button": "See the post"
   },
   "TTS": {
     "speed": "Speed",

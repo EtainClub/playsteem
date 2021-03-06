@@ -5,7 +5,6 @@ import TTS from 'react-native-tts';
 import {UIActionTypes, UIState, UIContextType, UIAction} from './types/uiTypes';
 
 // steem api
-import {fetchCommunityList} from '~/providers/steem/dsteemApi';
 import {PostsTypes, TTSStates} from './types';
 
 const initialState = {

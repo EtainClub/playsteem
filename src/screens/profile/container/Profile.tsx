@@ -29,14 +29,8 @@ const Profile = ({navigation}): JSX.Element => {
   const intl = useIntl();
   // contexts
   const {authState} = useContext(AuthContext)!;
-  const {setPostRef, setPostDetails} = useContext(PostsContext);
-  const {
-    userState,
-    getUserProfileData,
-    getNotifications,
-    getFollowings,
-    getFollowers,
-  } = useContext(UserContext);
+  const {setPostRef, setPostDetails, getTagList} = useContext(PostsContext);
+  const {userState, getUserProfileData} = useContext(UserContext);
   const {uiState, setAuthorParam, setToastMessage} = useContext(UIContext);
   const {
     postsState,
@@ -89,6 +83,8 @@ const Profile = ({navigation}): JSX.Element => {
       _getUserProfileData(username, true);
       _fetchBookmarks(username);
       _fetchFavorites(username);
+      // fetch community list
+      getTagList(username);
     }
   }, [authState.currentCredentials.username]);
 
@@ -227,7 +223,7 @@ const Profile = ({navigation}): JSX.Element => {
 
       //// this action requires posting key or above
       // check the key level
-      if (type < KeyTypes.ACTIVE) {
+      if (type < KeyTypes.POSTING) {
         // show key input modal
         setShowSecureKey(true);
         return;

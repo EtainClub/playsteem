@@ -73,14 +73,13 @@ const ParentPostView = (props: Props): JSX.Element => {
           padding: 3,
           width: width * 0.8,
         }}>
-        {/* <Text>{intl.formatMessage({id: 'ParentPost.info'})}</Text> */}
         <Text size={14} color="blue" bold>
           {post.state.title}
         </Text>
         <Button
           onPress={_handlePressButton}
           color={argonTheme.COLORS.STEEM}
-          size="large">
+          size="small">
           {intl.formatMessage({id: 'ParentPost.parent_button'})}
         </Button>
       </Block>
