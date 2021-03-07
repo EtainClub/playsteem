@@ -318,18 +318,20 @@ const Header = (props: Props): JSX.Element => {
             <Block row space="between">
               <Block row center style={{left: 100}}>
                 <Block style={{}}>
-                  <DropdownModal
-                    key={tagOptions[communityIndex]}
-                    defaultText={postingTag || tagOptions[communityIndex]}
-                    dropdownButtonStyle={styles.postingDropdownButtonStyle}
-                    selectedOptionIndex={communityIndex}
-                    rowTextStyle={styles.rowTextStyle}
-                    style={styles.postingDropdown}
-                    dropdownStyle={styles.postingDropdownStyle}
-                    textStyle={styles.dropdownText}
-                    options={tagOptions}
-                    onSelect={_handleOnCommunityChange}
-                  />
+                  {!uiState.editMode && (
+                    <DropdownModal
+                      key={tagOptions[communityIndex]}
+                      defaultText={postingTag || tagOptions[communityIndex]}
+                      dropdownButtonStyle={styles.postingDropdownButtonStyle}
+                      selectedOptionIndex={communityIndex}
+                      rowTextStyle={styles.rowTextStyle}
+                      style={styles.postingDropdown}
+                      dropdownStyle={styles.postingDropdownStyle}
+                      textStyle={styles.dropdownText}
+                      options={tagOptions}
+                      onSelect={_handleOnCommunityChange}
+                    />
+                  )}
                 </Block>
               </Block>
               <Block style={{left: 120, top: 0}}>
