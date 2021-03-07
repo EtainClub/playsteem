@@ -47,8 +47,9 @@ const Feed = (props: Props): JSX.Element => {
   const [initialFetched, setInitialFetched] = useState(false);
 
   //////// effects
-  //// hide splash screen
+  // event: account change
   useEffect(() => {
+    //// hide splash screen
     SplashScreen.hide();
     // initial fetching
     _fetchPosts(false);
@@ -62,15 +63,9 @@ const Feed = (props: Props): JSX.Element => {
       // get notifications
       getNotifications(username);
     }
-  }, []);
+  }, [authState.currentCredentials]);
 
-  // useEffect(() => {
-  //   if (posts) {
-  //     SplashScreen.hide();
-  //   }
-  // }, [posts]);
-
-  //// header tag/fiter change event
+  //// event: tag/fiter change
   useEffect(() => {
     if (postsState.needToFetch) {
       _fetchPosts(false);

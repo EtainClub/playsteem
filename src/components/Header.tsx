@@ -96,11 +96,6 @@ const Header = (props: Props): JSX.Element => {
     setKeyTypes(_keyTypes);
   }, [authState.currentCredentials]);
 
-  const _onSubmitSearch = () => {
-    console.log('_onSubmitSearch');
-    setSearchParam(searchText);
-  };
-
   const _renderAccountRow = (option, index, isSelect) => {
     return (
       <Block row style={{margin: 5}}>
@@ -544,19 +539,3 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
 });
-
-// dropdownStyle: {
-//   marginTop: 15,
-//   minWidth: 150,
-//   width: 200,
-//   backgroundColor: argonTheme.COLORS.DEFAULT,
-// },
-// dropdownButtonStyle: {
-//   color: argonTheme.COLORS.ERROR,
-//   width: 180,
-//   marginRight: 10,
-// },
-// dropdown: {
-//   width: 180,
-//   marginLeft: 10,
-// },

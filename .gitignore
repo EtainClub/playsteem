@@ -1,6 +1,7 @@
 # custom
 .env
 *.apk
+*.mp4
 
 # OSX
 #

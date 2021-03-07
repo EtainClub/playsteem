@@ -373,9 +373,9 @@
     "open": "Open the link",
     "copy": "Copy the link",
     "close": "Close",
-    "download": "Download the image",
-    "gallery": "Upload from Gallery",
-    "camera": "Take a photo",
+    "download": "Download",
+    "gallery": "Gallery",
+    "camera": "Camera",
     "search": "Search Posts",
     "search_placeholder": "Which posts are your looking for?"
   },

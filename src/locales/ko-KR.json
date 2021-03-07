@@ -373,9 +373,9 @@
     "open": "링크 열기",
     "copy": "링크 복사",
     "close": "닫기",
-    "download": "이미지 다운로드",
-    "gallery": "갤러리 사진 올리기",
-    "camera": "카메라로 찍기",
+    "download": "다운로드",
+    "gallery": "갤러리",
+    "camera": "카메라",
     "search": "포스트 검색",
     "search_placeholder": "찾고자 하는 포스트를 입력하세요."
   },
