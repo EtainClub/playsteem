@@ -1,5 +1,7 @@
-import React, {useState, useContext, useEffect} from 'react';
+import React, {useState, useContext, useEffect, useCallback} from 'react';
 import {Alert} from 'react-native';
+//// react navigation
+import {useFocusEffect} from '@react-navigation/native';
 //// storage
 import AsyncStorage from '@react-native-community/async-storage';
 import {useIntl} from 'react-intl';
@@ -102,9 +104,21 @@ const Posting = (props: Props): JSX.Element => {
     }
   }, [authState.currentCredentials]);
 
+  //// event: focus
+  useFocusEffect(
+    useCallback(() => {
+      if (authState.loggedIn) {
+        if (!uiState.editMode) _getDraftFromStorage();
+        // get tags history of the user
+        _getPostingTagsHistory();
+      }
+    }, []),
+  );
+
   //// event: edit mode
   useEffect(() => {
     console.log('[Posting] edit event. uiState', uiState);
+    const {username} = authState.currentCredentials;
     if (uiState.editMode) {
       const {postDetails} = postsState;
       // check if original post exists
@@ -362,9 +376,6 @@ const Posting = (props: Props): JSX.Element => {
   const _handlePressBeneficiary = () => {
     console.log('_handlePressBeneficiary');
     setShowBeneficiaryModal(true);
-
-    // @test
-    //_savePostingTags(tags);
   };
 
   const _getBeneficiaries = (_beneficiaries: any[]) => {
@@ -448,15 +459,22 @@ const Posting = (props: Props): JSX.Element => {
 
   //// save posting tags
   const _savePostingTags = async (newTags: string) => {
+    console.log('_savePostingTags. newTags', newTags);
+
     const {username} = authState.currentCredentials;
     // get the current history
     const key = `${username}_${StorageSchema.POSTING_TAGS}`;
 
-    // await AsyncStorage.removeItem(key);
-    // return;
-
     const _history = await _getItemFromStorage(key);
     console.log('_savePostingTags. key, previous history', key, _history);
+
+    debugger;
+
+    // save the new tags if the history is empty
+    if (!_history) {
+      _setItemToStorage(key, [newTags]);
+      return;
+    }
     // check if the tags is unique
     if (_history && _history.includes(newTags)) return;
     // append the new tags and limit the number
@@ -467,12 +485,15 @@ const Posting = (props: Props): JSX.Element => {
   };
 
   const _setItemToStorage = async (key: string, data: any) => {
+    console.log('_setItemToStorage. key, data', key, data);
+    // check sanity
+    if (!data) return;
     // stringify the data
     const dataString = JSON.stringify(data);
     try {
       await AsyncStorage.setItem(key, dataString);
     } catch (error) {
-      console.log('failed to save draft item in storage', error);
+      console.log('failed to save item in storage', key, error);
     }
   };
 
@@ -492,26 +513,28 @@ const Posting = (props: Props): JSX.Element => {
     const {username} = authState.currentCredentials;
     // get the current history
     const key = `${username}_${StorageSchema.POSTING_TAGS}`;
+
+    // @test
+    //    await AsyncStorage.removeItem(key);
+
     const history = await _getItemFromStorage(key);
     if (history) setTagsHistory(history);
     else setTagsHistory([]);
+    console.log('_getPostingTagsHistory', history);
+    debugger;
   };
 
   //// get a single item from storage
   const _getDraftFromStorage = async () => {
-    let _data = null;
-    try {
-      _data = await AsyncStorage.getItem(StorageSchema.DRAFT);
-      if (_data) {
-        const data = JSON.parse(_data);
-        console.log('_getDraftFromStorage. data', data);
-        // update
-        setTitle(data.title);
-        setBody(data.body);
-        setTags(data.tags);
-      }
-    } catch (error) {
-      console.log('failed to get draft from storage', error);
+    const {username} = authState.currentCredentials;
+    const key = `${username}_${StorageSchema.DRAFT}`;
+    const data = await _getItemFromStorage(key);
+    console.log('_getDraftFromStorage. data', data);
+    // update states
+    if (data) {
+      setTitle(data.title);
+      setBody(data.body);
+      setTags(data.tags);
     }
   };
 
@@ -553,7 +576,7 @@ const Posting = (props: Props): JSX.Element => {
         title={title}
         body={body}
         tags={tags}
-        tagsHistory={tagsHistory}
+        tagsHistory={tagsHistory || []}
         hideTagsHistory={hideTagsHistory}
         editMode={uiState.editMode}
         previewBody={previewBody}
