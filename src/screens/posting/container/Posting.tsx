@@ -468,8 +468,6 @@ const Posting = (props: Props): JSX.Element => {
     const _history = await _getItemFromStorage(key);
     console.log('_savePostingTags. key, previous history', key, _history);
 
-    debugger;
-
     // save the new tags if the history is empty
     if (!_history) {
       _setItemToStorage(key, [newTags]);
@@ -521,7 +519,6 @@ const Posting = (props: Props): JSX.Element => {
     if (history) setTagsHistory(history);
     else setTagsHistory([]);
     console.log('_getPostingTagsHistory', history);
-    debugger;
   };
 
   //// get a single item from storage

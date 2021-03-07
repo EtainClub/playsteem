@@ -49,13 +49,7 @@ const App = () => {
   //// code push
   const _codePushSync = () => {
     codePush.sync({
-      updateDialog: {
-        title: 'New Update',
-        optionalUpdateMessage: 'Install the update now?',
-        optionalIgnoreButtonLabel: 'Later',
-        optionalInstallButtonLabel: 'Update',
-      },
-      installMode: codePush.InstallMode.IMMEDIATE,
+      installMode: codePush.InstallMode.ON_NEXT_RESTART,
     });
   };
 
