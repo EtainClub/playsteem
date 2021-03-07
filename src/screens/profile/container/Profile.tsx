@@ -223,7 +223,7 @@ const Profile = ({navigation}): JSX.Element => {
 
       //// this action requires posting key or above
       // check the key level
-      if (type < KeyTypes.POSTING) {
+      if (type < KeyTypes.ACTIVE) {
         // show key input modal
         setShowSecureKey(true);
         return;

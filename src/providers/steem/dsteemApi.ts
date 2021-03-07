@@ -1303,13 +1303,12 @@ export const broadcastProfileUpdate = async (
   if (privateKey) {
     const opArray = [
       [
-        'account_update',
+        'account_update2',
         {
           account: username,
-          memo_key: account.memo_key,
           json_metadata: jsonStringify({profile: params}),
-          //          posting_json_metadata: jsonStringify({profile: params}),
-          //          extensions: [],
+          posting_json_metadata: jsonStringify({profile: params}),
+          extensions: [],
         },
       ],
     ];
