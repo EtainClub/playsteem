@@ -79,8 +79,10 @@ const Profile = ({navigation}): JSX.Element => {
     if (authState.loggedIn) {
       console.log('[Profile] Event. username changed.');
       const {username} = authState.currentCredentials;
-      setProfileFetched(false);
-      _getUserProfileData(username, true);
+      // fetch new profile data if the username changed, otherwise use prefetched profile if available
+      if (profileData && profileData.profile.name !== username)
+        _getUserProfileData(username, true);
+      else _getUserProfileData(username);
       _fetchBookmarks(username);
       _fetchFavorites(username);
       // fetch community list
@@ -88,20 +90,13 @@ const Profile = ({navigation}): JSX.Element => {
     }
   }, [authState.currentCredentials.username]);
 
-  // //// edit event
-  // useEffect(() => {
-  //   if (!editMode && profileData && !fetching) {
-  //     const {username} = authState.currentCredentials;
-  //     _getUserProfileData(username);
-  //   }
-  // }, [editMode]);
-
   const _getUserProfileData = async (author: string, refresh?: boolean) => {
+    // clear profile fetched flag
+    setProfileFetched(false);
     // clear author posts
     clearPosts(PostsTypes.AUTHOR);
     // start fetching
     setFetching(true);
-
     // get if user profile exists, otherwise fetch it
     let _profileData = null;
     if (!refresh && userState.profileData.profile.name) {

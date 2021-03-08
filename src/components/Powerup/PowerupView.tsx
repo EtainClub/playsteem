@@ -113,7 +113,7 @@ const PowerupView = (props: Props): JSX.Element => {
         <Button
           size="small"
           shadowless
-          color={argonTheme.COLORS.ERROR}
+          color={argonTheme.COLORS.STEEM}
           onPress={props.onPressProceedButton}
           loading={loading}>
           {showConfirm || loading

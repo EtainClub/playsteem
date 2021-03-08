@@ -172,7 +172,7 @@ const BeneficiaryView = (props: Props): JSX.Element => {
         <Button
           size="small"
           shadowless
-          color={argonTheme.COLORS.ERROR}
+          color={argonTheme.COLORS.STEEM}
           onPress={props.handlePressSave}>
           {intl.formatMessage({id: 'Beneficiary.save_button'})}
         </Button>

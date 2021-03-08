@@ -185,7 +185,7 @@ const PostingScreen = (props: Props): JSX.Element => {
               shadowless
               loading={props.posting}
               lodingSize="large"
-              color={argonTheme.COLORS.ERROR}>
+              color={argonTheme.COLORS.STEEM}>
               {editMode
                 ? intl.formatMessage({id: 'Posting.update_button'})
                 : intl.formatMessage({id: 'Posting.post_button'})}

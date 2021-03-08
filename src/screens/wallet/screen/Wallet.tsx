@@ -7,6 +7,7 @@ import {
   StyleSheet,
   ScrollView,
   Dimensions,
+  Platform,
   View,
 } from 'react-native';
 //// language
@@ -65,7 +66,7 @@ const WalletScreen = (props: Props): JSX.Element => {
       balance,
     } = props;
     return (
-      <Block style={{height: 300}}>
+      <Block style={Platform.OS === 'android' ? {height: 180} : {height: 300}}>
         <WalletStatsView
           walletData={props.walletData}
           isUser

@@ -85,7 +85,7 @@ const OTPView = (props: Props): JSX.Element => {
             style={{width: width * 0.8}}
             size="large"
             shadowless
-            color={argonTheme.COLORS.ERROR}
+            color={argonTheme.COLORS.STEEM}
             onPress={props.sendSMSCode}>
             {intl.formatMessage({id: 'OTP.phone_button'})}
           </Button>
@@ -120,7 +120,7 @@ const OTPView = (props: Props): JSX.Element => {
             disabled={!smsRequested}
             loading={loading}
             color={
-              smsRequested ? argonTheme.COLORS.ERROR : argonTheme.COLORS.MUTED
+              smsRequested ? argonTheme.COLORS.STEEM : argonTheme.COLORS.MUTED
             }
             onPress={props.verifySMSCode}>
             {intl.formatMessage({id: 'OTP.confirm_button'})}

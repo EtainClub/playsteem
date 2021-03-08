@@ -71,7 +71,7 @@ const IntroScreen = () => {
           <Button
             shadowless
             style={styles.button}
-            color={argonTheme.COLORS.ERROR}
+            color={argonTheme.COLORS.STEEM}
             onPress={_onGetStarted}>
             {intl.formatMessage({id: 'intro-button'})}
           </Button>

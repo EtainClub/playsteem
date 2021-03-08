@@ -35,19 +35,25 @@ const Notification = (props: Props): JSX.Element => {
 
   //////// effects
   //// focus event
-  useFocusEffect(
-    useCallback(() => {
-      if (authState.loggedIn)
-        setUsername(authState.currentCredentials.username);
-      _fetchNotifications(authState.currentCredentials.username);
-    }, []),
-  );
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     if (authState.loggedIn)
+  //       setUsername(authState.currentCredentials.username);
+  //     _fetchNotifications(authState.currentCredentials.username);
+  //   }, []),
+  // );
   //// username change event
   useEffect(() => {
     if (authState.loggedIn) {
+      // fetch new notifications data if the username changed,
+      if (notifications && username !== authState.currentCredentials.username) {
+        _fetchNotifications(authState.currentCredentials.username, true);
+      } else {
+        // otherwise use prefetched notifications if available
+        _fetchNotifications(authState.currentCredentials.username);
+      }
+      // set username
       setUsername(authState.currentCredentials.username);
-      // fetch notifications
-      _fetchNotifications(authState.currentCredentials.username, true);
     }
   }, [authState.currentCredentials]);
   //// fetch notifications

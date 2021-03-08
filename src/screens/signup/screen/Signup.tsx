@@ -97,7 +97,7 @@ const SignupScreen = (props: Props): JSX.Element => {
                 disabled={!accountAvailable}
                 color={
                   accountAvailable
-                    ? argonTheme.COLORS.ERROR
+                    ? argonTheme.COLORS.STEEM
                     : argonTheme.COLORS.MUTED
                 }
                 style={styles.button}
