@@ -4,6 +4,8 @@ import React, {useReducer, createContext, useContext} from 'react';
 import {useIntl} from 'react-intl';
 //// storage
 import AsyncStorage from '@react-native-community/async-storage';
+////
+import {size} from 'lodash';
 
 import {
   SettingsActionTypes,
@@ -109,6 +111,15 @@ const SettingsProvider = ({children}: Props) => {
       username,
       _settings,
     );
+
+    // check if this includes the recent setings
+    if (size(_settings) !== size(settingsState)) {
+      // initialize the storage with the default values
+      _settings = settingsState;
+      // set settings to storage
+      if (username) await _setUserSettingsToStorage(username, _settings);
+      return;
+    }
 
     // use default settings if nothing in storage
     if (!_settings) {

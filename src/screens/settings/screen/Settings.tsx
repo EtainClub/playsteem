@@ -153,6 +153,13 @@ const SettingsScreen = (props: Props): JSX.Element => {
         Platform.OS == 'android' ? APP_ANDROID_VERSION : APP_IOS_VERSION,
     },
     {
+      title: intl.formatMessage({id: 'Settings.claim_act'}),
+      id: SettingUITypes.CLAIM_ACT,
+      type: 'text',
+      defaultText: '0',
+      easter: true,
+    },
+    {
       title: intl.formatMessage({id: 'Settings.terms'}),
       id: SettingUITypes.TERMS,
       type: 'button',

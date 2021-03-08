@@ -346,6 +346,7 @@
     "msg_restart": "변경된 설정을 적용하려면 앱을 재시작 해야 합니다.",
     "rate_app": "앱 평가하기",
     "app_version": "앱 버전",
+    "claim_act": "계정 생성 토큰 요청",
     "version_body": "최신 버전입니다.",
     "version_update": "업데이트 v{what}가 존재합니다. 업데이트 하시겠습니까?",
     "terms": "이용약관",
@@ -388,5 +389,10 @@
     "qouta_exceeded": "업로드 할당량 초과",
     "invalid_image": "유효하지 않는 사진입니다. 다른 사진으로 해보세요.",
     "failed": "실패"
+  },
+  "Easter": {
+    "claim_act_success": "계정생성 토근 요청 성공",
+    "claim_act_fail": "RC 부족, 요청 실패, 나중에 다시 시도하세요",
+    "claim_act_error": "계정생성 토큰 요청 중 에러"
   }
 }

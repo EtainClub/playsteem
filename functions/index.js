@@ -88,6 +88,9 @@ exports.claimACTRequest = functions.https.onCall(async (context) => {
   const creator = functions.config().creator.account;
   const creatorWif = functions.config().creator.wif;
   const result = await _claimAccountCreationToken(creator, creatorWif);
+  if (result.data) {
+    // TODO: update the db (increase the number of ACTs)
+  }
   return result;
 });
 
@@ -169,7 +172,11 @@ exports.createAccountByACTRequest = functions.https.onCall(
         creatorKey,
       );
       console.log('created account, result', result);
-      if (result) return result;
+      if (result) {
+        // TODO: update the db (decrease the number of ACTs)
+        return result;
+      }
+
       return null;
     } catch (error) {
       console.log('failed to create account by ACT', error);

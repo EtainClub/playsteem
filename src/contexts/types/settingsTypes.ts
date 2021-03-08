@@ -11,6 +11,7 @@ export enum StorageSchema {
   DRAFT = 'draft', // title, body, tag, beneficiaries
   POSTING_TAGS = 'postingTags', // array of posting tags
   POSTING_TEMPLATE = 'postingTemplate', // posting template, beneficiaries, powerup, ...
+  EASTER_EGGS = 'easterEggs', // eater eggs found (true or false)
 }
 
 //// blockchain types
@@ -46,6 +47,11 @@ export type UITypes = {
   payoutIndex: number;
 };
 
+//// ester eggs
+export type EasterEggsTypes = {
+  claimACT: boolean;
+};
+
 //// draft types
 export type DraftTypes = {
   title: string;
@@ -75,6 +81,7 @@ export interface SettingsState {
   [StorageSchema.DND_TIMES]: DNDTimeTypes;
   [StorageSchema.LANGUAGES]: LanguageTypes;
   [StorageSchema.UI]: UITypes;
+  [StorageSchema.EASTER_EGGS]: EasterEggsTypes;
 }
 
 // initial post data
@@ -109,6 +116,9 @@ export const INITIAL_SETTINGS: SettingsState = {
     tagIndex: 0,
     communityIndex: 0,
     payoutIndex: 0,
+  },
+  [StorageSchema.EASTER_EGGS]: {
+    claimACT: false,
   },
 };
 

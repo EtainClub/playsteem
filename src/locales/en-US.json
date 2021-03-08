@@ -338,7 +338,7 @@
     "notify_follow": "Follow",
     "notify_beneficiary": "Beneficiary",
     "notify_reblog": "Reblog",
-    "general": "General Settings",
+    "general": "General",
     "notice": "Notice",
     "locale": "Language",
     "translation": "Translation Language",
@@ -346,6 +346,7 @@
     "msg_restart": "You need to restart the app to make the effect",
     "rate_app": "Rate App",
     "app_version": "App Version",
+    "claim_act": "Create Account Creation Token",
     "version_body": "This is the lastest vesion",
     "version_update": "Update v{what} exists. Update?",
     "terms": "Terms of Use",
@@ -388,5 +389,10 @@
     "qouta_exceeded": "Upload quota exceeded",
     "invalid_image": "Invalid image, try different file",
     "failed": "failed"
+  },
+  "Easter": {
+    "claim_act_success": "ACT successfully claimed",
+    "claim_act_fail": "Low RC! ACT claim failed. Try later",
+    "claim_act_error": "Error during claiming ACT"
   }
 }

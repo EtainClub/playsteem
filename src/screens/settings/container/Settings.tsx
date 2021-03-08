@@ -15,6 +15,8 @@ import {
 } from 'react-native';
 //// language
 import {useIntl} from 'react-intl';
+//// firebase
+import {firebase} from '@react-native-firebase/functions';
 //// UIs
 import {Button, Icon, Block, Input, Text, theme} from 'galio-framework';
 import {materialTheme} from '~/constants/materialTheme';
@@ -30,7 +32,12 @@ import {AuthContext, SettingsContext, UIContext} from '~/contexts';
 import {SettingsScreen} from '../screen/Settings';
 import {DNDTimes} from '~/components';
 //// constants
-import {TERMS_URL, PRIVACY_URL, SOURCE_URL} from '~/constants';
+import {
+  TERMS_URL,
+  PRIVACY_URL,
+  SOURCE_URL,
+  THRESHOLD_EASTER_CLICKS,
+} from '~/constants';
 import {SUPPORTED_LOCALES} from '~/locales';
 
 //// times
@@ -79,6 +86,7 @@ export enum SettingUITypes {
   PRIVACY = 'privacy',
   RATE_APP = 'rate_app',
   APP_VERSION = 'app_version',
+  CLAIM_ACT = 'claim_act',
   SHARE = 'share',
   FEEDBACK = 'feedback',
   SOURCE = 'source',
@@ -119,6 +127,9 @@ const SettingsContainer = (props: Props): JSX.Element => {
   const [translation, setTranslation] = useState(
     settingsState.languages.translation,
   );
+  //// eater egg count
+  const [easterCount, setEasterCount] = useState(0);
+  const [numACTs, setNumACTs] = useState(0);
 
   // app store, google play link
   const APP_LINK = Platform.OS === 'android' ? GOOGLEPLAY : APPSTORE;
@@ -149,6 +160,7 @@ const SettingsContainer = (props: Props): JSX.Element => {
         languages,
         securities,
         ui,
+        easterEggs,
       } = _settings;
       //// switch states
       let _switchStates = switchStates;
@@ -198,6 +210,14 @@ const SettingsContainer = (props: Props): JSX.Element => {
 
       // now set switch states
       setSwitchStates(_switchStates);
+
+      // easter eggs
+      if (easterEggs && easterEggs.claimACT) {
+        // get the number of claim ACT
+        _fetchNumACTs();
+      } else {
+        // set
+      }
     }
   };
 
@@ -528,10 +548,66 @@ const SettingsContainer = (props: Props): JSX.Element => {
             );
           }
         });
-
+        // handle easter egg
+        _handleEasterEgg();
+        break;
+      case SettingUITypes.CLAIM_ACT:
+        _claimACT();
         break;
       default:
         break;
+    }
+  };
+
+  //// handle eater egg
+  const _handleEasterEgg = async () => {
+    // increase the click count
+    const _count = easterCount + 1;
+    console.log('_handleEasterEgg. count', _count);
+    setEasterCount(_count);
+    if (_count >= THRESHOLD_EASTER_CLICKS) {
+      //// activate the easter egg item
+      // build structure
+      const _eggs = {...settingsState.easterEggs, claimACT: true};
+      console.log('_handleEasterEgg. found. eggs', _eggs);
+      // update in context state
+      updateSettingSchema(username, StorageSchema.EASTER_EGGS, _eggs);
+      _fetchNumACTs();
+    }
+  };
+
+  //// get the number of ACTs
+  const _fetchNumACTs = async () => {
+    // get the number of available ACT from firestore
+    const commonRef = firestore().doc('stats/common');
+    commonRef
+      .get()
+      .then((doc) => {
+        const _numACTs = doc.data().act;
+        console.log('_handleEasterEgg. number of ACTs', _numACTs);
+        // update the ACTs
+        setNumACTs(_numACTs);
+      })
+      .catch((error) => console.log('failed to get number of ACTs', error));
+  };
+
+  //// claim ACT
+  const _claimACT = async () => {
+    // call firestore function to claim ACT
+    try {
+      const result = await firebase
+        .functions()
+        .httpsCallable('claimACTRequest')();
+      console.log('_claimACT. result', result);
+      if (result.data) {
+        // update the db
+        setToastMessage(intl.formatMessage({id: 'Easter.claim_act_success'}));
+      } else {
+        setToastMessage(intl.formatMessage({id: 'Easter.claim_act_fail'}));
+      }
+    } catch (error) {
+      console.log('failed to claim ACT');
+      setToastMessage(intl.formatMessage({id: 'Easter.claim_act_error'}));
     }
   };
 
@@ -625,6 +701,8 @@ const SettingsContainer = (props: Props): JSX.Element => {
 
   ////
   const _renderItem = ({item}) => {
+    // hide easter egg until it is not found
+    if (item.easter && !settingsState.easterEggs.claimACT) return;
     switch (item.type) {
       case 'switch':
         return (
@@ -735,8 +813,17 @@ const SettingsContainer = (props: Props): JSX.Element => {
           </Block>
         );
       case 'text':
-        // TODO: get the app version from db
-        defaultText = item.defaultText;
+        switch (item.id) {
+          // handle easter egg item
+          case SettingUITypes.CLAIM_ACT:
+            defaultText = numACTs;
+            break;
+          default:
+            // TODO: get the app version from db
+            defaultText = item.defaultText;
+            break;
+        }
+
         return (
           <Block style={styles.rows}>
             <TouchableOpacity onPress={() => _handlePressText(item.id)}>
