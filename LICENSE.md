@@ -1,4 +1,4 @@
-Copyright (c) 2021 etainclub
+Copyright (c) 2021 etainclub (https://steemit.com/@etainclub)
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
