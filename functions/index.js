@@ -22,7 +22,6 @@ exports.searchRequest = functions.https.onCall(async (data, res) => {
   const key = functions.config().search.key;
   const cx = functions.config().search.cx;
   const search = `https://www.googleapis.com/customsearch/v1?key=${key}&cx=${cx}&q=${query}&ie=${encoding}&oe=${encoding}&num=${num}&start=${startAt}&sort=${sort}`;
-  console.log('search', search);
 
   let result = null;
   await axios
