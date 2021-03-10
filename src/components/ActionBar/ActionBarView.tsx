@@ -99,7 +99,7 @@ const ActionBarView = (props: Props): JSX.Element => {
         onBackdropPress={props.handleCancelVotingModal}>
         <Block card center style={styles.votingContainer}>
           <Text color={argonTheme.COLORS.ERROR}>
-            {props.votingWeight} % (${props.votingDollar})
+            {props.votingWeight} % ({props.votingDollar})
           </Text>
 
           <Slider
@@ -161,7 +161,7 @@ const ActionBarView = (props: Props): JSX.Element => {
             {intl.formatMessage({id: 'Actionbar.warning'})}
           </Text>
           <Text color={argonTheme.COLORS.FACEBOOK}>
-            -{props.votingWeight} % (${props.votingDollar})
+            -{props.votingWeight} % ({props.votingDollar})
           </Text>
           <Slider
             style={{width: width * 0.5, height: 40}}
@@ -196,7 +196,7 @@ const ActionBarView = (props: Props): JSX.Element => {
             size={actionBarStyle.textSize}
             color={argonTheme.COLORS.ERROR}
             style={{paddingRight: 5}}>
-            ${postState.payout}
+            {postState.payout}
           </Text>
           <Button
             onPress={props.handlePressVoteIcon}

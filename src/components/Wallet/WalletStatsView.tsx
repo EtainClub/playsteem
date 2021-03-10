@@ -263,7 +263,7 @@ const WalletStatsView = (props: Props): JSX.Element => {
               <Block row middle>
                 <DropdownModal
                   key={sbdIndex}
-                  defaultText={`$${balanceSBD}`}
+                  defaultText={`${balanceSBD}`}
                   dropdownButtonStyle={styles.dropdownButtonStyle}
                   selectedOptionIndex={-1}
                   rowTextStyle={styles.rowTextStyle}
@@ -278,7 +278,7 @@ const WalletStatsView = (props: Props): JSX.Element => {
           ) : (
             <Block row space="between">
               <Text color={argonTheme.COLORS.FACEBOOK}>STEEM DOLLARS</Text>
-              <Text color={argonTheme.COLORS.ERROR}>{`$${balanceSBD}`}</Text>
+              <Text color={argonTheme.COLORS.ERROR}>{`${balanceSBD}`}</Text>
             </Block>
           )}
 
@@ -291,7 +291,7 @@ const WalletStatsView = (props: Props): JSX.Element => {
             <Block row space="between">
               <Text>{intl.formatMessage({id: 'steem_price'})}</Text>
               <Block middle row>
-                {price ? <Text>${price.steem.usd.toFixed(3)}</Text> : null}
+                {price ? <Text>{price.steem.usd.toFixed(3)}</Text> : null}
                 {price ? (
                   <Block card style={styles.priceRate}>
                     <Text>{price.steem.change24h.toFixed(3)}%</Text>
@@ -304,7 +304,7 @@ const WalletStatsView = (props: Props): JSX.Element => {
             <Block row space="between">
               <Text>{intl.formatMessage({id: 'sbd_price'})}</Text>
               <Block middle row>
-                {price ? <Text>${price.sbd.usd.toFixed(3)}</Text> : null}
+                {price ? <Text>{price.sbd.usd.toFixed(3)}</Text> : null}
                 {price ? (
                   <Block card style={styles.priceRate}>
                     <Text>{price.sbd.change24h.toFixed(3)}%</Text>

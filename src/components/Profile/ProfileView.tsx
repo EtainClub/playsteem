@@ -194,7 +194,7 @@ const ProfileView: React.FC<Props> = ({
               style={{
                 marginBottom: 4,
               }}>
-              ${profile.voteAmount}
+              {profile.voteAmount}
             </Text>
             <Text size={12} color={argonTheme.COLORS.TEXT}>
               {intl.formatMessage({id: 'Profile.vote_amount'})}

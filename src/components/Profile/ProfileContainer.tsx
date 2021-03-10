@@ -76,10 +76,6 @@ const ProfileContainer = (props: Props): JSX.Element => {
     const _state = await isFollowing(username, author);
     // update the following state
     setFollowingState(_state);
-
-    // @test
-    console.log('following state', _state);
-    debugger;
   };
 
   //// set favorite state

@@ -147,7 +147,7 @@ const ActionBarContainer = (props: Props): JSX.Element => {
           (voteAmount * votingWeight) / 100
         ).toFixed(2);
         // append the user to ther voters
-        _voters = [`${username} ($${voteAmount})`, ...postState.voters];
+        _voters = [`${username} (${voteAmount})`, ...postState.voters];
         // update states
         _state = {
           ...postState,
@@ -163,7 +163,7 @@ const ActionBarContainer = (props: Props): JSX.Element => {
           (voteAmount * votingWeight) / 100
         ).toFixed(2);
         // append the user to ther voters
-        _voters = [`-${username} ($${voteAmount})`, ...postState.voters];
+        _voters = [`-${username} (${voteAmount})`, ...postState.voters];
         // update states
         _state = {
           ...postState,
