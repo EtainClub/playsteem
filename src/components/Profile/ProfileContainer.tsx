@@ -68,7 +68,7 @@ const ProfileContainer = (props: Props): JSX.Element => {
         _setFavoriteState(authState.currentCredentials.username, profile.name);
       }
     }
-  }, [followingState]);
+  }, []);
 
   //// set following state
   const _setFollowingState = async (username: string, author: string) => {
@@ -76,6 +76,10 @@ const ProfileContainer = (props: Props): JSX.Element => {
     const _state = await isFollowing(username, author);
     // update the following state
     setFollowingState(_state);
+
+    // @test
+    console.log('following state', _state);
+    debugger;
   };
 
   //// set favorite state
@@ -117,8 +121,12 @@ const ProfileContainer = (props: Props): JSX.Element => {
       props.profileData.profile.name,
       followingState ? '' : 'blog',
     );
-    setFollowingState(followingState ? false : true);
-    setToastMessage('Following Successful');
+    if (result) {
+      // toggle the state
+      setFollowingState(!followingState);
+      //      setToastMessage('Following Successful');
+    }
+    // reset loading
     setFollowing(false);
   };
 
