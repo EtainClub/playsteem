@@ -1,6 +1,9 @@
 const functions = require('firebase-functions');
 const axios = require('axios');
 const dsteem = require('@hiveio/dhive');
+const admin = require('firebase-admin');
+
+admin.initializeApp();
 
 const MAINNET_OFFICIAL = [
   'https://api.steemit.com',
@@ -87,8 +90,11 @@ exports.claimACTRequest = functions.https.onCall(async (context) => {
   const creator = functions.config().creator.account;
   const creatorWif = functions.config().creator.wif;
   const result = await _claimAccountCreationToken(creator, creatorWif);
+  //  console.log('claimACTRequest. result', result);
+
+  // update db
   if (result.data) {
-    // TODO: update the db (increase the number of ACTs)
+    _updateACTs();
   }
   return result;
 });
@@ -100,9 +106,9 @@ exports.createAccountByACTRequest = functions.https.onCall(
     const creator = functions.config().creator.account;
     const creatorWif = functions.config().creator.wif;
 
-    const hasACT = await _checkClaimedToken(creator);
+    const numACTs = await _checkClaimedToken(creator);
     // in case no ACT, then request to create
-    if (!hasACT) {
+    if (numACTs < 1) {
       // reqeust ACT
       const success = _claimAccountCreationToken(creator, creatorWif);
       if (!success) {
@@ -172,7 +178,8 @@ exports.createAccountByACTRequest = functions.https.onCall(
       );
       console.log('created account, result', result);
       if (result) {
-        // TODO: update the db (decrease the number of ACTs)
+        // update the db (decrease the number of ACTs)
+        _updateACTs();
         return result;
       }
 
@@ -264,11 +271,10 @@ const _checkClaimedToken = async (creator) => {
     const accounts = await client.database.call('get_accounts', [[creator]]);
     const numTokens = accounts[0].pending_claimed_accounts;
     console.log('number of claimed tokens', numTokens);
-    if (numTokens > 0) return true;
-    else return false;
+    return numTokens;
   } catch (error) {
     console.log('claimed token error', error);
-    return false;
+    return 0;
   }
 };
 
@@ -293,4 +299,21 @@ const _claimAccountCreationToken = async (creator, activeKey) => {
     console.log('error. claim failed', error);
     return false;
   }
+};
+
+// update the number of ACTs on db
+const _updateACTs = () => {
+  // get doc ref
+  const statsDocRef = admin.firestore().collection('stats').doc('common');
+  // update the number of ACTs
+  statsDocRef
+    .get()
+    .then(async (doc) => {
+      if (doc.exists) {
+        const numACTs = await _checkClaimedToken(creator);
+        console.log('_updateACTs. ACT_API', numACTs);
+        statsDocRef.update({act: numACTs});
+      }
+    })
+    .catch((error) => console.log('failed to update the ACT', error));
 };
