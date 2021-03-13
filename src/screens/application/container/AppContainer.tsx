@@ -4,31 +4,35 @@ import React, {useContext, useEffect} from 'react';
 import {Platform, BackHandler, Alert, Linking, AppState} from 'react-native';
 //// language
 import {useIntl} from 'react-intl';
-// notification
+//// notification
 import messaging, {
   FirebaseMessagingTypes,
 } from '@react-native-firebase/messaging';
 import PushNotification from 'react-native-push-notification';
-// navigation
 import {navigate} from '~/navigation/service';
 
-//import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
-
-import {AuthContext, PostsContext, UIContext, UserContext} from '~/contexts';
-
+//// contexts
+import {PostsContext, UIContext} from '~/contexts';
 import {ApplicationScreen} from '../screen/Application';
 
 // firebase messaging types
 type RemoteMessage = FirebaseMessagingTypes.RemoteMessage;
 
-// push notification message listener
-type FBRemoteMsgListner = (message: RemoteMessage) => any;
-//let fbMessageListener: FBRemoteMsgListner;
-//let fbMessageOpenedListener: FBRemoteMsgListner;
-// message open handler in foreground
-
 // push operation types
 import {SettingUITypes} from '~/screens/settings';
+import AsyncStorage from '@react-native-community/async-storage';
+
+import {StorageSchema} from '~/contexts/types';
+
+// set background notification listener
+messaging().setBackgroundMessageHandler(async (message: RemoteMessage) => {
+  console.log('[PlaySteem] bgMsgListener, message', message);
+  // save the message in storage
+  const bgPushMessage = JSON.stringify(message);
+  await AsyncStorage.setItem(StorageSchema.BG_PUSH_MESSAGE, bgPushMessage);
+});
+
+let firebaseOnNotificationOpenedAppListener = null;
 
 interface Props {}
 
@@ -36,14 +40,11 @@ export const AppContainer = (props: Props): JSX.Element => {
   //// language
   const intl = useIntl();
   //// contexts
-  const {authState} = useContext(AuthContext)!;
   const {setPostRef} = useContext(PostsContext);
   const {uiState, setToastMessage, setAuthorParam} = useContext(UIContext);
 
   useEffect(() => {
-    // setup push notification listener
-    //    _setupNotificationListeners();
-    console.log('_setupNotificationListeners');
+    //// setup push notification listener
     // request permission
     (async () => await messaging().requestPermission())();
     console.log('_setupNotificationListeners, got permission');
@@ -53,27 +54,71 @@ export const AppContainer = (props: Props): JSX.Element => {
     PushNotification.cancelAllLocalNotifications();
     // set foreground notification listener
     const fgMsgListener = messaging().onMessage((message: RemoteMessage) => {
-      console.log('fgMsgListener, message', message);
-      _handleRemoteMessages(message, false);
+      console.log('[Foreground] Notification Listener', message);
+      console.log('[App Closed] Notification Listener');
+      handleRemoteMessages(message, false);
     });
-    // set notification open listener
-    messaging().setBackgroundMessageHandler(async (message: RemoteMessage) => {
-      console.log('bgMsgListener, message', message);
-      // handle message
-      _handleRemoteMessages(message, true);
-    });
+
+    // background notifications open handler
+    firebaseOnNotificationOpenedAppListener = messaging().onNotificationOpenedApp(
+      (message) => {
+        console.log('[Background] Notification Listener', message);
+        if (message) handleRemoteMessages(message, true);
+      },
+    );
+
+    // app closed notification listener
+    // (async () =>
+    //   await messaging()
+    //     .getInitialNotification()
+    //     .then((message) => {
+    //       console.log('[App Closed] Notification Listener', message);
+    //       if (message) _handleRemoteMessages(message, true);
+    //     }))();
+
     return () => {
       if (__DEV__) console.log('unsubscribe notification listener');
+      // unsubscribe foreground listener
       fgMsgListener();
+      // unsubscribe background listener
+      if (firebaseOnNotificationOpenedAppListener) {
+        firebaseOnNotificationOpenedAppListener();
+      }
     };
   }, []);
 
+  //// event: navigation is ready
+  useEffect(() => {
+    if (navigate) {
+      console.log('');
+    }
+  }, [navigate]);
+
+  ////
+  const _handleBgPushMessage = async () => {
+    // // check if background push message exists
+    const _message = await AsyncStorage.getItem(StorageSchema.BG_PUSH_MESSAGE);
+    if (_message) {
+      // handle
+      const bgPushMessage = JSON.parse(_message);
+      console.log('_handleBgPushMessage', bgPushMessage);
+      // remove the bg message
+      await AsyncStorage.removeItem(StorageSchema.BG_PUSH_MESSAGE);
+      // navigate
+      // TODO: how much time is required??? move this to the resolve auth?
+      setTimeout(() => {
+        console.log('timeout. now navigate');
+        handleRemoteMessages(bgPushMessage, true);
+      }, 1500);
+    }
+  };
+
   // handle push notification messages
-  const _handleRemoteMessages = (
+  const handleRemoteMessages = (
     message: RemoteMessage,
     background: boolean,
   ): void => {
-    console.log('_handleRemoteMessages. message', message);
+    console.log('handleRemoteMessages. message', message);
 
     // get notification data
     const msgData = message.data;
@@ -87,7 +132,7 @@ export const AppContainer = (props: Props): JSX.Element => {
     // @test
     // TODO: handle the foreground message. show modal
     console.log('remote message data', msgData);
-    const {operation, author, permlink} = msgData;
+    const {operation, author, permlink, body} = msgData;
     let route = null;
     switch (operation) {
       // navigate to the post details
@@ -127,7 +172,7 @@ export const AppContainer = (props: Props): JSX.Element => {
       // handle foreground message
       Alert.alert(
         intl.formatMessage({id: 'App.push_title'}),
-        intl.formatMessage({id: 'App.push_body'}),
+        intl.formatMessage({id: 'App.push_body'}, {what: body}),
         [
           {text: intl.formatMessage({id: 'no'}), style: 'cancel'},
           {
@@ -149,6 +194,7 @@ export const AppContainer = (props: Props): JSX.Element => {
     <ApplicationScreen
       toastMessage={uiState.toastMessage}
       clearMessage={_clearMessage}
+      handleBgPushMessage={_handleBgPushMessage}
     />
   );
 };

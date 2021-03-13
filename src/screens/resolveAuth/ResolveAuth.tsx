@@ -18,14 +18,20 @@ import {
 } from '~/contexts';
 //// constant
 import {TRANSLATION_LANGUAGES} from '~/constants';
-
+//// notification
+import messaging, {
+  FirebaseMessagingTypes,
+} from '@react-native-firebase/messaging';
+// firebase messaging types
+type RemoteMessage = FirebaseMessagingTypes.RemoteMessage;
 import {navigate} from '~/navigation/service';
-import {PostsTypes} from '~/contexts/types';
-
+import {PostsTypes, StorageSchema} from '~/contexts/types';
+import {SettingUITypes} from '~/screens/settings';
 export const LOGIN_TOKEN = 'loginToken';
 
 export const ResolveAuth = (props) => {
   //// props
+  console.log('ResolveAuth. props', props);
   //// contexts
   const {authState, setAuthResolved, getCredentials} = useContext(AuthContext)!;
   const {
@@ -33,10 +39,13 @@ export const ResolveAuth = (props) => {
     getFollowings,
     getUserProfileData,
   } = useContext(UserContext);
-  const {getTagList, fetchPosts} = useContext(PostsContext);
-  const {setToastMessage, setTranslateLanguages, initTTS} = useContext(
-    UIContext,
-  );
+  const {getTagList, fetchPosts, setPostRef} = useContext(PostsContext);
+  const {
+    setToastMessage,
+    setTranslateLanguages,
+    initTTS,
+    setAuthorParam,
+  } = useContext(UIContext);
   const {settingsState, getAllSettingsFromStorage} = useContext(
     SettingsContext,
   );
@@ -91,6 +100,11 @@ export const ResolveAuth = (props) => {
           followings.length === 0 ? true : false,
           false,
         );
+
+        // TODO: cannot navigate to the postdetails.. because it is not mounted at this time.
+        // handle background message
+        // await _handleBGPushMessage();
+
         // why this???
         if (!followings) navigate({name: 'Drawer'});
         // fetch tags
@@ -113,6 +127,64 @@ export const ResolveAuth = (props) => {
       // @test
       //navigate({name: 'Drawer'});
       navigate({name: 'Welcome'});
+    }
+  };
+
+  //// handle background push message
+  const _handleBGPushMessage = async () => {
+    // check if background push message exists
+    const _message = await AsyncStorage.getItem(StorageSchema.BG_PUSH_MESSAGE);
+    if (_message) {
+      // parse the message
+      const bgPushMessage = JSON.parse(_message);
+      console.log('_handleBgPushMessage', bgPushMessage);
+      // remove the bg message
+      await AsyncStorage.removeItem(StorageSchema.BG_PUSH_MESSAGE);
+
+      //// handle push notification messages
+      // get notification data
+      const msgData = bgPushMessage.data;
+      // sanity check
+      if (!msgData) {
+        console.log('remote messgage data is undefined');
+        return;
+      }
+      const {operation, author, permlink, body} = msgData;
+      let route = null;
+      switch (operation) {
+        // navigate to the post details
+        case SettingUITypes.BENEFICIARY:
+        case SettingUITypes.MENTION:
+        case SettingUITypes.REBLOG:
+        case SettingUITypes.REPLY:
+        case SettingUITypes.VOTE:
+          //// navigate
+          // set route name
+          route = 'PostDetails';
+          // set post ref to the context
+          setPostRef({author, permlink});
+          break;
+        case SettingUITypes.FOLLOW:
+          //// navigate to the author profile
+          // set route name
+          route = 'AuthorProfile';
+          // set author to the context
+          setAuthorParam(author);
+          // navigate
+          break;
+        case SettingUITypes.TRANSFER:
+          //// navigate to the wallet
+          // set route name
+          route = 'Wallet';
+          break;
+        default:
+          break;
+      }
+      // no navigation if route is null
+      if (!route) return;
+      // navigate
+      //      navigate({name: route});
+      props.navigation.navigate('Drawer', {screen: 'PostDetails'});
     }
   };
 

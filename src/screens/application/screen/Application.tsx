@@ -6,10 +6,8 @@ import {
   NavigationContainer,
   NavigationContainerRef,
 } from '@react-navigation/native';
-import {View} from 'react-native';
 // SafeAreaView provider
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-
 // routes
 import Screens from '~/navigation/routes';
 // navigation helper
@@ -20,9 +18,14 @@ import {Toast} from '~/components/Toast';
 interface Props {
   toastMessage: string;
   clearMessage: () => void;
+  handleBgPushMessage: () => void;
 }
 
-const ApplicationScreen = ({toastMessage, clearMessage}: Props) => {
+const ApplicationScreen = ({
+  toastMessage,
+  clearMessage,
+  handleBgPushMessage,
+}: Props) => {
   const [showToastMessage, setShowToastMessage] = useState(false);
 
   useEffect(() => {
@@ -42,7 +45,8 @@ const ApplicationScreen = ({toastMessage, clearMessage}: Props) => {
       <NavigationContainer
         ref={(navigationRef: NavigationContainerRef) => {
           setTopLevelNavigator(navigationRef);
-        }}>
+        }}
+        onReady={handleBgPushMessage}>
         <Screens />
       </NavigationContainer>
       {showToastMessage && (

@@ -52,7 +52,7 @@
   "no": "No",
   "App": {
     "push_title": "Push Message Arrived",
-    "push_body": "Do you want to see the details?"
+    "push_body": "Do you want to see the details? {what}"
   },
   "Welcome": {
     "msg1": "Welcome To Steem World",
