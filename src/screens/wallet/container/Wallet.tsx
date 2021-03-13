@@ -21,7 +21,6 @@ interface Props {
 }
 const Wallet = (props: Props): JSX.Element => {
   //// props
-  console.log('[WalletContainer] props', props);
   const {navigation} = props;
   //// language
   const intl = useIntl();
@@ -55,31 +54,25 @@ const Wallet = (props: Props): JSX.Element => {
       // get following list
       _getFollowingList(username);
     }
-  }, []);
+  }, [authState.currentCredentials]);
   //// on focus event:
   //// when the WalletStatView is used before, then author's wallet data show
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      console.log('[Wallet] focus event');
-      if (authState.loggedIn) {
-        // fetch user's wallet data
-        getWalletData(authState.currentCredentials.username);
-      }
-    });
-    return unsubscribe;
-  }, [navigation]);
-  //// event: account switched
-  useEffect(() => {
-    if (authState.loggedIn) {
-      const {username} = authState.currentCredentials;
-      // fetch user data
-      getWalletData(username);
-      // fetch price
-      getPrice();
-      // get following list
-      _getFollowingList(username);
-    }
-  }, [authState.currentCredentials]);
+  // TODO: this focus event fetches the data of the previous account, why???
+  // useEffect(() => {
+  //   const unsubscribe = navigation.addListener('focus', () => {
+  //     if (authState.loggedIn) {
+  //       console.log(
+  //         '[Wallet] focus event. username',
+  //         authState.currentCredentials.username,
+  //       );
+  //       console.log('auth state', authState);
+
+  //       // fetch user's wallet data
+  //       getWalletData(authState.currentCredentials.username);
+  //     }
+  //   });
+  //   return unsubscribe;
+  // }, [navigation]);
 
   //// event: wallet fetched
   useEffect(() => {

@@ -383,7 +383,8 @@ const a = (el, forApp, webp) => {
         0,
         webp ? 'webp' : 'match',
       );
-      const embedSrc = `https://www.youtube.com/embed/${vid}?autoplay=1`;
+
+      const embedSrc = `https://www.youtube.com/embed/${vid}?autoplay=0`;
 
       el.textContent = '';
 
