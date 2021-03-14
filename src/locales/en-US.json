@@ -206,7 +206,7 @@
     "postings": "Postings",
     "power": "Steem Power",
     "balance": "Steem",
-    "vote_amount": "Voting Value",
+    "vote_amount": "Max Voting Value",
     "display_name": "Display Name",
     "introduction": "Introduction",
     "location": "Location",
