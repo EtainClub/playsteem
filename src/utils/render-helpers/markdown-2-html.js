@@ -13,6 +13,7 @@ const xss = require('xss');
 const imgRegex = /(https?:\/\/.*\.(?:tiff?|jpe?g|gif|png|svg|ico))(.*)/gim;
 const ipfsRegex = /^https?:\/\/[^/]+\/(ip[fn]s)\/([^/?#]+)/gim;
 const postRegex = /^https?:\/\/(.*)\/(.*)\/(@[\w.\d-]+)\/(.*)/i;
+const crossPostRegex = /\/(@[\w.\d-]+)\/(.*)/i;
 const mentionRegex = /^https?:\/\/(.*)\/(@[\w.\d-]+)$/i;
 const copiedPostRegex = /\/(.*)\/(@[\w.\d-]+)\/(.*)/i;
 const youTubeRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([^& \n<]+)(?:[^ \n<]+)?/g;
@@ -224,6 +225,8 @@ const traverse = (node, forApp, depth = 0, webp = false) => {
 const a = (el, forApp, webp) => {
   let href = el.getAttribute('href');
 
+  console.log('href', href);
+  //  debugger;
   // Continue if href has no value
   if (!href) {
     return;
@@ -286,7 +289,7 @@ const a = (el, forApp, webp) => {
     return;
   }
 
-  // TODO: handle blurt post inside the app
+  // TODO: handle steemit post inside the app
   // If a steemit post
   const postMatch = href.match(postRegex);
   if (postMatch && whiteList.includes(postMatch[1])) {
@@ -501,6 +504,19 @@ const a = (el, forApp, webp) => {
         return;
       }
     }
+  }
+
+  // cross post
+  const crossPostMatch = href.match(crossPostRegex);
+  if (crossPostMatch) {
+    el.setAttribute('class', 'markdown-post-link');
+    //    console.log('cross post match. match', crossPostMatch);
+    const author = crossPostMatch[1].replace('@', '');
+    const permlink = crossPostMatch[2];
+    el.removeAttribute('href');
+    el.setAttribute('data-author', author);
+    el.setAttribute('data-permlink', permlink);
+    return;
   }
 
   // Detect 3Speak
