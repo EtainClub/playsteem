@@ -1,9 +1,10 @@
 //// react
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useEffect, useContext, useCallback} from 'react';
 //// react native
 import {View} from 'react-native';
 //// language
 import {useIntl} from 'react-intl';
+import {useFocusEffect} from '@react-navigation/native';
 ////
 import {AuthContext, UIContext, UserContext} from '~/contexts';
 import {WalletData, KeyTypes, PriceData} from '~/contexts/types';
@@ -40,6 +41,7 @@ const Wallet = (props: Props): JSX.Element => {
   const [showPowerupModal, setShowPowerupModal] = useState(false);
   const [followingList, setFollowingList] = useState([]);
   const [isSBD, setIsSBD] = useState(false);
+
   //////// events
   //// event: mount
   useEffect(() => {
@@ -55,24 +57,27 @@ const Wallet = (props: Props): JSX.Element => {
       _getFollowingList(username);
     }
   }, [authState.currentCredentials]);
-  //// on focus event:
+  //// on blur event:
   //// when the WalletStatView is used before, then author's wallet data show
   // TODO: this focus event fetches the data of the previous account, why???
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      if (authState.loggedIn) {
-        console.log(
-          '[Wallet] profile name',
-          userState.profileData.profile.name,
-        );
+  // useEffect(() => {
+  //   const unsubscribe = navigation.addListener('blur', () => {
+  //     console.log('[Wallet] blur event');
+  //     // clear data
+  //     setWalletData(null);
+  //   });
+  //   return unsubscribe;
+  // }, [navigation]);
 
+  //// event: focus. need to wait until the username changes. why???
+  useFocusEffect(
+    useCallback(() => {
+      if (authState.loggedIn) {
         // fetch user's wallet data
-        // TODO: have to use profile's name... why?
-        getWalletData(userState.profileData.profile.name);
+        _getWalletData();
       }
-    });
-    return unsubscribe;
-  }, [navigation]);
+    }, [userState.profileData]),
+  );
 
   //// event: wallet fetched
   useEffect(() => {
@@ -157,22 +162,24 @@ const Wallet = (props: Props): JSX.Element => {
   };
 
   return (
-    <WalletScreen
-      walletData={walletData}
-      handlePressClaim={_handlePressClaim}
-      claiming={claiming}
-      price={price}
-      onRefresh={_getWalletData}
-      followingList={followingList}
-      showTransfer={showTransferModal}
-      isSBD={isSBD}
-      showPowerup={showPowerupModal}
-      balance={isSBD ? walletData.balanceSBD : walletData.balance}
-      handleTransferPress={_handleTransferPress}
-      handleTransferResult={_handleTransferResult}
-      handlePowerupPress={_handlePowerupPress}
-      handlePowerupResult={_handlePowerupResult}
-    />
+    walletData && (
+      <WalletScreen
+        walletData={walletData}
+        handlePressClaim={_handlePressClaim}
+        claiming={claiming}
+        price={price}
+        onRefresh={_getWalletData}
+        followingList={followingList}
+        showTransfer={showTransferModal}
+        isSBD={isSBD}
+        showPowerup={showPowerupModal}
+        balance={isSBD ? walletData.balanceSBD : walletData.balance}
+        handleTransferPress={_handleTransferPress}
+        handleTransferResult={_handleTransferResult}
+        handlePowerupPress={_handlePowerupPress}
+        handlePowerupResult={_handlePowerupResult}
+      />
+    )
   );
 };
 

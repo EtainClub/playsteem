@@ -225,8 +225,6 @@ const traverse = (node, forApp, depth = 0, webp = false) => {
 const a = (el, forApp, webp) => {
   let href = el.getAttribute('href');
 
-  console.log('href', href);
-  //  debugger;
   // Continue if href has no value
   if (!href) {
     return;
