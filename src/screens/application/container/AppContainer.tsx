@@ -29,7 +29,11 @@ messaging().setBackgroundMessageHandler(async (message: RemoteMessage) => {
   console.log('[PlaySteem] bgMsgListener, message', message);
   // save the message in storage
   const bgPushMessage = JSON.stringify(message);
-  await AsyncStorage.setItem(StorageSchema.BG_PUSH_MESSAGE, bgPushMessage);
+  if (bgPushMessage)
+    await AsyncStorage.setItem(
+      StorageSchema.BG_PUSH_MESSAGE || 'bgPushMessage',
+      bgPushMessage,
+    );
 });
 
 let firebaseOnNotificationOpenedAppListener = null;
@@ -97,13 +101,17 @@ export const AppContainer = (props: Props): JSX.Element => {
   ////
   const _handleBgPushMessage = async () => {
     // // check if background push message exists
-    const _message = await AsyncStorage.getItem(StorageSchema.BG_PUSH_MESSAGE);
+    const _message = await AsyncStorage.getItem(
+      StorageSchema.BG_PUSH_MESSAGE || 'bgPushMessage',
+    );
     if (_message) {
       // handle
       const bgPushMessage = JSON.parse(_message);
       console.log('_handleBgPushMessage', bgPushMessage);
       // remove the bg message
-      await AsyncStorage.removeItem(StorageSchema.BG_PUSH_MESSAGE);
+      await AsyncStorage.removeItem(
+        StorageSchema.BG_PUSH_MESSAGE || 'bgPUshMessage',
+      );
       // navigate
       // TODO: how much time is required??? move this to the resolve auth?
       setTimeout(() => {
@@ -121,7 +129,7 @@ export const AppContainer = (props: Props): JSX.Element => {
     console.log('handleRemoteMessages. message', message);
 
     // remove app-closed message in storage
-    AsyncStorage.removeItem(StorageSchema.BG_PUSH_MESSAGE);
+    AsyncStorage.removeItem(StorageSchema.BG_PUSH_MESSAGE || 'bgPushMessage');
 
     // get notification data
     const msgData = message.data;

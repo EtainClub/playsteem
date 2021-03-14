@@ -27,7 +27,6 @@ type RemoteMessage = FirebaseMessagingTypes.RemoteMessage;
 import {navigate} from '~/navigation/service';
 import {PostsTypes, StorageSchema} from '~/contexts/types';
 import {SettingUITypes} from '~/screens/settings';
-export const LOGIN_TOKEN = 'loginToken';
 
 export const ResolveAuth = (props) => {
   //// props
@@ -70,9 +69,9 @@ export const ResolveAuth = (props) => {
   //// resolve auth
   const _resolveEntry = async () => {
     // get user login token from storage
-    let username = await AsyncStorage.getItem(LOGIN_TOKEN);
-    // get settings from storage
-    await getAllSettingsFromStorage(username);
+    let username = await AsyncStorage.getItem(
+      StorageSchema.LOGIN_TOKEN || 'loginToken',
+    );
     // fetch global props
     await fetchBlockchainGlobalProps();
     // get supported translation languages
@@ -84,6 +83,8 @@ export const ResolveAuth = (props) => {
     initTTS(settingsState.languages.locale);
     // set category to feed if username exists
     if (username) {
+      // get settings from storage
+      await getAllSettingsFromStorage(username);
       console.log('[resolveAuth] username', username);
       try {
         // // get user profile
@@ -133,13 +134,17 @@ export const ResolveAuth = (props) => {
   //// handle background push message
   const _handleBGPushMessage = async () => {
     // check if background push message exists
-    const _message = await AsyncStorage.getItem(StorageSchema.BG_PUSH_MESSAGE);
+    const _message = await AsyncStorage.getItem(
+      StorageSchema.BG_PUSH_MESSAGE || 'bgPushMessage',
+    );
     if (_message) {
       // parse the message
       const bgPushMessage = JSON.parse(_message);
       console.log('_handleBgPushMessage', bgPushMessage);
       // remove the bg message
-      await AsyncStorage.removeItem(StorageSchema.BG_PUSH_MESSAGE);
+      await AsyncStorage.removeItem(
+        StorageSchema.BG_PUSH_MESSAGE || 'bgPushMessage',
+      );
 
       //// handle push notification messages
       // get notification data

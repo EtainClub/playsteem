@@ -20,10 +20,6 @@ import {
   SettingsContext,
 } from '~/contexts';
 import {INITIAL_SETTINGS, StorageSchema} from '~/contexts/types';
-
-import {LOGIN_TOKEN} from '~/screens';
-import {OTP} from '~/components';
-
 import AsyncStorage from '@react-native-community/async-storage';
 
 interface Props {
@@ -173,7 +169,7 @@ const Login = (props: Props): JSX.Element => {
               userRef.update({pushToken, lastLoginAt: new Date()});
             }
             // save the username to async storage for auto login
-            AsyncStorage.setItem(LOGIN_TOKEN, _username);
+            AsyncStorage.setItem(StorageSchema.LOGIN_TOKEN, _username);
           })
           .catch((error) => {
             console.log('failed to get user document', error);

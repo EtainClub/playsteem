@@ -22,6 +22,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import * as RNLocalize from 'react-native-localize';
 // contants
 import {SUPPORTED_LOCALES} from '~/locales';
+import {StorageSchema} from '~/contexts/types';
 
 // contexts
 import {
@@ -60,7 +61,9 @@ const App = () => {
     // check if there is a preferred language stored in the storage
     let _languages = null;
     try {
-      _languages = await AsyncStorage.getItem('languages');
+      _languages = await AsyncStorage.getItem(
+        StorageSchema.LANGUAGES || 'languages',
+      );
       if (_languages) {
         const languages = JSON.parse(_languages);
         _locale = languages.locale;
@@ -77,7 +80,10 @@ const App = () => {
             locale: _locale,
             translation: _locale.split('-')[0].toUpperCase(),
           };
-          AsyncStorage.setItem('languages', JSON.stringify(_languages));
+          AsyncStorage.setItem(
+            StorageSchema.LANGUAGES || 'languages',
+            JSON.stringify(_languages),
+          );
         }
       }
     } catch (error) {

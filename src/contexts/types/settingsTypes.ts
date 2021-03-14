@@ -13,6 +13,7 @@ export enum StorageSchema {
   POSTING_TEMPLATE = 'postingTemplate', // posting template, beneficiaries, powerup, ...
   EASTER_EGGS = 'easterEggs', // eater eggs found (true or false)
   BG_PUSH_MESSAGE = 'bgPushMessage', // background push message
+  LOGIN_TOKEN = 'loginToken',
 }
 
 //// blockchain types

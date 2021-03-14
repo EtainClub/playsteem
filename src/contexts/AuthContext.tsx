@@ -19,7 +19,7 @@ import {
   Credentials,
 } from './types/authTypes';
 import AsyncStorage from '@react-native-community/async-storage';
-import {LOGIN_TOKEN} from '../screens';
+import {StorageSchema} from '~/contexts/types';
 import {UIContext} from '~/contexts';
 import {FlatList} from 'react-native';
 const KEYCHAIN_SERVER = 'users';
@@ -153,7 +153,7 @@ const AuthProvider = ({children}: Props) => {
     // check sanity
     if (!authState.loggedIn) return;
     // remove login token
-    await AsyncStorage.removeItem(LOGIN_TOKEN);
+    await AsyncStorage.removeItem(StorageSchema.LOGIN_TOKEN);
     console.log('removed login token');
     // remove firebase device push token
     const result1 = await _removePushToken(currentCredentials.username);
@@ -187,7 +187,7 @@ const AuthProvider = ({children}: Props) => {
       payload: credentials,
     });
     // change account in the storage
-    AsyncStorage.setItem(LOGIN_TOKEN, account);
+    AsyncStorage.setItem(StorageSchema.LOGIN_TOKEN, account);
   };
 
   return (

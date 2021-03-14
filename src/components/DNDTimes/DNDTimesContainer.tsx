@@ -11,6 +11,7 @@ const {height, width} = Dimensions.get('window');
 import {DNDTimesView} from './DNDTimesView';
 //// times
 import moment from 'moment';
+import {StorageSchema} from '~/contexts/types';
 
 const UTC_OFFSET_IN_MINUTES = new Date().getTimezoneOffset();
 
@@ -41,19 +42,21 @@ const DNDTimesContainer = (props: Props): JSX.Element => {
   //// initialize DND times
   const _initDNDTimes = async () => {
     // try to get start time from storage
-    const start = await AsyncStorage.getItem('dnd_start_time');
-    console.log('[_initDNDTimes] start', start);
+    //    const start = await AsyncStorage.getItem('dnd_start_time');
+    const _dndTimes = await AsyncStorage.getItem(StorageSchema.DND_TIMES);
+    const dndTimes = JSON.parse(_dndTimes);
+
+    console.log('[_initDNDTimes] start', dndTimes.startTime);
     // if exists, then set states
-    if (start) {
+    if (dndTimes.startTime) {
       // set the state
       setShowDND(true);
       // get end time
-      const end = await AsyncStorage.getItem('dnd_end_time');
-      console.log('[initSettings] start', JSON.parse(start));
-      console.log('[initSettings] end', JSON.parse(end));
+      console.log('[initSettings] start', JSON.parse(dndTimes.startTime));
+      console.log('[initSettings] end', JSON.parse(dndTimes.endTime));
       // set the time
-      setStartTime(JSON.parse(start));
-      setEndTime(JSON.parse(end));
+      setStartTime(dndTimes.startTime);
+      setEndTime(JSON.parse(dndTimes.endTime));
     }
   };
 

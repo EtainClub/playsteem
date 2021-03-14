@@ -7,7 +7,7 @@ import {SearchFeed} from './search';
 import {PostDetails} from './post';
 import {Notification} from './notification';
 import {Login} from './login';
-import {ResolveAuth, LOGIN_TOKEN} from './resolveAuth/ResolveAuth';
+import {ResolveAuth} from './resolveAuth/ResolveAuth';
 import {WelcomeScreen} from './application';
 import {Settings} from './settings';
 import {Signup} from './signup';
@@ -23,7 +23,6 @@ export {
   Notification,
   Login,
   ResolveAuth,
-  LOGIN_TOKEN,
   WelcomeScreen,
   Settings,
   Signup,
