@@ -109,7 +109,7 @@ export const AppContainer = (props: Props): JSX.Element => {
       setTimeout(() => {
         console.log('timeout. now navigate');
         handleRemoteMessages(bgPushMessage, true);
-      }, 1500);
+      }, 3000);
     }
   };
 
@@ -119,6 +119,9 @@ export const AppContainer = (props: Props): JSX.Element => {
     background: boolean,
   ): void => {
     console.log('handleRemoteMessages. message', message);
+
+    // remove app-closed message in storage
+    AsyncStorage.removeItem(StorageSchema.BG_PUSH_MESSAGE);
 
     // get notification data
     const msgData = message.data;
