@@ -66,7 +66,7 @@ const WalletScreen = (props: Props): JSX.Element => {
       balance,
     } = props;
     return (
-      <Block style={Platform.OS === 'android' ? {height: 140} : {height: 260}}>
+      <Block style={Platform.OS === 'android' ? {height: 180} : {height: 300}}>
         <WalletStatsView
           walletData={props.walletData}
           isUser
