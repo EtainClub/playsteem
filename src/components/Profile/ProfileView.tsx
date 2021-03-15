@@ -68,7 +68,7 @@ const ProfileView: React.FC<Props> = ({
       <Block flex style={styles.profileCard}>
         <Block middle style={styles.avatarContainer}>
           <Block flex row center>
-            <Block center flex={1} style={{top: 40}}>
+            <Block center flex={1.2} style={{top: 40}}>
               <TouchableOpacity onPress={props.handlePressFollowers}>
                 <Text size={16} color="blue">
                   {getNumberStat(profile.stats.followers)}
@@ -123,7 +123,7 @@ const ProfileView: React.FC<Props> = ({
                 <Text color="orange">@{profile.name}</Text>
               </Block>
             )}
-            <Block center flex={1} style={{top: 40}}>
+            <Block center flex={1.2} style={{top: 40}}>
               <TouchableOpacity onPress={props.handlePressFollowings}>
                 <Text size={16} color="blue">
                   {getNumberStat(profile.stats.following)}

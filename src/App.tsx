@@ -37,7 +37,6 @@ LogBox.ignoreLogs(['Require cycles:', 'Require cycle:', 'VirtualizedLists']);
 
 //export default () => {
 const App = () => {
-  // const language = await AsyncStorage.getItem('language');
   const [locale, setLocale] = useState('en-US');
   //
   useEffect(() => {
@@ -56,38 +55,41 @@ const App = () => {
 
   //// get locale
   const _getLocale = async () => {
-    // detect default language
+    // detect default locale. it can be en-KR or en-JP which does not belong to en-US nor ko-KR.
     let _locale = RNLocalize.getLocales()[0].languageTag;
     // check if there is a preferred language stored in the storage
-    let _languages = null;
+    let supported = false;
     try {
-      _languages = await AsyncStorage.getItem(
-        StorageSchema.LANGUAGES || 'languages',
-      );
-      if (_languages) {
-        const languages = JSON.parse(_languages);
-        _locale = languages.locale;
-      } else {
-        // check if the preferred language is supported by tha app
-        if (!SUPPORTED_LOCALES.find((locale) => locale.locale === _locale)) {
-          console.log(
-            'the preferred language is not supported. preferred langage',
-            _locale,
-          );
-        } else {
-          // store the locale and translation in the storage
-          const _languages = {
-            locale: _locale,
-            translation: _locale.split('-')[0].toUpperCase(),
-          };
-          AsyncStorage.setItem(
-            StorageSchema.LANGUAGES || 'languages',
-            JSON.stringify(_languages),
-          );
+      // get username first
+      let username = await AsyncStorage.getItem(StorageSchema.LOGIN_TOKEN);
+      // username exists then get settings from storage
+      if (username) {
+        // get user settings from storage and parse it
+        const _settings = await AsyncStorage.getItem(username);
+        // settings exist
+        if (_settings) {
+          const settings = JSON.parse(_settings);
+          console.log('[App] _getLocale. _languages', settings.languages);
+          // get the saved locale
+          _locale = settings.languages.locale;
+          // check if the preferred language is supported by the app
+          if (SUPPORTED_LOCALES.find((locale) => locale.locale === _locale)) {
+            console.log(
+              'the preferred language is supported. preferred langage',
+              _locale,
+            );
+            supported = true;
+            // set locale
+          }
         }
       }
     } catch (error) {
       console.log('failed to get languages from storage', error);
+    }
+    // set default locale if not supported
+    if (!supported) {
+      // set default locale
+      _locale = 'en-US';
     }
     console.log('[App] locale', _locale);
     setLocale(_locale);

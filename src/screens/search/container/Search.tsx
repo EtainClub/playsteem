@@ -121,6 +121,7 @@ const SearchFeed = (props: Props): JSX.Element => {
     // need to log in to search
     if (!authState.loggedIn) {
       console.log('you need to log in to search posts');
+      setToastMessage('you need to log in to search posts');
       return;
     }
     let response = null;

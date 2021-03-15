@@ -69,9 +69,7 @@ export const ResolveAuth = (props) => {
   //// resolve auth
   const _resolveEntry = async () => {
     // get user login token from storage
-    let username = await AsyncStorage.getItem(
-      StorageSchema.LOGIN_TOKEN || 'loginToken',
-    );
+    let username = await AsyncStorage.getItem(StorageSchema.LOGIN_TOKEN);
     // fetch global props
     await fetchBlockchainGlobalProps();
     // get supported translation languages

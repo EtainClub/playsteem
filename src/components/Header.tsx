@@ -78,6 +78,7 @@ const Header = (props: Props): JSX.Element => {
   useEffect(() => {
     //    if (authState.loggedIn) {
     setUsername(authState.currentCredentials.username);
+
     // set accounts
     const iterator = authState.credentialsList.values();
     let _accounts = [];
