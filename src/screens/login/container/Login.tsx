@@ -143,11 +143,6 @@ const Login = (props: Props): JSX.Element => {
             // create a new document
             if (!doc.exists) {
               console.log('user doc does not exist');
-              // get perferred language
-              const _languages = await AsyncStorage.getItem(
-                StorageSchema.LANGUAGES,
-              );
-              const languages = JSON.parse(_languages);
               // create a user doc
               userRef
                 .set({
@@ -157,7 +152,7 @@ const Login = (props: Props): JSX.Element => {
                   lastLoginAt: new Date(),
                   dndTimes: null,
                   pushNotifications: INITIAL_SETTINGS.pushNotifications,
-                  locale: languages.locale,
+                  locale: settingsState.languages.locale,
                 })
                 .then(() => console.log('created user document'))
                 .catch((error) =>
@@ -169,7 +164,8 @@ const Login = (props: Props): JSX.Element => {
               userRef.update({pushToken, lastLoginAt: new Date()});
             }
             // save the username to async storage for auto login
-            AsyncStorage.setItem(StorageSchema.LOGIN_TOKEN, _username);
+            if (settingsState.securities.useAutoLogin)
+              AsyncStorage.setItem(StorageSchema.LOGIN_TOKEN, _username);
           })
           .catch((error) => {
             console.log('failed to get user document', error);
