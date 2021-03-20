@@ -363,6 +363,8 @@ const _getFollowers = async (
     followingType,
     limit,
   );
+  // check sanity
+  if (!result) return null;
   // get the followers
   const _followers = result.map((item) => {
     return item.follower;
@@ -392,6 +394,8 @@ const _getFollowings = async (
     followingType,
     limit,
   );
+  // check sanity
+  if (!result) return null;
   // get the followings
   const _followings = result.map((item) => {
     return item.following;

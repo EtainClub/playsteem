@@ -103,7 +103,7 @@ const ProfileView: React.FC<Props> = ({
                         `${props.imageServer}/u/${profile.name}/avatar` || null,
                       //uri: props.profileData.profile.metadata.profile_image || null,
                     }}
-                    style={[styles.avatar, {left: 10}]}
+                    style={[styles.avatar, {left: isUser ? 10 : 0}]}
                   />
                   {isUser && (
                     <Icon

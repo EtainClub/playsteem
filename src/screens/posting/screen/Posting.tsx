@@ -95,17 +95,6 @@ const PostingScreen = (props: Props): JSX.Element => {
     intl.formatMessage({id: 'Posting.no_reward'}),
   ];
 
-  const DATA2 = [
-    'kr zzn sct',
-    'xpilar steemit',
-    'tag1 tag2',
-    'kr zzn sct',
-    'xpilar steemit',
-    'tag1 tag2',
-    'kr zzn sct',
-    'xpilar steemit',
-    'tag1 tag2',
-  ];
   const defaultOptionText = '';
   return (
     <View>

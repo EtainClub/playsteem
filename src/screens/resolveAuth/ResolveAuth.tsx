@@ -91,7 +91,8 @@ export const ResolveAuth = (props) => {
         // get followings
         const followings = await getFollowings(username);
         // fetch initial posts
-        await fetchPosts(
+        // TODO: check if it is ok to remove await here
+        fetchPosts(
           PostsTypes.FEED,
           0,
           0,

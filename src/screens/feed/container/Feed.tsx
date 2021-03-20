@@ -2,11 +2,8 @@
 import React, {useState, useEffect, useContext, useCallback} from 'react';
 //// react native
 import {BackHandler} from 'react-native';
-// keychain to store data securely
-import * as Keychain from 'react-native-keychain';
 import {useFocusEffect} from '@react-navigation/native';
 import SplashScreen from 'react-native-splash-screen';
-import {navigate} from '~/navigation/service';
 import {PostRef, PostData, PostsTypes} from '~/contexts/types';
 import {PostsContext, AuthContext, UIContext, UserContext} from '~/contexts';
 
@@ -25,7 +22,6 @@ const Feed = (props: Props): JSX.Element => {
     setPostsType,
   } = useContext(PostsContext);
   const {authState} = useContext(AuthContext);
-  const {uiState, setToastMessage} = useContext(UIContext);
   const {
     userState,
     getUserProfileData,
@@ -33,16 +29,16 @@ const Feed = (props: Props): JSX.Element => {
     getNotifications,
   } = useContext(UserContext);
   //// states
-  const [username, setUsername] = useState(
-    authState.currentCredentials.username,
-  );
+  // const [username, setUsername] = useState(
+  //   authState.currentCredentials.username,
+  // );
   const [posts, setPosts] = useState<PostData[]>(null);
   //  const [postsType, setPostsType] = useState(PostsTypes.FEED);
   const [reloading, setReloading] = useState(true);
-  const [startPostRef, setStartPostRef] = useState<PostRef>({
-    author: null,
-    permlink: null,
-  });
+  // const [startPostRef, setStartPostRef] = useState<PostRef>({
+  //   author: null,
+  //   permlink: null,
+  // });
   const [fetchedAll, setFetchedAll] = useState(false);
   const [initialFetched, setInitialFetched] = useState(false);
 
@@ -62,6 +58,8 @@ const Feed = (props: Props): JSX.Element => {
       getWalletData(username);
       // get notifications
       getNotifications(username);
+      // get tag list
+      getTagList(authState.currentCredentials.username);
     }
   }, [authState.currentCredentials]);
 
@@ -74,16 +72,16 @@ const Feed = (props: Props): JSX.Element => {
   }, [postsState.needToFetch]);
 
   // account change event
-  useEffect(() => {
-    console.log('Feed. effect: auth changed', authState);
-    if (!reloading) {
-      // // fetch only the user account has been changed
-      // if (username != authState.currentCredentials.username) _fetchPosts(false);
-      _fetchPosts(false);
-      // get tag list
-      getTagList(authState.currentCredentials.username);
-    }
-  }, [authState.currentCredentials]);
+  // useEffect(() => {
+  //   console.log('Feed. effect: auth changed', authState);
+  //   if (!reloading) {
+  //     // // fetch only the user account has been changed
+  //     // if (username != authState.currentCredentials.username) _fetchPosts(false);
+  //     _fetchPosts(false);
+  //     // get tag list
+  //     getTagList(authState.currentCredentials.username);
+  //   }
+  // }, [authState.currentCredentials]);
 
   ////
 

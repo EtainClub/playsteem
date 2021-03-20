@@ -735,7 +735,7 @@ export const fetchPrice = async () => {
       timeout: 5000,
     });
     if (data) return data;
-    else return null;
+    return null;
   } catch (error) {
     console.log('failed to fetch price', error);
     return null;

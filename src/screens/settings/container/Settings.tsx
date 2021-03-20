@@ -37,6 +37,11 @@ import {
   PRIVACY_URL,
   SOURCE_URL,
   THRESHOLD_EASTER_CLICKS,
+  argonTheme,
+  GOOGLEPLAY,
+  APPSTORE,
+  APP_ANDROID_VERSION,
+  APP_IOS_VERSION,
 } from '~/constants';
 import {SUPPORTED_LOCALES} from '~/locales';
 
@@ -45,13 +50,13 @@ import moment, {locale} from 'moment';
 import {StorageSchema} from '~/contexts/types';
 import {setBlockchainClient} from '~/providers/steem/dsteemApi';
 //// constants
-import {
-  argonTheme,
-  GOOGLEPLAY,
-  APPSTORE,
-  APP_ANDROID_VERSION,
-  APP_IOS_VERSION,
-} from '~/constants';
+// import {
+//   argonTheme,
+//   GOOGLEPLAY,
+//   APPSTORE,
+//   APP_ANDROID_VERSION,
+//   APP_IOS_VERSION,
+// } from '~/constants';
 
 // start date and time: 1AM
 const DATE1 = new Date(2021, 12, 12, 1, 0, 0);
@@ -93,6 +98,9 @@ export enum SettingUITypes {
   ABOUT = 'about',
 }
 
+// app store, google play link
+const APP_LINK = Platform.OS === 'android' ? GOOGLEPLAY : APPSTORE;
+
 interface Props {}
 const SettingsContainer = (props: Props): JSX.Element => {
   //// props
@@ -131,8 +139,6 @@ const SettingsContainer = (props: Props): JSX.Element => {
   const [easterCount, setEasterCount] = useState(0);
   const [numACTs, setNumACTs] = useState(0);
 
-  // app store, google play link
-  const APP_LINK = Platform.OS === 'android' ? GOOGLEPLAY : APPSTORE;
   //// effects
   // event: account changed
   useEffect(() => {
@@ -276,7 +282,6 @@ const SettingsContainer = (props: Props): JSX.Element => {
           useOTP: switchStates[SettingUITypes.USE_OTP],
         };
         // update context state and storage
-        // TODO: need to use username key => create a function to handle all the update
         updateSettingSchema(username, StorageSchema.SECURITIES, _securities);
         break;
       case SettingUITypes.USE_OTP:
