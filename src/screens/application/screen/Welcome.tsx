@@ -62,7 +62,10 @@ const WelcomeScreen = () => {
   const _renderLastSlide = (index: number) => {
     if (index === WELCOME_MESSAGES.length - 1) {
       return (
-        <Button style={{bottom: -50}} onPress={_onGetStarted}>
+        <Button
+          style={{bottom: -50}}
+          color={argonTheme.COLORS.STEEM}
+          onPress={_onGetStarted}>
           {intl.formatMessage({id: 'Welcome.button'})}
         </Button>
       );

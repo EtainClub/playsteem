@@ -304,6 +304,8 @@ const UserProvider = ({children}: Props) => {
       setToastMessage(intl.formatMessage({id: 'fetch_error'}));
       return [];
     }
+    // append the user to the list
+    followings.push(follower);
     // dispatch action
     dispatch({
       type: UserActionTypes.SET_FOLLOWINGS,
@@ -321,6 +323,8 @@ const UserProvider = ({children}: Props) => {
       setToastMessage(intl.formatMessage({id: 'fetch_error'}));
       return [];
     }
+    // append the user to the list
+    followers.push(username);
     // dispatch action
     dispatch({
       type: UserActionTypes.SET_FOLLOWERS,
