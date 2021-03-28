@@ -71,7 +71,7 @@ export const ResolveAuth = (props) => {
     // get user login token from storage
     let username = await AsyncStorage.getItem(StorageSchema.LOGIN_TOKEN);
     // fetch global props
-    await fetchBlockchainGlobalProps();
+    fetchBlockchainGlobalProps();
     // get supported translation languages
     const languages = TRANSLATION_LANGUAGES;
     // const languages = await _getSupportedLanguages();
@@ -108,7 +108,7 @@ export const ResolveAuth = (props) => {
         // why this???
         if (!followings) navigate({name: 'Drawer'});
         // fetch tags
-        await getTagList(username);
+        getTagList(username);
       } catch (error) {
         console.log('failed to fetch initial info (followings, tags)', error);
         setToastMessage('The server is down, Choose another in the settings');

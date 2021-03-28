@@ -289,17 +289,17 @@
   },
   "TokenTransfer": {
     "recipient_placeholder": "수신자 계정을 검색",
-    "amount_placeholder": "송금하고자 하는 금액",
+    "amount_placeholder": "송금하고자 하는 수량",
     "memo_placeholder": "송금 메시지",
     "next_button": "계속 진행",
     "transfer_button": "송금하기",
     "confirm_title": "송금 내용 확인",
     "empty_recipient": "수신자를 입력해야 합니다.",
-    "amount_message": "금액을 확인하세요.",
+    "amount_message": "수량을 확인하세요.",
     "error": "오류가 발생했습니다. 메시지를 확인하세요.",
     "steem_balance": "Balance: {what} STEEM",
     "sbd_balance": "Balance: {what} SBD",
-    "amount": "금액",
+    "amount": "수량",
     "memo": "메모",
     "memo_message": "이 메모는 누구나 볼 수 있습니다.",
     "invalid_pass": "키가 올바르지 않습니다.",
@@ -315,7 +315,7 @@
   "SecureKey": {
     "title": "암호 요구",
     "password_placeholder": "패스워드 (Wallet Import Format 또는 마스터 암호)",
-    "password_guide": "액티트 키 이상의 키 또는 마스터 암호가 필요합니다.",
+    "password_guide": "액티브 키 이상의 키 또는 마스터 암호가 필요합니다.",
     "confirm_button": "확인"
   },
   "Settings": {

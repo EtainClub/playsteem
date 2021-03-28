@@ -136,6 +136,24 @@ const AuthorListView = (props: Props): JSX.Element => {
     );
   };
 
+  const _renderSearchBar = () => (
+    <Block center>
+      <Input
+        style={styles.searchContainer}
+        right
+        color={argonTheme.COLORS.ERROR}
+        autoFocus={true}
+        autoCorrect={false}
+        autoCapitalize="none"
+        defaultValue={searchText}
+        placeholder={intl.formatMessage({id: 'Profile.search_author'})}
+        placehoderTextColor={argonTheme.COLORS.INPUT}
+        onChangeText={_handleTextChange}
+        onSubmitEditing={_onSubmitSearch}
+      />
+    </Block>
+  );
+
   //// render footer when loading more
   const _renderFooter = () => {
     if (!loadingMore) return null;
@@ -195,13 +213,14 @@ const AuthorListView = (props: Props): JSX.Element => {
       animationOut="zoomOut"
       onBackdropPress={props.cancelModal}>
       <Block card style={styles.container}>
+        {_renderSearchBar()}
         <FlatList
           contentContainerStyle={styles.posts}
           data={searchedItems}
           renderItem={({item, index}) => _renderItem(item, index)}
           keyExtractor={(item, index) => String(index)}
           initialNumToRender={5}
-          ListHeaderComponent={_renderHeader}
+          // ListHeaderComponent={_renderHeader}
           ListFooterComponent={_renderFooter}
           showsVerticalScrollIndicator={false}
         />
