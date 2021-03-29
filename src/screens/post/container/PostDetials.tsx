@@ -75,6 +75,7 @@ const PostDetails = (props: Props): JSX.Element => {
   //////// events
   // event: account change
   useEffect(() => {
+    //    console.log('[postDetails] event: account change');
     _fetchPostDetailsEntry();
     // update vote amount
     if (authState.loggedIn) {
@@ -84,6 +85,7 @@ const PostDetails = (props: Props): JSX.Element => {
   //// event: new post ref set
   useEffect(() => {
     if (postsState.postRef.author || postsState.postRef.permlink) {
+      //     console.log('[postDetails] event: post ref');
       // fetch post
       _fetchPostDetailsEntry();
     }
@@ -97,6 +99,7 @@ const PostDetails = (props: Props): JSX.Element => {
   useEffect(() => {
     // parent post exist?
     if (postDetails && postDetails.depth > 0) {
+      //    console.log('[postDetails] event: parent post');
       // fetch parent post
       _fetchParentPost(postDetails.state.parent_ref);
     }
@@ -104,6 +107,7 @@ const PostDetails = (props: Props): JSX.Element => {
   //// event: need to fetch details
   useEffect(() => {
     if (needFetching) {
+      //    console.log('[postDetails] event: need to fetching');
       // get post details
       getPostDetails(
         postsState.postRef,
@@ -122,7 +126,7 @@ const PostDetails = (props: Props): JSX.Element => {
   //// event: on blur
   useEffect(() => {
     const unsubscribe = navigation.addListener('blur', () => {
-      console.log('[PostDetails] blur event');
+      //    console.log('[PostDetails] event: blur');
       // stop tts before go back
       speakBody('', true);
     });
@@ -133,6 +137,8 @@ const PostDetails = (props: Props): JSX.Element => {
     console.log('_fetchPostDetailsEntry post state', postsState.postRef);
     // check sanity
     if (!postsState.postRef.author) return;
+    // fetch comments only if they exist
+    _fetchComments();
     // clear translation
     setTranslatedPostDetails(null);
     // clear comments
@@ -171,11 +177,6 @@ const PostDetails = (props: Props): JSX.Element => {
         authState.currentCredentials.username,
       );
       if (bookmarked) details.state.bookmarked = bookmarked;
-    }
-
-    // fetch comments only if they exist
-    if (details.children > 0) {
-      _fetchComments();
     }
   };
 
