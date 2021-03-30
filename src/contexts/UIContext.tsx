@@ -18,6 +18,7 @@ const initialState = {
   selectedLanguage: 'en',
   availableVoices: [],
   ttsState: TTSStates.NON_INIT,
+  ttsLangIndex: 0,
 };
 
 // create ui context
@@ -44,6 +45,8 @@ const uiReducer = (state: UIState, action: UIAction) => {
       return {...state, selectedLanguage: action.payload};
     case UIActionTypes.SET_AVAILABLE_VOICES:
       return {...state, availableVoices: action.payload};
+    case UIActionTypes.SET_TTS_LANG_INDEX:
+      return {...state, ttsLangIndex: action.payload};
     default:
       return state;
   }
@@ -156,6 +159,16 @@ const UIProvider = ({children}: Props) => {
       type: UIActionTypes.SET_AVAILABLE_VOICES,
       payload: availableVoices,
     });
+
+    //
+    // set index for default language
+    const _index = availableVoices.indexOf(locale);
+    console.log('available voices, index', uiState.availableVoices, _index);
+    // dispatch action
+    dispatch({
+      type: UIActionTypes.SET_TTS_LANG_INDEX,
+      payload: _index,
+    });
   };
 
   ////
@@ -170,7 +183,7 @@ const UIProvider = ({children}: Props) => {
       const htmlRegex = /(<([^>]+)>)/gm;
       //      console.log('original text', _text);
       const text = _text.replace(htmlRegex, ' ');
-      //      console.log('tts text', text);
+      console.log('tts text', text);
       TTS.speak(text);
     }
   };
@@ -199,7 +212,13 @@ const UIProvider = ({children}: Props) => {
   const setTTSLanguageIndex = async (index: number) => {
     // change default language
     try {
+      // change language
       await TTS.setDefaultLanguage(uiState.availableVoices[index]);
+      // dispatch action
+      dispatch({
+        type: UIActionTypes.SET_TTS_LANG_INDEX,
+        payload: index,
+      });
     } catch (error) {
       console.log('failed to set tts language', error);
     }

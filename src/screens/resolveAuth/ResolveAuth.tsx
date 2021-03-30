@@ -77,12 +77,12 @@ export const ResolveAuth = (props) => {
     // const languages = await _getSupportedLanguages();
     // set languages
     setTranslateLanguages(languages);
-    // initialize tts
-    initTTS(settingsState.languages.locale);
     // set category to feed if username exists
     if (username) {
       // get settings from storage
-      await getAllSettingsFromStorage(username);
+      const _settings = await getAllSettingsFromStorage(username);
+      // initialize tts
+      initTTS(_settings.languages.locale);
       console.log('[resolveAuth] username', username);
       try {
         // // get user profile
@@ -122,6 +122,8 @@ export const ResolveAuth = (props) => {
       // set fetched flag
       setFetched(true);
     } else {
+      // initialize tts
+      initTTS(settingsState.languages.locale);
       // fetch tags
       await getTagList(username);
       // @test

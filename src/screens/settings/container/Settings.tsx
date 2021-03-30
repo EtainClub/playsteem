@@ -473,7 +473,7 @@ const SettingsContainer = (props: Props): JSX.Element => {
                 {text: intl.formatMessage({id: 'no'}), style: 'cancel'},
                 {
                   text: intl.formatMessage({id: 'yes'}),
-                  onPress: () => Linking.openURL(APP_LINK),
+                  onPress: () => Linking.openURL('https://playsteem.app'),
                 },
               ],
               {cancelable: true},
@@ -494,7 +494,7 @@ const SettingsContainer = (props: Props): JSX.Element => {
         });
         break;
       case SettingUITypes.RATE_APP:
-        Linking.openURL(APP_LINK);
+        Linking.openURL('https://playsteem.app');
         break;
       case SettingUITypes.TERMS:
         Linking.openURL(TERMS_URL);

@@ -32,16 +32,11 @@ const TTSContainer = (props: Props): JSX.Element => {
   const {settingsState} = useContext(SettingsContext);
   //// states
   const [showModal, setShowModal] = useState(false);
-  const [languageIndex, setLanguageIndex] = useState(0);
+  const [languageIndex, setLanguageIndex] = useState(uiState.ttsLangIndex);
   //// effects
   useEffect(() => {
     setShowModal(true);
-    // set index for default language
-    const _index = uiState.availableVoices.indexOf(
-      settingsState.languages.locale,
-    );
-    console.log('available voices, index', uiState.availableVoices, _index);
-    setLanguageIndex(_index);
+    setLanguageIndex(uiState.ttsLangIndex);
   }, []);
 
   ////

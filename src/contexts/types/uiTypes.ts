@@ -11,6 +11,7 @@ export enum UIActionTypes {
   SET_LANGUAGE_PARAM,
   SET_AVAILABLE_VOICES,
   SET_TTS_STATE,
+  SET_TTS_LANG_INDEX,
 }
 
 //// TTS states
@@ -40,6 +41,7 @@ export interface UIState {
   // available voices for tts
   availableVoices: string[];
   ttsState: TTSStates;
+  ttsLangIndex: number;
 }
 
 //// actions
@@ -88,6 +90,11 @@ interface SetTTSStateAction {
   type: UIActionTypes.SET_TTS_STATE;
   payload: TTSStates;
 }
+//
+interface SetTTSLangIndexAction {
+  type: UIActionTypes.SET_TTS_LANG_INDEX;
+  payload: number;
+}
 
 // ui context type
 export interface UIContextType {
@@ -135,4 +142,5 @@ export type UIAction =
   | SetTranslateLanguagesAction
   | SetLanguageParamAction
   | SetAvailableVoicesAction
-  | SetTTSStateAction;
+  | SetTTSStateAction
+  | SetTTSLangIndexAction;
