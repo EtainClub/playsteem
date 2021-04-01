@@ -570,6 +570,7 @@ const Posting = (props: Props): JSX.Element => {
   return (
     <Block>
       <PostingScreen
+        loggedIn={authState.loggedIn}
         title={title}
         body={body}
         tags={tags}

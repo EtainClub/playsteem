@@ -26,6 +26,7 @@ import {PostBody, Editor} from '~/components';
 //// constants
 
 interface Props {
+  loggedIn: boolean;
   title: string;
   body: string;
   editMode: boolean;
@@ -53,6 +54,7 @@ interface Props {
 const PostingScreen = (props: Props): JSX.Element => {
   //// props
   const {
+    loggedIn,
     title,
     body,
     tags,
@@ -161,9 +163,12 @@ const PostingScreen = (props: Props): JSX.Element => {
             />
             <Button
               size="small"
+              disabled={!loggedIn}
+              color={
+                loggedIn ? argonTheme.COLORS.FACEBOOK : argonTheme.COLORS.MUTED
+              }
               onPress={props.handlePressBeneficiary}
-              shadowless
-              color={argonTheme.COLORS.FACEBOOK}>
+              shadowless>
               {intl.formatMessage({id: 'Posting.beneficiary_button'})}
             </Button>
           </Block>
