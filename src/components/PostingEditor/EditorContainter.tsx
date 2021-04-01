@@ -79,11 +79,15 @@ const EditorContainer = (props: Props): JSX.Element => {
   //// uploading image event
   useEffect(() => {
     if (uploadedImageUrl) {
-      const _body =
-        body.substring(0, bodySelection.start) +
-        uploadedImageUrl +
-        body.substring(bodySelection.end);
-      _handleBodyChange(_body);
+      if (body) {
+        const _body =
+          body.substring(0, bodySelection.start) +
+          uploadedImageUrl +
+          body.substring(bodySelection.end);
+        _handleBodyChange(_body);
+      } else {
+        _handleBodyChange(uploadedImageUrl);
+      }
     }
   }, [uploadedImageUrl]);
 
