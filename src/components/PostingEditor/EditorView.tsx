@@ -19,7 +19,9 @@ import {Block, Icon, Button, Input, Text, theme} from 'galio-framework';
 import {argonTheme} from '~/constants/argonTheme';
 const {height, width} = Dimensions.get('window');
 //// components
-import {ImageUpload} from '~/components';
+import {ImageUpload, PostBody} from '~/components';
+//// utils
+import {renderPostBody} from '~/utils/render-helpers';
 
 interface Props {
   isComment: boolean;
@@ -52,6 +54,19 @@ const EditorView = (props: Props): JSX.Element => {
   } = props;
   //// language
   const intl = useIntl();
+
+  //// render preview of posting
+  // const _renderPreview = () => {
+  //   const _body = renderPostBody('## test', true);
+
+  //   return (
+  //     <Block>
+  //       <Block card style={{margin: 10, lexWrap: 'wrap'}}>
+  //         <PostBody body={_body} />
+  //       </Block>
+  //     </Block>
+  //   );
+  // };
 
   // icon for submitting a comment
   const iconSend = (
@@ -140,6 +155,7 @@ const EditorView = (props: Props): JSX.Element => {
           color={argonTheme.COLORS.SWITCH_ON}
         />
       </Block>
+      {/* {_renderPreview()} */}
     </Block>
   );
 };
