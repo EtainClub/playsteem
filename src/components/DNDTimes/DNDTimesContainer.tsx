@@ -46,9 +46,9 @@ const DNDTimesContainer = (props: Props): JSX.Element => {
     const _dndTimes = await AsyncStorage.getItem(StorageSchema.DND_TIMES);
     const dndTimes = JSON.parse(_dndTimes);
 
-    console.log('[_initDNDTimes] start', dndTimes.startTime);
     // if exists, then set states
     if (dndTimes.startTime) {
+      console.log('[_initDNDTimes] start', dndTimes.startTime);
       // set the state
       setShowDND(true);
       // get end time
