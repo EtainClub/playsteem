@@ -232,7 +232,7 @@ const UserProvider = ({children}: Props) => {
         payload: profileData,
       });
     } else {
-      setToastMessage(intl.formatMessage({id: 'fetch_error'}));
+      //      setToastMessage(intl.formatMessage({id: 'fetch_error'}));
       return null;
     }
     return profileData;
@@ -254,7 +254,7 @@ const UserProvider = ({children}: Props) => {
       });
       return notifications;
     } else {
-      setToastMessage(intl.formatMessage({id: 'fetch_error'}));
+      //      setToastMessage(intl.formatMessage({id: 'fetch_error'}));
       return [];
     }
   };
@@ -274,7 +274,7 @@ const UserProvider = ({children}: Props) => {
       });
       return priceData;
     } else {
-      setToastMessage(intl.formatMessage({id: 'fetch_error'}));
+      //      setToastMessage(intl.formatMessage({id: 'fetch_error'}));
       return null;
     }
   };

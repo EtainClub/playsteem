@@ -110,6 +110,13 @@ const SettingsProvider = ({children}: Props) => {
       '[getAllSettingsFromStorage] username, _settings',
       username,
       _settings,
+      size(_settings),
+    );
+
+    console.log(
+      '[getAllSettingsFromStorage] settingsState',
+      settingsState,
+      size(settingsState),
     );
 
     // check if this includes the recent setings
