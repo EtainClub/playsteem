@@ -86,6 +86,7 @@ export enum SettingUITypes {
   USE_AUTO_LOGIN = 'use_auto_login',
   NSFW = 'nsfw',
   // general
+  FONT_SIZE = 'font_size',
   NOTICE = 'notice',
   TERMS = 'terms',
   PRIVACY = 'privacy',
@@ -135,6 +136,7 @@ const SettingsContainer = (props: Props): JSX.Element => {
   const [translation, setTranslation] = useState(
     settingsState.languages.translation,
   );
+  const [fontIndex, setFontIndex] = useState(settingsState.ui.fontIndex);
   //// eater egg count
   const [easterCount, setEasterCount] = useState(0);
   const [numACTs, setNumACTs] = useState(0);
@@ -201,6 +203,8 @@ const SettingsContainer = (props: Props): JSX.Element => {
       setLocale(languages.locale);
       // translation
       setTranslation(languages.translation);
+      // font size index
+      setFontIndex(ui.fontIndex);
       //// dnd time states
       if (dndTimes.startTime) {
         setStartDNDTime(dndTimes.startTime);
@@ -374,6 +378,7 @@ const SettingsContainer = (props: Props): JSX.Element => {
     const userRef = firestore().doc(`users/${username}`);
     let _blockchains = null;
     let _languages = null;
+    let _ui = null;
     switch (uiType) {
       case SettingUITypes.RPC_SERVER:
         // check if the input value is the same as the current value
@@ -435,6 +440,16 @@ const SettingsContainer = (props: Props): JSX.Element => {
         _languages = {locale: locale, translation: value};
         // update in context state
         updateSettingSchema(username, StorageSchema.LANGUAGES, _languages);
+        break;
+      case SettingUITypes.FONT_SIZE:
+        // check if the input value is the same as the current value
+        if (fontIndex === index) return;
+        // update state
+        setFontIndex(index);
+        // build structure
+        _ui = {...settingsState.ui, fontIndex: index};
+        // update in context state
+        updateSettingSchema(username, StorageSchema.UI, _ui);
         break;
       default:
         break;

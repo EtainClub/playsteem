@@ -347,6 +347,7 @@
     "locale": "Language",
     "translation": "Translation Language",
     "lang_not_supported": "The selected language is not supported",
+    "font_size": "Font Size",
     "msg_restart": "You need to restart the app to make the effect",
     "rate_app": "Rate App",
     "app_version": "App Version",

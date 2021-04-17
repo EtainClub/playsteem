@@ -21,6 +21,7 @@ import {RPC_SERVERS, IMAGE_SERVERS} from '~/constants/blockchain';
 import {APP_IOS_VERSION, APP_ANDROID_VERSION} from '~/constants/app';
 import {SUPPORTED_LOCALES, LOCALE} from '~/locales';
 import {SettingUITypes} from '../container/Settings';
+import {BODY_FONT_SIZES} from '~/constants';
 
 //// props
 interface Props {
@@ -124,6 +125,13 @@ const SettingsScreen = (props: Props): JSX.Element => {
       type: 'dropdown',
       defaultText: 'EN',
       options: props.translationLanguages,
+    },
+    {
+      title: intl.formatMessage({id: 'Settings.font_size'}),
+      id: SettingUITypes.FONT_SIZE,
+      type: 'dropdown',
+      defaultText: BODY_FONT_SIZES[1].name,
+      options: BODY_FONT_SIZES.map((item) => item.name),
     },
     {
       title: intl.formatMessage({id: 'Settings.notice'}),

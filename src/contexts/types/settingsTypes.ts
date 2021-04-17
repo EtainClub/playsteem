@@ -1,4 +1,4 @@
-import {RPC_SERVERS, IMAGE_SERVERS} from '~/constants/blockchain';
+import {RPC_SERVERS, IMAGE_SERVERS, BODY_FONT_SIZES} from '~/constants';
 
 //// storage schema
 export enum StorageSchema {
@@ -47,6 +47,7 @@ export type UITypes = {
   tagIndex: number;
   communityIndex: number;
   payoutIndex: number;
+  fontIndex?: number;
 };
 
 //// ester eggs
@@ -118,6 +119,7 @@ export const INITIAL_SETTINGS: SettingsState = {
     tagIndex: 0,
     communityIndex: 0,
     payoutIndex: 0,
+    fontIndex: 1,
   },
   [StorageSchema.EASTER_EGGS]: {
     claimACT: false,

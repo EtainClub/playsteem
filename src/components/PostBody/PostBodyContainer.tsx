@@ -5,13 +5,19 @@ import {Linking, Platform, PermissionsAndroid} from 'react-native';
 import {get} from 'lodash';
 import {useIntl} from 'react-intl';
 import {PostBodyView} from './PostBodyView';
-import {UIContext, AuthContext, PostsContext} from '~/contexts';
+import {
+  UIContext,
+  AuthContext,
+  PostsContext,
+  SettingsContext,
+} from '~/contexts';
 import {navigate} from '~/navigation/service';
 import RNFetchBlob from 'rn-fetch-blob';
 import Clipboard from '@react-native-community/clipboard';
 import CameraRoll from '@react-native-community/cameraroll';
 
 import {Text} from 'react-native';
+import {BODY_FONT_SIZES} from '~/constants';
 
 interface Props {
   body: string;
@@ -25,6 +31,7 @@ const PostBodyContainer = (props: Props): JSX.Element => {
   const {setAuthorParam, setToastMessage} = useContext(UIContext);
   const {authState} = useContext(AuthContext);
   const {setPostRef, appendTag, setPostDetails} = useContext(PostsContext);
+  const {settingsState} = useContext(SettingsContext);
   //// states
   const [selectedLink, setSelectedLink] = useState(null);
   const [postImages, setPostImages] = useState([]);
@@ -264,6 +271,7 @@ const PostBodyContainer = (props: Props): JSX.Element => {
       commentDepth={props.commentDepth ? props.commentDepth : 0}
       linkActionRef={linkActionRef}
       imageActionRef={imageActionRef}
+      bodyFontSize={BODY_FONT_SIZES[settingsState.ui.fontIndex].size}
       handleLinkPress={_handleLinkPress}
       copyLinkToClipboard={_copyLinkToClipboard}
       openExternalLInk={_openExternalLInk}

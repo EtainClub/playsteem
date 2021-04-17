@@ -18,3 +18,10 @@ export const MIN_EDITOR_HEIGHT = 50;
 export const MAX_ACTIVE_VOTERS = 20;
 export const MAX_TAGS_HISTORY = 10;
 export const THRESHOLD_EASTER_CLICKS = 8;
+
+export const BODY_FONT_SIZES = [
+  {size: '12', name: 'S'},
+  {size: '16', name: 'M'},
+  {size: '20', name: 'L'},
+  {size: '24', name: 'XL'},
+];
