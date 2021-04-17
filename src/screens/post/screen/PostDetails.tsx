@@ -41,22 +41,25 @@ interface Props {
   parentPost: PostData;
   index: number;
   comments: CommentData[];
+  commentY: number;
   handleRefresh: () => void;
   handleSubmitComment: (text: string) => Promise<boolean>;
   handlePressTag: (tag: string) => void;
   handlePressTranslation: () => void;
   flagPost: () => void;
+  updateCommentY: (height: number) => void;
 }
 const PostDetailsScreen = (props: Props): JSX.Element => {
   //// props
-  const {post, comments} = props;
+  const {post, comments, commentY} = props;
   const {state} = post;
   const {nickname} = state;
   const {tags} = post.metadata;
   const reputation = Math.floor(state.reputation).toFixed(0);
   //// contexts
   //// states
-  const [commentY, setCommentY] = useState(0);
+  //  const [commentY, setCommentY] = useState(0);
+
   const [avoidKeyboard, setAvoidKeyboard] = useState(false);
   //// refs
   const commentRef = useRef(null);
@@ -157,7 +160,9 @@ const PostDetailsScreen = (props: Props): JSX.Element => {
               </Block>
             )}
             <Block
-              onLayout={(event) => setCommentY(event.nativeEvent.layout.y)}>
+              onLayout={(event) =>
+                props.updateCommentY(event.nativeEvent.layout.y)
+              }>
               <Editor
                 isComment={true}
                 depth={0}

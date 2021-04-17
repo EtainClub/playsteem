@@ -272,7 +272,7 @@ const Header = (props: Props): JSX.Element => {
         postsState.tagList.forEach((item) => tagOptions.push(item[1]));
         return (
           <Block row space="between">
-            <Block row space="around" style={{left: 100}}>
+            <Block row space="around" style={{left: 70}}>
               <DropdownModal
                 key={tagOptions[tagIndex]}
                 defaultText={defaultCommunityText || tagOptions[tagIndex]}
@@ -288,7 +288,7 @@ const Header = (props: Props): JSX.Element => {
               <DropdownModal
                 key={filterList[filterIndex]}
                 defaultText={defaultCategoryText || filterList[filterIndex]}
-                dropdownButtonStyle={styles.dropdownButtonStyle}
+                dropdownButtonStyle={[styles.dropdownButtonStyle, {left: 30}]}
                 selectedOptionIndex={filterIndex}
                 rowTextStyle={styles.rowTextStyle}
                 style={styles.dropdown}
@@ -369,7 +369,7 @@ const Header = (props: Props): JSX.Element => {
     <Block style={headerStyles}>
       <NavBar
         back={back}
-        title={intl.formatMessage({id: `${title.toLowerCase()}`})}
+        // title={intl.formatMessage({id: `${title.toLowerCase()}`})}
         style={styles.navbar}
         transparent={transparent}
         right={_renderRight()}

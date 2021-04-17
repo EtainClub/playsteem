@@ -72,6 +72,7 @@ const PostDetails = (props: Props): JSX.Element => {
   const [submitted, setSubmitted] = useState(false);
   const [parentPost, setParentPost] = useState<PostData>(null);
   const [needFetching, setNeedFetching] = useState(false);
+  const [commentY, setCommentY] = useState(0);
   //////// events
   // event: account change
   useEffect(() => {
@@ -129,6 +130,8 @@ const PostDetails = (props: Props): JSX.Element => {
       //    console.log('[PostDetails] event: blur');
       // stop tts before go back
       speakBody('', true);
+      // reset comment height
+      setCommentY(0);
     });
     return unsubscribe;
   }, [navigation]);
@@ -361,6 +364,8 @@ const PostDetails = (props: Props): JSX.Element => {
       postsType={postsState.postsType}
       index={postIndex}
       comments={comments}
+      commentY={commentY}
+      updateCommentY={(height) => setCommentY(height)}
       handleRefresh={_onRefresh}
       handleSubmitComment={_onSubmitComment}
       handlePressTag={_handlePressTag}
