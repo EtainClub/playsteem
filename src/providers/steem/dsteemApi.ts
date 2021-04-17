@@ -795,7 +795,7 @@ export const fetchPostsSummary = async (
     limit: limit,
     start_permlink: startPostRef.permlink || undefined,
     start_author: startPostRef.author || undefined,
-    truncate_body: TRUNCATE_BODY_LENGTH,
+    truncate_body: TRUNCATE_BODY_LENGTH, // @todo what if no trucate?
   };
 
   try {

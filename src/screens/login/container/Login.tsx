@@ -91,9 +91,22 @@ const Login = (props: Props): JSX.Element => {
     await auth()
       .signInAnonymously()
       .then((result) => console.log('signed in firebase', result))
-      .catch((error) => console.log('failed to sign in firebase', error));
-    // create or update user db
-    _updateUserDB(username);
+      .catch((error) => {
+        setToastMessage(
+          intl.formatMessage({id: 'Login.firebase_auth_error'}, {what: error}),
+        );
+        console.log('failed to sign in firebase', error);
+        setLoading(false);
+        return;
+      });
+
+    try {
+      // create or update user db
+      _updateUserDB(username);
+    } catch (error) {
+      setLoading(false);
+      return;
+    }
 
     //// fetch user data
     // update followings which is required in fetching feed
@@ -155,9 +168,15 @@ const Login = (props: Props): JSX.Element => {
                   locale: settingsState.languages.locale,
                 })
                 .then(() => console.log('created user document'))
-                .catch((error) =>
-                  console.log('failed to create a user document', error),
-                );
+                .catch((error) => {
+                  setToastMessage(
+                    intl.formatMessage(
+                      {id: 'Login.firebase_create_doc_error'},
+                      {what: error},
+                    ),
+                  );
+                  console.log('failed to create a user document', error);
+                });
             } else {
               console.log('user doc exists, username', _username);
               // update push token
@@ -168,10 +187,24 @@ const Login = (props: Props): JSX.Element => {
               AsyncStorage.setItem(StorageSchema.LOGIN_TOKEN, _username);
           })
           .catch((error) => {
+            setToastMessage(
+              intl.formatMessage(
+                {id: 'Login.firebase_get_user_error'},
+                {what: error},
+              ),
+            );
             console.log('failed to get user document', error);
           });
       })
-      .catch((error) => console.log('failed to get push token', error));
+      .catch((error) => {
+        setToastMessage(
+          intl.formatMessage(
+            {id: 'Login.firebase_get_push_error'},
+            {what: error},
+          ),
+        );
+        console.log('failed to get push token', error);
+      });
   };
 
   //// render
