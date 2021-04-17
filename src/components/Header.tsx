@@ -370,6 +370,7 @@ const Header = (props: Props): JSX.Element => {
       <NavBar
         back={back}
         // title={intl.formatMessage({id: `${title.toLowerCase()}`})}
+        title={''}
         style={styles.navbar}
         transparent={transparent}
         right={_renderRight()}
