@@ -269,6 +269,12 @@ const ActionBarContainer = (props: Props): JSX.Element => {
   const handleCancelVotingModal = () => {
     setShowVotingModal(false);
     setShowDownvoting(false);
+    // reset voting weight
+    _resetVoting();
+  };
+
+  const _resetVoting = () => {
+    setVotingWeight(100);
   };
 
   //// handle press speak
