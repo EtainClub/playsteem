@@ -121,7 +121,8 @@ const ImageUploadContainer = (props: Props): JSX.Element => {
           );
           setUploadedImage(res.data);
           // return the result
-          props.getImageURL(res.data.url);
+          const url = `![](${res.data.url})`;
+          props.getImageURL(url);
         }
       })
       .catch((error) => {

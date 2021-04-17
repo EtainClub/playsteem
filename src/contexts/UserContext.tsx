@@ -214,7 +214,7 @@ const UserProvider = ({children}: Props) => {
       });
       return walletData;
     } else {
-      setToastMessage(intl.formatMessage({id: 'fetch_error'}));
+      //      setToastMessage(intl.formatMessage({id: 'fetch_error'}));
       console.log('[getWalletData] walletData not fetched', walletData);
       return null;
     }

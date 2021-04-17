@@ -122,10 +122,10 @@ export const AppContainer = (props: Props): JSX.Element => {
   };
 
   // handle push notification messages
-  const handleRemoteMessages = (
+  const handleRemoteMessages = async (
     message: RemoteMessage,
     background: boolean,
-  ): void => {
+  ) => {
     console.log('handleRemoteMessages. message', message);
 
     // remove app-closed message in storage
@@ -178,9 +178,32 @@ export const AppContainer = (props: Props): JSX.Element => {
     if (!route) return;
     // navigate if the app is in background
     if (background) {
+      console.log('bg push');
       navigate({name: route});
     } else {
+      console.log('fg push');
       // handle foreground message
+      await AsyncAlert(route, body);
+      // Alert.alert(
+      //   intl.formatMessage({id: 'App.push_title'}),
+      //   intl.formatMessage({id: 'App.push_body'}, {what: body}),
+      //   [
+      //     {text: intl.formatMessage({id: 'no'}), style: 'cancel'},
+      //     {
+      //       text: intl.formatMessage({id: 'yes'}),
+      //       onPress: () => {
+      //         console.log('yes. pressed');
+      //         navigate({name: route});
+      //       },
+      //     },
+      //   ],
+      //   {cancelable: true},
+      // );
+    }
+  };
+
+  const AsyncAlert = async (route: string, body: string) =>
+    new Promise(() => {
       Alert.alert(
         intl.formatMessage({id: 'App.push_title'}),
         intl.formatMessage({id: 'App.push_body'}, {what: body}),
@@ -188,13 +211,15 @@ export const AppContainer = (props: Props): JSX.Element => {
           {text: intl.formatMessage({id: 'no'}), style: 'cancel'},
           {
             text: intl.formatMessage({id: 'yes'}),
-            onPress: () => navigate({name: route}),
+            onPress: () => {
+              console.log('yes. pressed');
+              navigate({name: route});
+            },
           },
         ],
         {cancelable: true},
       );
-    }
-  };
+    });
 
   // clear toast message
   const _clearMessage = () => {
