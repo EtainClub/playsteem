@@ -42,24 +42,24 @@ interface Props {
   index: number;
   comments: CommentData[];
   commentY: number;
+  hideHeader: boolean;
   handleRefresh: () => void;
   handleSubmitComment: (text: string) => Promise<boolean>;
   handlePressTag: (tag: string) => void;
   handlePressTranslation: () => void;
   flagPost: () => void;
   updateCommentY: (height: number) => void;
+  toggleHideHeader: (value: boolean) => void;
 }
 const PostDetailsScreen = (props: Props): JSX.Element => {
   //// props
-  const {post, comments, commentY} = props;
+  const {post, comments, commentY, hideHeader} = props;
   const {state} = post;
   const {nickname} = state;
   const {tags} = post.metadata;
   const reputation = Math.floor(state.reputation).toFixed(0);
   //// contexts
   //// states
-  //  const [commentY, setCommentY] = useState(0);
-
   const [avoidKeyboard, setAvoidKeyboard] = useState(false);
   //// refs
   const commentRef = useRef(null);
@@ -83,34 +83,53 @@ const PostDetailsScreen = (props: Props): JSX.Element => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={50}
       style={{flex: 1, marginBottom: 20}}>
-      <Block style={{marginHorizontal: 20}}>
-        {props.parentPost && <ParentPost post={props.parentPost} />}
-        <Block row space="between">
-          <Text size={24}>{post.state.title}</Text>
-          {!props.parentPost && (
-            <Icon
-              onPress={props.flagPost}
-              style={{margin: 5}}
-              size={16}
-              color={argonTheme.COLORS.MUTED}
-              name="flag-outline"
-              family="ionicon"
-            />
-          )}
-        </Block>
-        <Block row space="between">
-          <Avatar
-            avatar={post.state.avatar}
-            avatarSize={40}
-            account={post.state.post_ref.author}
-            nickname={nickname ? nickname : post.state.post_ref.author}
-            reputation={reputation}
-            textSize={14}
-            truncate={false}
+      {hideHeader ? (
+        <Block right>
+          <Icon
+            onPress={() => props.toggleHideHeader(!hideHeader)}
+            size={20}
+            name="caretdown"
+            family="antdesign"
           />
-          <Text style={{top: 10, marginRight: 20}}>{formatedTime}</Text>
         </Block>
-      </Block>
+      ) : (
+        <Block style={{marginHorizontal: 20}}>
+          {props.parentPost && <ParentPost post={props.parentPost} />}
+          <Block row space="between">
+            <Text size={24}>{post.state.title}</Text>
+            {!props.parentPost && (
+              <Icon
+                onPress={props.flagPost}
+                style={{margin: 5}}
+                size={16}
+                color={argonTheme.COLORS.MUTED}
+                name="flag-outline"
+                family="ionicon"
+              />
+            )}
+          </Block>
+          <Block row space="between">
+            <Avatar
+              avatar={post.state.avatar}
+              avatarSize={40}
+              account={post.state.post_ref.author}
+              nickname={nickname ? nickname : post.state.post_ref.author}
+              reputation={reputation}
+              textSize={14}
+              truncate={false}
+            />
+            <Text style={{top: 10, marginRight: 20}}>{formatedTime}</Text>
+            <Block center style={{right: 0}}>
+              <Icon
+                onPress={() => props.toggleHideHeader(!hideHeader)}
+                size={20}
+                name="caretup"
+                family="antdesign"
+              />
+            </Block>
+          </Block>
+        </Block>
+      )}
       <Block style={{marginBottom: 150}}>
         <Block>
           <ActionBar
