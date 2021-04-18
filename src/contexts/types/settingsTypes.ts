@@ -129,6 +129,7 @@ export const INITIAL_SETTINGS: SettingsState = {
 //// settings action types
 export enum SettingsActionTypes {
   SET_ALL_SETTINGS,
+  SET_STORAGE_SETTINGS,
   FINALIZE_SETTINGS_TO_STORAGE,
   SET_SCHEMA,
   SET_BLOCKCHAINS,
@@ -144,6 +145,11 @@ export enum SettingsActionTypes {
 // set all settings
 interface SetAllSettingsAction {
   type: SettingsActionTypes.SET_ALL_SETTINGS;
+  payload: SettingsState;
+}
+// set all settings
+interface SetStorageSettingsAction {
+  type: SettingsActionTypes.SET_STORAGE_SETTINGS;
   payload: SettingsState;
 }
 // finalize settings to storage
@@ -179,5 +185,6 @@ export interface SettingsContextType {
 
 export type SettingsAction =
   | SetAllSettingsAction
+  | SetStorageSettingsAction
   | FinalizeSettingsToStorageAction
   | SetSchemaAction;

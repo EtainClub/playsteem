@@ -35,6 +35,38 @@ const settingsReducer = (state: SettingsState, action: SettingsAction) => {
   switch (action.type) {
     case SettingsActionTypes.SET_ALL_SETTINGS:
       return action.payload;
+    case SettingsActionTypes.SET_STORAGE_SETTINGS:
+      return {
+        ...state,
+        [StorageSchema.BLOCKCHAINS]: {
+          ...state[StorageSchema.BLOCKCHAINS],
+          ...action.payload[StorageSchema.BLOCKCHAINS],
+        },
+        [StorageSchema.SECURITIES]: {
+          ...state[StorageSchema.SECURITIES],
+          ...action.payload[StorageSchema.SECURITIES],
+        },
+        [StorageSchema.PUSH_NOTIFICATIONS]: {
+          ...state[StorageSchema.PUSH_NOTIFICATIONS],
+          ...action.payload[StorageSchema.PUSH_NOTIFICATIONS],
+        },
+        [StorageSchema.DND_TIMES]: {
+          ...state[StorageSchema.DND_TIMES],
+          ...action.payload[StorageSchema.DND_TIMES],
+        },
+        [StorageSchema.LANGUAGES]: {
+          ...state[StorageSchema.LANGUAGES],
+          ...action.payload[StorageSchema.LANGUAGES],
+        },
+        [StorageSchema.UI]: {
+          ...state[StorageSchema.UI],
+          ...action.payload[StorageSchema.UI],
+        },
+        [StorageSchema.EASTER_EGGS]: {
+          ...state[StorageSchema.EASTER_EGGS],
+          ...action.payload[StorageSchema.EASTER_EGGS],
+        },
+      };
     case SettingsActionTypes.FINALIZE_SETTINGS_TO_STORAGE:
       return {...state, existInStorage: true};
     case SettingsActionTypes.SET_SCHEMA:
@@ -104,44 +136,35 @@ const SettingsProvider = ({children}: Props) => {
 
   //// get all settings from storage
   const getAllSettingsFromStorage = async (username?: string) => {
+    //// update states with the ones that exist in storage
+    // set the settingsState
+    let _settings = settingsState;
     // get user's settings from storage
-    let _settings = await _getUserSettingsFromStorage(username);
-    console.log(
-      '[getAllSettingsFromStorage] username, _settings',
-      username,
-      _settings,
-      size(_settings),
-    );
+    const _storageSettgins = await _getUserSettingsFromStorage(username);
+    // console.log(
+    //   '[getAllSettingsFromStorage] username, _strageSettings',
+    //   username,
+    //   _storageSettgins,
+    //   size(_settings),
+    // );
+    // console.log(
+    //   '[getAllSettingsFromStorage] settingsState',
+    //   settingsState,
+    //   size(settingsState),
+    // );
 
-    console.log(
-      '[getAllSettingsFromStorage] settingsState',
-      settingsState,
-      size(settingsState),
-    );
-
-    // check if this includes the recent setings
-    if (size(_settings) !== size(settingsState)) {
-      // initialize the storage with the default values
-      _settings = settingsState;
-      // set settings to storage
-      if (username) await _setUserSettingsToStorage(username, _settings);
-      return;
-    }
-
-    // use default settings if nothing in storage
-    if (!_settings) {
-      _settings = settingsState;
-
-      // set settings to storage
-      if (username) await _setUserSettingsToStorage(username, _settings);
-    } else {
-      // dispatch actions: set settings state using the storage values
-      console.log('[getAllSettingsFromStorage] _settings', _settings);
+    // use storage settings if it exits
+    if (_storageSettgins) {
+      _settings = _storageSettgins;
       dispatch({
-        type: SettingsActionTypes.SET_ALL_SETTINGS,
+        type: SettingsActionTypes.SET_STORAGE_SETTINGS,
         payload: _settings as SettingsState,
       });
+    } else {
+      // if not storage settings, set settings to storage
+      if (username) await _setUserSettingsToStorage(username, _settings);
     }
+
     return _settings;
   };
 
