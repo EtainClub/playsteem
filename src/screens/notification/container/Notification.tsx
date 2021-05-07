@@ -1,9 +1,9 @@
 //// react
-import React, {useState, useEffect, useContext, useCallback} from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 //// react native
 //// react navigation
-import {useFocusEffect} from '@react-navigation/native';
-import {navigate} from '~/navigation/service';
+import { useFocusEffect } from '@react-navigation/native';
+import { navigate } from '~/navigation/service';
 //// language
 //// ui, styles
 //// contexts
@@ -16,18 +16,18 @@ import {
 } from '~/contexts';
 //// etc
 //// screens, views
-import {NotificationScreen} from '../screen/Notification';
+import { NotificationScreen } from '../screen/Notification';
 
-interface Props {}
+interface Props { }
 
 const Notification = (props: Props): JSX.Element => {
   //// props
   //// contexts
-  const {setPostRef, setPostDetails} = useContext(PostsContext);
-  const {userState, getNotifications} = useContext(UserContext);
-  const {authState} = useContext(AuthContext);
-  const {setAuthorParam} = useContext(UIContext);
-  const {settingsState} = useContext(SettingsContext);
+  const { setPostRef, setPostDetails } = useContext(PostsContext);
+  const { userState, getNotifications } = useContext(UserContext);
+  const { authState } = useContext(AuthContext);
+  const { setAuthorParam } = useContext(UIContext);
+  const { settingsState } = useContext(SettingsContext);
   //// states
   const [username, setUsername] = useState('');
   const [fetching, setFetching] = useState(false);
@@ -81,16 +81,16 @@ const Notification = (props: Props): JSX.Element => {
     // check if permlink exists
     if (permlink) {
       // set post ref
-      setPostRef({author, permlink});
+      setPostRef({ author, permlink });
       // set post data to context
       setPostDetails(null);
       // navigate to the post
-      navigate({name: 'PostDetails'});
+      navigate({ name: 'PostDetailsNoti' });
     } else {
       // set author param
       setAuthorParam(author);
       // navigate to the author profile
-      navigate({name: 'AuthorProfile'});
+      navigate({ name: 'AuthorProfile' });
     }
   };
 
@@ -111,4 +111,4 @@ const Notification = (props: Props): JSX.Element => {
   );
 };
 
-export {Notification};
+export { Notification };

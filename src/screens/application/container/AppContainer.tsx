@@ -1,28 +1,28 @@
 //// react
-import React, {useContext, useEffect} from 'react';
+import React, { useContext, useEffect } from 'react';
 //// react native
-import {Platform, BackHandler, Alert, Linking, AppState} from 'react-native';
+import { Platform, BackHandler, Alert, Linking, AppState } from 'react-native';
 //// language
-import {useIntl} from 'react-intl';
+import { useIntl } from 'react-intl';
 //// notification
 import messaging, {
   FirebaseMessagingTypes,
 } from '@react-native-firebase/messaging';
 import PushNotification from 'react-native-push-notification';
-import {navigate} from '~/navigation/service';
+import { navigate } from '~/navigation/service';
 
 //// contexts
-import {PostsContext, UIContext} from '~/contexts';
-import {ApplicationScreen} from '../screen/Application';
+import { PostsContext, UIContext } from '~/contexts';
+import { ApplicationScreen } from '../screen/Application';
 
 // firebase messaging types
 type RemoteMessage = FirebaseMessagingTypes.RemoteMessage;
 
 // push operation types
-import {SettingUITypes} from '~/screens/settings';
+import { SettingUITypes } from '~/screens/settings';
 import AsyncStorage from '@react-native-community/async-storage';
 
-import {StorageSchema} from '~/contexts/types';
+import { StorageSchema } from '~/contexts/types';
 
 // set background notification listener
 messaging().setBackgroundMessageHandler(async (message: RemoteMessage) => {
@@ -38,14 +38,14 @@ messaging().setBackgroundMessageHandler(async (message: RemoteMessage) => {
 
 let firebaseOnNotificationOpenedAppListener = null;
 
-interface Props {}
+interface Props { }
 
 export const AppContainer = (props: Props): JSX.Element => {
   //// language
   const intl = useIntl();
   //// contexts
-  const {setPostRef} = useContext(PostsContext);
-  const {uiState, setToastMessage, setAuthorParam} = useContext(UIContext);
+  const { setPostRef } = useContext(PostsContext);
+  const { uiState, setToastMessage, setAuthorParam } = useContext(UIContext);
 
   useEffect(() => {
     //// setup push notification listener
@@ -143,7 +143,7 @@ export const AppContainer = (props: Props): JSX.Element => {
     // @test
     // TODO: handle the foreground message. show modal
     console.log('remote message data', msgData);
-    const {operation, author, permlink, body} = msgData;
+    const { operation, author, permlink, body } = msgData;
     let route = null;
     switch (operation) {
       // navigate to the post details
@@ -156,7 +156,7 @@ export const AppContainer = (props: Props): JSX.Element => {
         // set route name
         route = 'PostDetails';
         // set post ref to the context
-        setPostRef({author, permlink});
+        setPostRef({ author, permlink });
         break;
       case SettingUITypes.FOLLOW:
         //// navigate to the author profile
@@ -179,7 +179,7 @@ export const AppContainer = (props: Props): JSX.Element => {
     // navigate if the app is in background
     if (background) {
       console.log('bg push');
-      navigate({name: route});
+      navigate({ name: route });
     } else {
       console.log('fg push');
       // handle foreground message
@@ -205,19 +205,19 @@ export const AppContainer = (props: Props): JSX.Element => {
   const AsyncAlert = async (route: string, body: string) =>
     new Promise(() => {
       Alert.alert(
-        intl.formatMessage({id: 'App.push_title'}),
-        intl.formatMessage({id: 'App.push_body'}, {what: body}),
+        intl.formatMessage({ id: 'App.push_title' }),
+        intl.formatMessage({ id: 'App.push_body' }, { what: body }),
         [
-          {text: intl.formatMessage({id: 'no'}), style: 'cancel'},
+          { text: intl.formatMessage({ id: 'no' }), style: 'cancel' },
           {
-            text: intl.formatMessage({id: 'yes'}),
+            text: intl.formatMessage({ id: 'yes' }),
             onPress: () => {
               console.log('yes. pressed');
-              navigate({name: route});
+              navigate({ name: route });
             },
           },
         ],
-        {cancelable: true},
+        { cancelable: true },
       );
     });
 

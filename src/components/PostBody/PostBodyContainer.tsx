@@ -1,23 +1,23 @@
 //// react
-import React, {useRef, useState, useContext} from 'react';
+import React, { useRef, useState, useContext } from 'react';
 //// react native
-import {Linking, Platform, PermissionsAndroid} from 'react-native';
-import {get} from 'lodash';
-import {useIntl} from 'react-intl';
-import {PostBodyView} from './PostBodyView';
+import { Linking, Platform, PermissionsAndroid } from 'react-native';
+import { get } from 'lodash';
+import { useIntl } from 'react-intl';
+import { PostBodyView } from './PostBodyView';
 import {
   UIContext,
   AuthContext,
   PostsContext,
   SettingsContext,
 } from '~/contexts';
-import {navigate} from '~/navigation/service';
+import { navigate } from '~/navigation/service';
 import RNFetchBlob from 'rn-fetch-blob';
 import Clipboard from '@react-native-community/clipboard';
 import CameraRoll from '@react-native-community/cameraroll';
 
-import {Text} from 'react-native';
-import {BODY_FONT_SIZES} from '~/constants';
+import { Text } from 'react-native';
+import { BODY_FONT_SIZES } from '~/constants';
 
 interface Props {
   body: string;
@@ -28,10 +28,10 @@ const PostBodyContainer = (props: Props): JSX.Element => {
   //// language
   const intl = useIntl();
   //// contexts
-  const {setAuthorParam, setToastMessage} = useContext(UIContext);
-  const {authState} = useContext(AuthContext);
-  const {setPostRef, appendTag, setPostDetails} = useContext(PostsContext);
-  const {settingsState} = useContext(SettingsContext);
+  const { setAuthorParam, setToastMessage } = useContext(UIContext);
+  const { authState } = useContext(AuthContext);
+  const { setPostRef, appendTag, setPostDetails } = useContext(PostsContext);
+  const { settingsState } = useContext(SettingsContext);
   //// states
   const [selectedLink, setSelectedLink] = useState(null);
   const [postImages, setPostImages] = useState([]);
@@ -47,11 +47,11 @@ const PostBodyContainer = (props: Props): JSX.Element => {
   const _handlePostPress = (author: string, permlink: string) => {
     if (permlink) {
       // set post ref
-      setPostRef({author, permlink});
+      setPostRef({ author, permlink });
       // set post data to context
       setPostDetails(null);
       // navigate to the post details screen
-      navigate({name: 'PostDetails'});
+      navigate({ name: 'PostDetails' });
     }
   };
 
@@ -62,7 +62,7 @@ const PostBodyContainer = (props: Props): JSX.Element => {
       setAuthorParam(author);
       if (authState.currentCredentials.username === author) {
         // navigate to the author profile
-        navigate({name: 'Profile'});
+        navigate({ name: 'Profile' });
       } else {
         navigate({
           // if the author is the user, then navigate to the Profile
@@ -149,7 +149,7 @@ const PostBodyContainer = (props: Props): JSX.Element => {
           break;
       }
     } catch (error) {
-      setToastMessage(intl.formatMessage({id: 'PostDetails.wrong_link'}));
+      setToastMessage(intl.formatMessage({ id: 'PostDetails.wrong_link' }));
     }
   };
 
@@ -161,7 +161,7 @@ const PostBodyContainer = (props: Props): JSX.Element => {
         Linking.openURL(selectedLink);
       } else {
         // toast message
-        setToastMessage(intl.formatMessage({id: 'Alert.open_link_fail'}));
+        setToastMessage(intl.formatMessage({ id: 'Alert.open_link_fail' }));
       }
     });
     // hide the link action sheet
@@ -181,7 +181,7 @@ const PostBodyContainer = (props: Props): JSX.Element => {
     }
     // copt the link to the clipboard
     Clipboard.setString(link);
-    setToastMessage(intl.formatMessage({id: 'Alert.copied'}));
+    setToastMessage(intl.formatMessage({ id: 'Alert.copied' }));
     console.log('[_copyLinkToClipboard] link', link);
   };
 
@@ -225,19 +225,19 @@ const PostBodyContainer = (props: Props): JSX.Element => {
         console.log('[_onSaveImage] uri', uri);
       }
       // save image
-      CameraRoll.save(uri, {type: 'photo'})
+      CameraRoll.save(uri, { type: 'photo' })
         .then((res) => {
           // hide image action sheet
           imageActionRef.current?.setModalVisible(false);
-          setToastMessage(intl.formatMessage({id: 'Alert.saved'}));
+          setToastMessage(intl.formatMessage({ id: 'Alert.saved' }));
         })
         .catch((error) => {
           console.log('[_saveImage] failed to save image', error);
-          setToastMessage(intl.formatMessage({id: 'Alert.save_fail'}));
+          setToastMessage(intl.formatMessage({ id: 'Alert.save_fail' }));
         });
     } catch (error) {
       console.log('[_saveImage] failed to get image uri', error);
-      setToastMessage(intl.formatMessage({id: 'Alert.save_fail'}));
+      setToastMessage(intl.formatMessage({ id: 'Alert.save_fail' }));
     }
   };
 
@@ -284,4 +284,4 @@ const PostBodyContainer = (props: Props): JSX.Element => {
   );
 };
 
-export {PostBodyContainer};
+export { PostBodyContainer };

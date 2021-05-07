@@ -1,13 +1,13 @@
-import React, {useContext} from 'react';
-import {Platform, Dimensions} from 'react-native';
+import React, { useContext } from 'react';
+import { Platform, Dimensions } from 'react-native';
 import {
   createDrawerNavigator,
   DrawerNavigationProp,
 } from '@react-navigation/drawer';
-import {Icon} from 'galio-framework';
-import {injectIntl, useIntl} from 'react-intl';
+import { Icon } from 'galio-framework';
+import { injectIntl, useIntl } from 'react-intl';
 
-import {AuthContext, SettingsContext} from '~/contexts';
+import { AuthContext, SettingsContext } from '~/contexts';
 
 // screens
 import {
@@ -27,18 +27,23 @@ import {
 } from '../screens';
 import CustomDrawerContent from './Menu';
 
-import {Header} from '../components/';
+import { Header } from '../components/';
 // themes
-import {materialTheme} from '~/constants/';
-import {argonTheme} from '~/constants';
+import { materialTheme } from '~/constants/';
+import { argonTheme } from '~/constants';
 
-const {width} = Dimensions.get('screen');
+const { width } = Dimensions.get('screen');
 
 // navigation
-import {createStackNavigator} from '@react-navigation/stack';
-import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
+import { createStackNavigator, TransitionSpecs, CardStyleInterpolators } from '@react-navigation/stack';
+//import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
+
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+
+const Tab = createMaterialTopTabNavigator<BottomTabParams>();
+
 // navigation params
-import {BottomTabParams, DrawerParams} from './types';
+import { BottomTabParams, DrawerParams } from './types';
 
 //// create navigators
 //
@@ -47,7 +52,7 @@ const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator<DrawerParams>();
 // the drawer includes Bottom Tab
 //const Tab = createBottomTabNavigator<BottomTabParams>();
-const Tab = createMaterialBottomTabNavigator<BottomTabParams>();
+//const Tab = createMaterialBottomTabNavigator<BottomTabParams>();
 
 //// navigation props
 
@@ -73,24 +78,73 @@ const LandingStack = () => {
   );
 };
 
+const openConfig = {
+  animation: 'spring',
+  config: {
+    stiffness: 1000,
+    damping: 50,
+    mass: 3,
+    overshootClamping: false,
+    restDisplacementThreshold: 0.01,
+    restSpeedThreshold: 0.01,
+  },
+}
+
+const closeConfig = {
+  animation: 'timing',
+  config: {
+    duration: 500,
+    damping: 50,
+    mass: 3,
+    overshootClamping: false,
+    restDisplacementThreshold: 0.01,
+    restSpeedThreshold: 0.01,
+  },
+}
+
+
 // use the navigators
 const TabFeedStack = () => {
   return (
-    <Stack.Navigator mode="card" headerMode="screen">
+    <Stack.Navigator
+      mode="card"
+      headerMode="float"
+      screenOptions={{
+        gestureEnabled: true,
+        gestureDirection: 'horizontal',
+        cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        // transitionSpec: {
+        //   open: TransitionSpecs.TransitionIOSSpec,
+        //   close: TransitionSpecs.TransitionIOSSpec,
+        // }
+      }}
+    >
       <Stack.Screen
         name="Feed"
         component={Feed}
         options={{
-          header: ({navigation}) => {
+          header: ({ navigation }) => {
             return <Header title="Feed" navigation={navigation} back={false} />;
           },
         }}
       />
+
+      <Stack.Screen
+        name="PostDetails"
+        component={PostDetails}
+        options={{
+          header: ({ navigation }) => {
+            return <Header title="Post" navigation={navigation} back={true} />;
+          },
+        }}
+      />
+
+
       <Stack.Screen
         name="SearchFeed"
         component={SearchFeed}
         options={{
-          header: ({navigation}) => {
+          header: ({ navigation }) => {
             return (
               <Header title="Search" navigation={navigation} back={true} />
             );
@@ -103,12 +157,23 @@ const TabFeedStack = () => {
 
 const TabNotificationStack = () => {
   return (
-    <Stack.Navigator mode="card" headerMode="screen">
+    <Stack.Navigator mode="card"
+      headerMode="float"
+      screenOptions={{
+        gestureEnabled: true,
+        gestureDirection: 'horizontal',
+        cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        // transitionSpec: {
+        //   open: TransitionSpecs.TransitionIOSSpec,
+        //   close: TransitionSpecs.TransitionIOSSpec,
+        // }
+      }}
+    >
       <Stack.Screen
         name="Notification"
         component={Notification}
         options={{
-          header: ({navigation}) => {
+          header: ({ navigation }) => {
             return (
               <Header
                 title="Notification"
@@ -119,24 +184,57 @@ const TabNotificationStack = () => {
           },
         }}
       />
+
+      <Stack.Screen
+        name="PostDetailsNoti"
+        component={PostDetails}
+        options={{
+          header: ({ navigation }) => {
+            return <Header title="Post" navigation={navigation} back={true} />;
+          },
+        }}
+      />
+
     </Stack.Navigator>
   );
 };
 
 const TabProfileStack = (props): JSX.Element => {
   return (
-    <Stack.Navigator mode="card" headerMode="screen">
+    <Stack.Navigator mode="card"
+      headerMode="float"
+      screenOptions={{
+        gestureEnabled: true,
+        gestureDirection: 'horizontal',
+        cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        // transitionSpec: {
+        //   open: TransitionSpecs.TransitionIOSSpec,
+        //   close: TransitionSpecs.TransitionIOSSpec,
+        // }
+      }}
+    >
       <Stack.Screen
         name="Profile"
         component={Profile}
         options={{
-          header: ({navigation}) => {
+          header: ({ navigation }) => {
             return (
               <Header title="Profile" navigation={navigation} back={false} />
             );
           },
         }}
       />
+
+      <Stack.Screen
+        name="PostDetailsProfile"
+        component={PostDetails}
+        options={{
+          header: ({ navigation }) => {
+            return <Header title="Post" navigation={navigation} back={true} />;
+          },
+        }}
+      />
+
     </Stack.Navigator>
   );
 };
@@ -148,7 +246,7 @@ const TabPostingStack = (): JSX.Element => {
         name="Posting"
         component={Posting}
         options={{
-          header: ({navigation}) => {
+          header: ({ navigation }) => {
             return (
               <Header title="Posting" navigation={navigation} back={false} />
             );
@@ -166,7 +264,7 @@ const TabWalletStack = (): JSX.Element => {
         name="Wallet"
         component={Wallet}
         options={{
-          header: ({navigation}) => {
+          header: ({ navigation }) => {
             return (
               <Header title="Wallet" navigation={navigation} back={false} />
             );
@@ -180,27 +278,40 @@ const TabWalletStack = (): JSX.Element => {
 const TabIconSize: number = 22;
 const TabNavigator = (props) => {
   // get route name
-  const {route} = props;
+  const { route } = props;
   //// language
   const intl = useIntl();
   // check loggedin for profile, wallet, notification, posting
-  const {authState} = useContext(AuthContext);
-  const {loggedIn} = authState;
+  const { authState } = useContext(AuthContext);
+  const { loggedIn } = authState;
   let disable = true;
   // if (route !== 'Feed' && !loggedIn) return?
   return (
     <Tab.Navigator
       initialRouteName="Feed"
-      labeled={true}
-      barStyle={{
-        backgroundColor: argonTheme.COLORS.STEEM,
-      }}>
+      tabBarPosition="bottom"
+      tabBarOptions={{
+        showIcon: true,
+        showLabel: false,
+        activeTintColor: '#FFFFFF',
+        inactiveTintColor: '#F8F8F8',
+        style: {
+          backgroundColor: argonTheme.COLORS.STEEM,
+        },
+        indicatorStyle: {
+          height: 0,
+        },
+        // iconStyle: {
+        //   height: 30,
+        // }
+      }}
+    >
       <Tab.Screen
         name="Feed"
         component={TabFeedStack}
         options={{
-          tabBarLabel: intl.formatMessage({id: 'feed'}),
-          tabBarIcon: ({focused}) => (
+          tabBarLabel: 'Feed',
+          tabBarIcon: ({ focused }) => (
             <Icon
               name="feed"
               family="font-awesome"
@@ -214,8 +325,8 @@ const TabNavigator = (props) => {
         name="Notification"
         component={TabNotificationStack}
         options={{
-          tabBarLabel: intl.formatMessage({id: 'notification'}),
-          tabBarIcon: ({focused}) => (
+          tabBarLabel: intl.formatMessage({ id: 'notification' }),
+          tabBarIcon: ({ focused }) => (
             <Icon
               name="notifications"
               family="ionicon"
@@ -229,8 +340,8 @@ const TabNavigator = (props) => {
         name="Posting"
         component={TabPostingStack}
         options={{
-          tabBarLabel: intl.formatMessage({id: 'posting'}),
-          tabBarIcon: ({focused}) => (
+          tabBarLabel: intl.formatMessage({ id: 'posting' }),
+          tabBarIcon: ({ focused }) => (
             <Icon
               name="pencil"
               family="font-awesome"
@@ -243,15 +354,15 @@ const TabNavigator = (props) => {
       <Tab.Screen
         name="Profile"
         component={TabProfileStack}
-        listeners={({navigation, route}) => ({
+        listeners={({ navigation, route }) => ({
           tabPress: (e) => {
             e.preventDefault();
             navigation.navigate('Profile');
           },
         })}
         options={{
-          tabBarLabel: intl.formatMessage({id: 'profile'}),
-          tabBarIcon: ({focused}) => (
+          tabBarLabel: intl.formatMessage({ id: 'profile' }),
+          tabBarIcon: ({ focused }) => (
             <Icon
               name="user-alt"
               family="font-awesome-5"
@@ -265,8 +376,8 @@ const TabNavigator = (props) => {
         name="Wallet"
         component={TabWalletStack}
         options={{
-          tabBarLabel: intl.formatMessage({id: 'wallet'}),
-          tabBarIcon: ({focused}) => (
+          tabBarLabel: intl.formatMessage({ id: 'wallet' }),
+          tabBarIcon: ({ focused }) => (
             <Icon
               name="wallet"
               family="entypo"
@@ -290,9 +401,10 @@ const PostDetailsStack = () => (
       name="PostDetails"
       component={PostDetails}
       options={{
-        header: ({navigation}) => {
+        header: ({ navigation }) => {
           return <Header title="Post" navigation={navigation} back={true} />;
         },
+        gestureEnabled: true,
       }}
     />
   </Stack.Navigator>
@@ -305,7 +417,7 @@ const AuthorStack = () => {
         name="AuthorProfile"
         component={AuthorProfile}
         options={{
-          header: ({navigation}) => {
+          header: ({ navigation }) => {
             return (
               <Header title="Author" navigation={navigation} back={true} />
             );
@@ -323,7 +435,7 @@ const SettingsStack = () => {
         name="Settings"
         component={Settings}
         options={{
-          header: ({navigation}) => {
+          header: ({ navigation }) => {
             return (
               <Header title="Settings" navigation={navigation} back={true} />
             );
@@ -335,8 +447,8 @@ const SettingsStack = () => {
 };
 
 const DrawerNavigator = (props) => {
-  const {authState} = useContext(AuthContext);
-  const {settingsState} = useContext(SettingsContext);
+  const { authState } = useContext(AuthContext);
+  const { settingsState } = useContext(SettingsContext);
   const profile = {
     avatar: `${settingsState.blockchains.image}/u/${authState.currentCredentials.username}/avatar`,
     name: authState.currentCredentials.username,
@@ -389,8 +501,8 @@ const DrawerNavigator = (props) => {
   );
 };
 
-const NavigationStack = ({intl}) => {
-  const {authState} = useContext(AuthContext);
+const NavigationStack = ({ intl }) => {
+  const { authState } = useContext(AuthContext);
 
   return (
     <Stack.Navigator mode="card" headerMode="none">

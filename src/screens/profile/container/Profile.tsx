@@ -1,12 +1,12 @@
-import React, {useState, useContext, useEffect, useCallback} from 'react';
-import {View, ActivityIndicator, Alert} from 'react-native';
-import {useFocusEffect} from '@react-navigation/native';
+import React, { useState, useContext, useEffect, useCallback } from 'react';
+import { View, ActivityIndicator, Alert } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 //// language
-import {useIntl} from 'react-intl';
+import { useIntl } from 'react-intl';
 import firestore from '@react-native-firebase/firestore';
-import {get, has} from 'lodash';
-import {ProfileScreen} from '../screen/Profile';
-import {ProfileEditForm} from '../screen/ProfileEdit';
+import { get, has } from 'lodash';
+import { ProfileScreen } from '../screen/Profile';
+import { ProfileEditForm } from '../screen/ProfileEdit';
 import {
   AuthContext,
   UserContext,
@@ -14,24 +14,24 @@ import {
   PostsContext,
   SettingsContext,
 } from '~/contexts';
-import {PostsTypes, PostData, PostRef, ProfileData} from '~/contexts/types';
-import {broadcastProfileUpdate} from '~/providers/steem/dsteemApi';
-import {argonTheme} from '~/constants';
+import { PostsTypes, PostData, PostRef, ProfileData } from '~/contexts/types';
+import { broadcastProfileUpdate } from '~/providers/steem/dsteemApi';
+import { argonTheme } from '~/constants';
 //// components
-import {SecureKey} from '~/components';
-import {KeyTypes} from '~/contexts/types';
+import { SecureKey } from '~/components';
+import { KeyTypes } from '~/contexts/types';
 
-import {navigate} from '~/navigation/service';
+import { navigate } from '~/navigation/service';
 
-const Profile = ({navigation}): JSX.Element => {
+const Profile = ({ navigation }): JSX.Element => {
   //// props
   //// language
   const intl = useIntl();
   // contexts
-  const {authState} = useContext(AuthContext)!;
-  const {setPostRef, setPostDetails, getTagList} = useContext(PostsContext);
-  const {userState, getUserProfileData} = useContext(UserContext);
-  const {uiState, setAuthorParam, setToastMessage} = useContext(UIContext);
+  const { authState } = useContext(AuthContext)!;
+  const { setPostRef, setPostDetails, getTagList } = useContext(PostsContext);
+  const { userState, getUserProfileData } = useContext(UserContext);
+  const { uiState, setAuthorParam, setToastMessage } = useContext(UIContext);
   const {
     postsState,
     fetchPosts,
@@ -39,7 +39,7 @@ const Profile = ({navigation}): JSX.Element => {
     fetchFavorites,
     clearPosts,
   } = useContext(PostsContext);
-  const {settingsState} = useContext(SettingsContext);
+  const { settingsState } = useContext(SettingsContext);
   // states
   const [profileData, setProfileData] = useState<ProfileData>(null);
   const [profileFetched, setProfileFetched] = useState(false);
@@ -78,7 +78,7 @@ const Profile = ({navigation}): JSX.Element => {
   useEffect(() => {
     if (authState.loggedIn) {
       console.log('[Profile] Event. username changed.');
-      const {username} = authState.currentCredentials;
+      const { username } = authState.currentCredentials;
       // fetch new profile data if the username changed, otherwise use prefetched profile if available
       if (profileData && profileData.profile.name !== username)
         _getUserProfileData(username, true);
@@ -115,7 +115,7 @@ const Profile = ({navigation}): JSX.Element => {
     setProfileData(_profileData);
 
     // update the profile inputs
-    const {metadata} = _profileData.profile;
+    const { metadata } = _profileData.profile;
     setName(metadata.name);
     setAbout(metadata.about);
     setLocation(metadata.location);
@@ -125,7 +125,7 @@ const Profile = ({navigation}): JSX.Element => {
     if (_profileData) {
       setAvatarUrl(_profileData.profile.metadata.profile_image);
       //      setAvatarUrl(`${settingsState.blockchains.image}/u/${author}/avatar`);
-      const {fetchedPosts, fetchedAll} = await fetchPosts(
+      const { fetchedPosts, fetchedAll } = await fetchPosts(
         PostsTypes.AUTHOR,
         0,
         0,
@@ -157,15 +157,15 @@ const Profile = ({navigation}): JSX.Element => {
 
   //// handle press author
   const _handlePressAuthor = (author: string) => {
-    const {username} = authState.currentCredentials;
+    const { username } = authState.currentCredentials;
     if (username !== author) {
       // set author param
       setAuthorParam(author);
       // navigate
-      navigate({name: 'AuthorProfile'});
+      navigate({ name: 'AuthorProfile' });
     } else {
       // navigate profile
-      navigate({name: 'Profile'});
+      navigate({ name: 'Profile' });
     }
   };
 
@@ -194,7 +194,7 @@ const Profile = ({navigation}): JSX.Element => {
     // set post data to context
     setPostDetails(null);
     // navigate to the post details
-    navigate({name: 'PostDetails'});
+    navigate({ name: 'PostDetailsProfile' });
   };
 
   //// update the profile
@@ -202,7 +202,7 @@ const Profile = ({navigation}): JSX.Element => {
     if (authState.loggedIn) {
       // set updating
       setUpdating(true);
-      const {username, password, type} = authState.currentCredentials;
+      const { username, password, type } = authState.currentCredentials;
 
       const params = {
         name,
@@ -231,19 +231,19 @@ const Profile = ({navigation}): JSX.Element => {
 
   //// update the profile
   const _updateProfile = async (_password, _params) => {
-    const {username} = authState.currentCredentials;
+    const { username } = authState.currentCredentials;
     // broadcast the update to blockchain
     const result = await broadcastProfileUpdate(username, _password, _params);
     if (result) {
-      setToastMessage(intl.formatMessage({id: 'Profile.profile_updated'}));
+      setToastMessage(intl.formatMessage({ id: 'Profile.profile_updated' }));
       // update profile data
       const _profileData = {
         ...profileData,
-        profile: {...profileData.profile, metadata: _params},
+        profile: { ...profileData.profile, metadata: _params },
       };
       setProfileData(_profileData);
     } else {
-      setToastMessage(intl.formatMessage({id: 'Profile.profile_update_error'}));
+      setToastMessage(intl.formatMessage({ id: 'Profile.profile_update_error' }));
     }
     // reset edit mode
     setEditMode(false);
@@ -262,7 +262,7 @@ const Profile = ({navigation}): JSX.Element => {
     }
     // // show message
     setToastMessage(
-      intl.formatMessage({id: 'Transaction.need_higher_password'}),
+      intl.formatMessage({ id: 'Transaction.need_higher_password' }),
     );
   };
 
@@ -278,7 +278,7 @@ const Profile = ({navigation}): JSX.Element => {
 
   //// remove a bookmark in firestore
   const _removeBookmark = async (postRef: PostRef) => {
-    const {username} = authState.currentCredentials;
+    const { username } = authState.currentCredentials;
     const docId = `${postRef.author}${postRef.permlink}`;
     // remove the bookmark doc
     firestore()
@@ -298,22 +298,22 @@ const Profile = ({navigation}): JSX.Element => {
   const _handleRemoveBookmark = async (postRef: PostRef, title: string) => {
     // show alert
     Alert.alert(
-      intl.formatMessage({id: 'Profile.bookmark_remove_title'}),
-      intl.formatMessage({id: 'Profile.bookmark_remove_body'}, {what: title}),
+      intl.formatMessage({ id: 'Profile.bookmark_remove_title' }),
+      intl.formatMessage({ id: 'Profile.bookmark_remove_body' }, { what: title }),
       [
-        {text: intl.formatMessage({id: 'no'}), style: 'cancel'},
+        { text: intl.formatMessage({ id: 'no' }), style: 'cancel' },
         {
-          text: intl.formatMessage({id: 'yes'}),
+          text: intl.formatMessage({ id: 'yes' }),
           onPress: () => _removeBookmark(postRef),
         },
       ],
-      {cancelable: true},
+      { cancelable: true },
     );
   };
 
   //// remove a favorite author in firestore
   const _removeFavoriteAuthor = async (account: string) => {
-    const {username} = authState.currentCredentials;
+    const { username } = authState.currentCredentials;
     // remove the favorite doc
     firestore()
       .doc(`users/${username}`)
@@ -333,16 +333,16 @@ const Profile = ({navigation}): JSX.Element => {
   const _handleRemoveFavorite = (account: string) => {
     // show alert
     Alert.alert(
-      intl.formatMessage({id: 'Profile.favorite_remove_title'}),
-      intl.formatMessage({id: 'Profile.favorite_remove_body'}, {what: account}),
+      intl.formatMessage({ id: 'Profile.favorite_remove_title' }),
+      intl.formatMessage({ id: 'Profile.favorite_remove_body' }, { what: account }),
       [
-        {text: intl.formatMessage({id: 'no'}), style: 'cancel'},
+        { text: intl.formatMessage({ id: 'no' }), style: 'cancel' },
         {
-          text: intl.formatMessage({id: 'yes'}),
+          text: intl.formatMessage({ id: 'yes' }),
           onPress: () => _removeFavoriteAuthor(account),
         },
       ],
-      {cancelable: true},
+      { cancelable: true },
     );
   };
 
@@ -351,7 +351,7 @@ const Profile = ({navigation}): JSX.Element => {
     // clear blogs
     setBlogs(null);
     setRefreshing(true);
-    const {username} = authState.currentCredentials;
+    const { username } = authState.currentCredentials;
     await _getUserProfileData(username, true);
     setRefreshing(false);
   };
@@ -360,7 +360,7 @@ const Profile = ({navigation}): JSX.Element => {
   const _refreshBookmarks = async () => {
     setRefreshing(true);
     setBookmarks(null);
-    const {username} = authState.currentCredentials;
+    const { username } = authState.currentCredentials;
     await _fetchBookmarks(username);
     setRefreshing(false);
   };
@@ -369,7 +369,7 @@ const Profile = ({navigation}): JSX.Element => {
   const _refreshFavorites = async () => {
     setRefreshing(true);
     setFavorites(null);
-    const {username} = authState.currentCredentials;
+    const { username } = authState.currentCredentials;
     await _fetchFavorites(username);
     setRefreshing(false);
   };
@@ -415,7 +415,7 @@ const Profile = ({navigation}): JSX.Element => {
       />
     ) : (
       !profileFetched && (
-        <View style={{top: 20}}>
+        <View style={{ top: 20 }}>
           <ActivityIndicator color={argonTheme.COLORS.ERROR} size="large" />
         </View>
       )
@@ -450,7 +450,7 @@ const Profile = ({navigation}): JSX.Element => {
   );
 };
 
-export {Profile};
+export { Profile };
 
 /*
 
