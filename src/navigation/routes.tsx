@@ -185,7 +185,7 @@ const TabNotificationStack = () => {
         }}
       />
 
-      <Stack.Screen
+      {/* <Stack.Screen
         name="PostDetailsNoti"
         component={PostDetails}
         options={{
@@ -193,7 +193,7 @@ const TabNotificationStack = () => {
             return <Header title="Post" navigation={navigation} back={true} />;
           },
         }}
-      />
+      /> */}
 
     </Stack.Navigator>
   );
@@ -225,7 +225,7 @@ const TabProfileStack = (props): JSX.Element => {
         }}
       />
 
-      <Stack.Screen
+      {/* <Stack.Screen
         name="PostDetailsProfile"
         component={PostDetails}
         options={{
@@ -233,7 +233,7 @@ const TabProfileStack = (props): JSX.Element => {
             return <Header title="Post" navigation={navigation} back={true} />;
           },
         }}
-      />
+      /> */}
 
     </Stack.Navigator>
   );

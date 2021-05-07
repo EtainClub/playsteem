@@ -85,7 +85,7 @@ const Notification = (props: Props): JSX.Element => {
       // set post data to context
       setPostDetails(null);
       // navigate to the post
-      navigate({ name: 'PostDetailsNoti' });
+      navigate({ name: 'PostDetails' });
     } else {
       // set author param
       setAuthorParam(author);

@@ -194,7 +194,7 @@ const Profile = ({ navigation }): JSX.Element => {
     // set post data to context
     setPostDetails(null);
     // navigate to the post details
-    navigate({ name: 'PostDetailsProfile' });
+    navigate({ name: 'PostDetails' });
   };
 
   //// update the profile
