@@ -37,8 +37,8 @@ const { width } = Dimensions.get('screen');
 // navigation
 import { createStackNavigator, TransitionSpecs, CardStyleInterpolators } from '@react-navigation/stack';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
-
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+//import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 // navigation params
 import { BottomTabParams, DrawerParams } from './types';
@@ -83,6 +83,7 @@ const TabFeedStack = () => {
   return (
     <Stack.Navigator
       mode="card"
+      initialRouteName="Feed"
       headerMode="float"
       screenOptions={{
         gestureEnabled: true,
@@ -145,6 +146,7 @@ const TabFeedStack = () => {
 const TabNotificationStack = () => {
   return (
     <Stack.Navigator mode="card"
+      initialRouteName="Notification"
       headerMode="float"
       screenOptions={{
         gestureEnabled: true,
@@ -297,6 +299,9 @@ const TabNavigator = (props) => {
   const { authState } = useContext(AuthContext);
   const { loggedIn } = authState;
   let disable = true;
+  // reset navigation?
+
+
   // if (route !== 'Feed' && !loggedIn) return?
   return (
     <Tab.Navigator
@@ -309,6 +314,11 @@ const TabNavigator = (props) => {
       <Tab.Screen
         name="Feed"
         component={TabFeedStack}
+        listeners={({ navigation, route }) => ({
+          tabPress: (e) => {
+            navigation.navigate('Feed');
+          },
+        })}
         options={{
           tabBarLabel: 'Feed',
           tabBarIcon: ({ focused }) => (
@@ -324,6 +334,11 @@ const TabNavigator = (props) => {
       <Tab.Screen
         name="Notification"
         component={TabNotificationStack}
+        listeners={({ navigation, route }) => ({
+          tabPress: (e) => {
+            navigation.navigate('Notification');
+          },
+        })}
         options={{
           tabBarLabel: intl.formatMessage({ id: 'notification' }),
           tabBarIcon: ({ focused }) => (
@@ -356,7 +371,6 @@ const TabNavigator = (props) => {
         component={TabProfileStack}
         listeners={({ navigation, route }) => ({
           tabPress: (e) => {
-            e.preventDefault();
             navigation.navigate('Profile');
           },
         })}

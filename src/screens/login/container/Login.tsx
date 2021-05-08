@@ -1,16 +1,16 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 //// config
 import Config from 'react-native-config';
 //// language
-import {useIntl} from 'react-intl';
+import { useIntl } from 'react-intl';
 // firebase
 import messaging from '@react-native-firebase/messaging';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 // blockchain api
-import {verifyPassoword} from '~/providers/steem/dsteemApi';
-import {navigate} from '~/navigation/service';
-import {LoginScreen} from '../screen/Login';
+import { verifyPassword } from '~/providers/steem/dsteemApi';
+import { navigate } from '~/navigation/service';
+import { LoginScreen } from '../screen/Login';
 //// contexts
 import {
   AuthContext,
@@ -19,7 +19,7 @@ import {
   UserContext,
   SettingsContext,
 } from '~/contexts';
-import {INITIAL_SETTINGS, StorageSchema} from '~/contexts/types';
+import { INITIAL_SETTINGS, StorageSchema } from '~/contexts/types';
 import AsyncStorage from '@react-native-community/async-storage';
 
 interface Props {
@@ -28,16 +28,16 @@ interface Props {
 
 const Login = (props: Props): JSX.Element => {
   //// props
-  const {route} = props;
+  const { route } = props;
   const addingAccount = route.params?.addingAccount;
   //// language
   const intl = useIntl();
   //// contexts
-  const {processLogin} = useContext(AuthContext);
-  const {setToastMessage} = useContext(UIContext);
-  const {updateVoteAmount, getFollowings} = useContext(UserContext);
-  const {settingsState} = useContext(SettingsContext);
-  const {getTagList} = useContext(PostsContext);
+  const { processLogin } = useContext(AuthContext);
+  const { setToastMessage } = useContext(UIContext);
+  const { updateVoteAmount, getFollowings } = useContext(UserContext);
+  const { settingsState } = useContext(SettingsContext);
+  const { getTagList } = useContext(PostsContext);
   //// states
   const [username, setUsername] = useState('');
   const [password, setPasword] = useState('');
@@ -54,7 +54,7 @@ const Login = (props: Props): JSX.Element => {
       // reset logged in
       setLoggedIn(false);
       // navigate to the Feed screen
-      navigate({name: 'Feed'});
+      navigate({ name: 'Feed' });
     }
   }, [loggedIn]);
 
@@ -79,9 +79,9 @@ const Login = (props: Props): JSX.Element => {
     // set loading
     setLoading(true);
     // verify the private key
-    const {account, keyType} = await verifyPassoword(username, password);
+    const { account, keyType } = await verifyPassword(username, password);
     if (!account) {
-      setToastMessage(intl.formatMessage({id: 'Login.login_error'}));
+      setToastMessage(intl.formatMessage({ id: 'Login.login_error' }));
       setLoading(false);
       return;
     }
@@ -93,7 +93,7 @@ const Login = (props: Props): JSX.Element => {
       .then((result) => console.log('signed in firebase', result))
       .catch((error) => {
         setToastMessage(
-          intl.formatMessage({id: 'Login.firebase_auth_error'}, {what: error}),
+          intl.formatMessage({ id: 'Login.firebase_auth_error' }, { what: error }),
         );
         console.log('failed to sign in firebase', error);
         setLoading(false);
@@ -119,14 +119,14 @@ const Login = (props: Props): JSX.Element => {
 
     //// process login action
     processLogin(
-      {username, password, type: keyType},
+      { username, password, type: keyType },
       addingAccount,
       settingsState.securities.useAutoLogin,
     );
     ////
     // show login toast message
     setToastMessage(
-      intl.formatMessage({id: 'Login.logged_in'}, {what: username}),
+      intl.formatMessage({ id: 'Login.logged_in' }, { what: username }),
     );
 
     //// clear up
@@ -171,8 +171,8 @@ const Login = (props: Props): JSX.Element => {
                 .catch((error) => {
                   setToastMessage(
                     intl.formatMessage(
-                      {id: 'Login.firebase_create_doc_error'},
-                      {what: error},
+                      { id: 'Login.firebase_create_doc_error' },
+                      { what: error },
                     ),
                   );
                   console.log('failed to create a user document', error);
@@ -180,7 +180,7 @@ const Login = (props: Props): JSX.Element => {
             } else {
               console.log('user doc exists, username', _username);
               // update push token
-              userRef.update({pushToken, lastLoginAt: new Date()});
+              userRef.update({ pushToken, lastLoginAt: new Date() });
             }
             // save the username to async storage for auto login
             if (settingsState.securities.useAutoLogin)
@@ -189,8 +189,8 @@ const Login = (props: Props): JSX.Element => {
           .catch((error) => {
             setToastMessage(
               intl.formatMessage(
-                {id: 'Login.firebase_get_user_error'},
-                {what: error},
+                { id: 'Login.firebase_get_user_error' },
+                { what: error },
               ),
             );
             console.log('failed to get user document', error);
@@ -199,8 +199,8 @@ const Login = (props: Props): JSX.Element => {
       .catch((error) => {
         setToastMessage(
           intl.formatMessage(
-            {id: 'Login.firebase_get_push_error'},
-            {what: error},
+            { id: 'Login.firebase_get_push_error' },
+            { what: error },
           ),
         );
         console.log('failed to get push token', error);
@@ -221,4 +221,4 @@ const Login = (props: Props): JSX.Element => {
   );
 };
 
-export {Login};
+export { Login };

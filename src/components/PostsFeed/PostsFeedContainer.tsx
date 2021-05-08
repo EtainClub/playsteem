@@ -8,15 +8,15 @@ import React, {
 } from 'react';
 //// react native
 //// react navigation
-import {useFocusEffect} from '@react-navigation/native';
-import {navigate} from '~/navigation/service';
+import { useFocusEffect } from '@react-navigation/native';
+import { navigate } from '~/navigation/service';
 //// language
 //// ui, styles
 //// contexts
-import {UIContext} from '~/contexts';
-import {PostData} from '~/contexts/types';
+import { UIContext } from '~/contexts';
+import { PostData } from '~/contexts/types';
 //// etc
-import {PostsFeedView} from './PostsFeedView';
+import { PostsFeedView } from './PostsFeedView';
 
 //// props
 interface Props {
@@ -28,9 +28,9 @@ interface Props {
 //// component
 const PostsFeed = (props: Props): JSX.Element => {
   //// props
-  const {posts, fetchPosts} = props;
+  const { posts, fetchPosts } = props;
   //// context
-  const {setSearchParam} = useContext(UIContext);
+  const { setSearchParam } = useContext(UIContext);
   //// state
   const [loadingMore, setLoadingMore] = useState(false);
   const [showSearchFAB, setShowSearchFAB] = useState(false);
@@ -92,7 +92,7 @@ const PostsFeed = (props: Props): JSX.Element => {
     // set search param in the context
     setSearchParam(query);
     // navigate to search screen
-    navigate({name: 'SearchFeed'});
+    navigate({ name: 'SearchFeed' });
   };
 
   return (
@@ -112,4 +112,4 @@ const PostsFeed = (props: Props): JSX.Element => {
   );
 };
 
-export {PostsFeed};
+export { PostsFeed };

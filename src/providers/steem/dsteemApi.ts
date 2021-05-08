@@ -238,7 +238,7 @@ export const createAccount = async (
 
 // verify the password (master password, private keys in wif format)
 // return account and password key type
-export const verifyPassoword = async (username: string, password: string) => {
+export const verifyPassword = async (username: string, password: string) => {
   // get accounts by username
   let account = null;
   try {
@@ -635,7 +635,7 @@ export const updateFollow = async (
   action: string,
 ) => {
   // verify the key
-  const { account } = await verifyPassoword(follower, password);
+  const { account } = await verifyPassword(follower, password);
   if (!account) {
     return null;
   }
@@ -1056,7 +1056,7 @@ export const broadcastPost = async (
   options?: any[],
 ) => {
   // verify the key
-  const { account } = await verifyPassoword(postingData.author, password);
+  const { account } = await verifyPassword(postingData.author, password);
   if (!account) {
     return null;
   }
@@ -1101,7 +1101,7 @@ export const broadcastPostUpdate = async (
   // check validity of the password
   // verify the key
   // @todo check sanity of argument: exits? (it happend the empty post)
-  const { account } = await verifyPassoword(postingContent.author, password);
+  const { account } = await verifyPassword(postingContent.author, password);
   if (!account) {
     return { success: false, message: 'the password is invalid' };
   }
@@ -1166,7 +1166,7 @@ export const signImage = async (photo, username, password) => {
   // verify the user and password
   // @test
   //  password = Config.ETAINCLUB_POSTING_WIF;
-  const { account } = await verifyPassoword(username, password);
+  const { account } = await verifyPassword(username, password);
   if (!account) {
     console.log('[signImage] failed to verify password');
     return null;
@@ -1224,7 +1224,7 @@ export const reblog = async (
   permlink: string,
 ) => {
   // verify the key
-  const { account } = await verifyPassoword(username, password);
+  const { account } = await verifyPassword(username, password);
   if (!account) {
     return { success: false, message: 'the password is invalid' };
   }
@@ -1264,7 +1264,7 @@ export const submitVote = async (
     weight: votingWeight * 100,
   };
   // verify the key
-  const { account } = await verifyPassoword(voter, password);
+  const { account } = await verifyPassword(voter, password);
   if (!account) {
     return null;
   }
@@ -1297,7 +1297,7 @@ export const broadcastProfileUpdate = async (
   params: {},
 ) => {
   // verify the key, require active or above
-  const { account } = await verifyPassoword(username, password);
+  const { account } = await verifyPassword(username, password);
   if (!account) {
     return { success: false, message: 'the password is invalid' };
   }
@@ -1442,7 +1442,7 @@ export const claimRewardBalance = async (
   username: string,
   password: string,
 ) => {
-  const { account } = await verifyPassoword(username, password);
+  const { account } = await verifyPassword(username, password);
   if (!account) {
     return { success: false, message: 'the password is invalid' };
   }
@@ -1499,7 +1499,7 @@ export const transferToken = async (
   },
 ): Promise<TransactionReturnCodes> => {
   // get key type
-  const { account, keyType } = await verifyPassoword(username, password);
+  const { account, keyType } = await verifyPassword(username, password);
   // check sanity
   if (!account) {
     return TransactionReturnCodes.NO_ACCOUNT;
@@ -1541,7 +1541,7 @@ export const transferToVesting = async (
   },
 ): Promise<TransactionReturnCodes> => {
   // get key type
-  const { account, keyType } = await verifyPassoword(username, password);
+  const { account, keyType } = await verifyPassword(username, password);
   // check sanity
   if (!account) {
     return TransactionReturnCodes.NO_ACCOUNT;

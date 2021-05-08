@@ -1,15 +1,15 @@
 //// react
-import React, {useState, useEffect, useContext, useCallback} from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 //// react native
-import {BackHandler} from 'react-native';
-import {useFocusEffect} from '@react-navigation/native';
+import { BackHandler } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import SplashScreen from 'react-native-splash-screen';
-import {PostRef, PostData, PostsTypes} from '~/contexts/types';
-import {PostsContext, AuthContext, UIContext, UserContext} from '~/contexts';
+import { PostRef, PostData, PostsTypes } from '~/contexts/types';
+import { PostsContext, AuthContext, UIContext, UserContext } from '~/contexts';
 
-import {PostsFeed} from '~/components';
+import { PostsFeed } from '~/components';
 
-interface Props {}
+interface Props { }
 
 const Feed = (props: Props): JSX.Element => {
   //// contexts
@@ -21,7 +21,7 @@ const Feed = (props: Props): JSX.Element => {
     getTagList,
     setPostsType,
   } = useContext(PostsContext);
-  const {authState} = useContext(AuthContext);
+  const { authState } = useContext(AuthContext);
   const {
     userState,
     getUserProfileData,
@@ -51,7 +51,7 @@ const Feed = (props: Props): JSX.Element => {
     _fetchPosts(false);
     // fetch user profile
     if (authState.loggedIn) {
-      const {username} = authState.currentCredentials;
+      const { username } = authState.currentCredentials;
       // get profile data
       getUserProfileData(username);
       // get wallet data
@@ -126,7 +126,7 @@ const Feed = (props: Props): JSX.Element => {
     }
 
     // handle intially fetched case
-    if (!initialFetched) {
+    if (!initialFetched && !appending) {
       // set posts if exist
       if (postsState.feed.posts.length > 0) {
         setPosts(postsState.feed.posts);
@@ -136,13 +136,14 @@ const Feed = (props: Props): JSX.Element => {
       }
     }
 
+
     //
-    const {username} = authState.currentCredentials;
+    const { username } = authState.currentCredentials;
     let tagIndex = postsState.tagIndex;
     let filterIndex = postsState.filterIndex;
     let noFollowings = userState.followings.length === 0 ? true : false;
     console.log('[Feed] username, noFollowings ?', username, noFollowings);
-    const {fetchedPosts, fetchedAll} = await fetchPosts(
+    const { fetchedPosts, fetchedAll } = await fetchPosts(
       postsType,
       tagIndex,
       filterIndex,
@@ -150,6 +151,9 @@ const Feed = (props: Props): JSX.Element => {
       noFollowings,
       appending,
     );
+
+    console.log('fetched all?', fetchedAll);
+
     if (!fetchedPosts || fetchedAll) {
       setFetchedAll(true);
     } else {
@@ -171,4 +175,4 @@ const Feed = (props: Props): JSX.Element => {
   );
 };
 
-export {Feed};
+export { Feed };

@@ -1,20 +1,20 @@
 //// react
-import React, {useState, useContext, useEffect} from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 //// react native
-import {View} from 'react-native';
+import { View } from 'react-native';
 //// config
 import Config from 'react-native-config';
 //// language
-import {useIntl} from 'react-intl';
+import { useIntl } from 'react-intl';
 //// blockchain
-import {verifyPassoword} from '~/providers/steem/dsteemApi';
+import { verifyPassword } from '~/providers/steem/dsteemApi';
 //// context
-import {AuthContext, UserContext, SettingsContext} from '~/contexts';
+import { AuthContext, UserContext, SettingsContext } from '~/contexts';
 //// components
-import {OTP} from '~/components';
+import { OTP } from '~/components';
 //// views
-import {SecureKeyView} from './SecureKeyView';
-import {KeyTypes} from '~/contexts/types';
+import { SecureKeyView } from './SecureKeyView';
+import { KeyTypes } from '~/contexts/types';
 
 interface Props {
   showModal: boolean;
@@ -28,9 +28,9 @@ const SecureKeyContainer = (props: Props): JSX.Element => {
   //// language
   const intl = useIntl();
   //// contexts
-  const {authState} = useContext(AuthContext);
-  const {userState} = useContext(UserContext);
-  const {settingsState} = useContext(SettingsContext);
+  const { authState } = useContext(AuthContext);
+  const { userState } = useContext(UserContext);
+  const { settingsState } = useContext(SettingsContext);
   //// states
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
@@ -70,10 +70,10 @@ const SecureKeyContainer = (props: Props): JSX.Element => {
 
   ////
   const _handlePressConfirm = async () => {
-    const {username} = authState.currentCredentials;
+    const { username } = authState.currentCredentials;
     setLoading(true);
     // check password
-    const {keyType} = await verifyPassoword(username, password);
+    const { keyType } = await verifyPassword(username, password);
     setLoading(false);
     // check key type
     if (keyType && keyType >= props.requiredKeyType) {
@@ -88,7 +88,7 @@ const SecureKeyContainer = (props: Props): JSX.Element => {
       props.handleResult(true, password);
     } else {
       // show message
-      setMessage(intl.formatMessage({id: 'Transaction.need_higher_password'}));
+      setMessage(intl.formatMessage({ id: 'Transaction.need_higher_password' }));
     }
   };
 
@@ -103,7 +103,7 @@ const SecureKeyContainer = (props: Props): JSX.Element => {
     }
     if (!result) {
       // show error
-      setMessage(intl.formatMessage({id: 'Transaction.need_higher_password'}));
+      setMessage(intl.formatMessage({ id: 'Transaction.need_higher_password' }));
     }
   };
 
@@ -141,4 +141,4 @@ const SecureKeyContainer = (props: Props): JSX.Element => {
   );
 };
 
-export {SecureKeyContainer};
+export { SecureKeyContainer };
