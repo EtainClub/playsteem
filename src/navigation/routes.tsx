@@ -78,31 +78,6 @@ const LandingStack = () => {
   );
 };
 
-const openConfig = {
-  animation: 'spring',
-  config: {
-    stiffness: 1000,
-    damping: 50,
-    mass: 3,
-    overshootClamping: false,
-    restDisplacementThreshold: 0.01,
-    restSpeedThreshold: 0.01,
-  },
-}
-
-const closeConfig = {
-  animation: 'timing',
-  config: {
-    duration: 500,
-    damping: 50,
-    mass: 3,
-    overshootClamping: false,
-    restDisplacementThreshold: 0.01,
-    restSpeedThreshold: 0.01,
-  },
-}
-
-
 // use the navigators
 const TabFeedStack = () => {
   return (
@@ -185,15 +160,15 @@ const TabNotificationStack = () => {
         }}
       />
 
-      {/* <Stack.Screen
-        name="PostDetailsNoti"
+      <Stack.Screen
+        name="PostDetails"
         component={PostDetails}
         options={{
           header: ({ navigation }) => {
             return <Header title="Post" navigation={navigation} back={true} />;
           },
         }}
-      /> */}
+      />
 
     </Stack.Navigator>
   );
@@ -290,6 +265,7 @@ const TabNavigator = (props) => {
     <Tab.Navigator
       initialRouteName="Feed"
       tabBarPosition="bottom"
+      swipeEnabled={false}
       tabBarOptions={{
         showIcon: true,
         showLabel: false,
@@ -486,7 +462,7 @@ const DrawerNavigator = (props) => {
       <Drawer.Screen name="Login" component={Login} />
       <Drawer.Screen name="SignUp" component={Signup} />
       <Drawer.Screen name="AuthorProfile" component={AuthorStack} />
-      <Drawer.Screen name="PostDetails" component={PostDetailsStack} />
+      {/* <Drawer.Screen name="PostDetails" component={PostDetailsStack} /> */}
       {!authState.loggedIn ? (
         <Drawer.Screen name="Logout" component={Login} />
       ) : (
