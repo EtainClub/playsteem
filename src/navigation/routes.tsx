@@ -36,11 +36,9 @@ const { width } = Dimensions.get('screen');
 
 // navigation
 import { createStackNavigator, TransitionSpecs, CardStyleInterpolators } from '@react-navigation/stack';
-//import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-
-const Tab = createMaterialTopTabNavigator<BottomTabParams>();
 
 // navigation params
 import { BottomTabParams, DrawerParams } from './types';
@@ -52,7 +50,9 @@ const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator<DrawerParams>();
 // the drawer includes Bottom Tab
 //const Tab = createBottomTabNavigator<BottomTabParams>();
-//const Tab = createMaterialBottomTabNavigator<BottomTabParams>();
+const Tab = createMaterialBottomTabNavigator<BottomTabParams>();
+// const Tab = createMaterialTopTabNavigator<BottomTabParams>();
+
 
 //// navigation props
 
@@ -114,6 +114,18 @@ const TabFeedStack = () => {
         }}
       />
 
+      <Stack.Screen
+        name="AuthorProfile"
+        component={AuthorProfile}
+        options={{
+          header: ({ navigation }) => {
+            return (
+              <Header title="Author" navigation={navigation} back={true} />
+            );
+          },
+        }}
+      />
+
 
       <Stack.Screen
         name="SearchFeed"
@@ -170,6 +182,18 @@ const TabNotificationStack = () => {
         }}
       />
 
+      <Stack.Screen
+        name="AuthorProfile"
+        component={AuthorProfile}
+        options={{
+          header: ({ navigation }) => {
+            return (
+              <Header title="Author" navigation={navigation} back={true} />
+            );
+          },
+        }}
+      />
+
     </Stack.Navigator>
   );
 };
@@ -200,15 +224,28 @@ const TabProfileStack = (props): JSX.Element => {
         }}
       />
 
-      {/* <Stack.Screen
-        name="PostDetailsProfile"
+      <Stack.Screen
+        name="PostDetails"
         component={PostDetails}
         options={{
           header: ({ navigation }) => {
             return <Header title="Post" navigation={navigation} back={true} />;
           },
         }}
-      /> */}
+      />
+
+
+      <Stack.Screen
+        name="AuthorProfile"
+        component={AuthorProfile}
+        options={{
+          header: ({ navigation }) => {
+            return (
+              <Header title="Author" navigation={navigation} back={true} />
+            );
+          },
+        }}
+      />
 
     </Stack.Navigator>
   );
@@ -264,22 +301,9 @@ const TabNavigator = (props) => {
   return (
     <Tab.Navigator
       initialRouteName="Feed"
-      tabBarPosition="bottom"
-      swipeEnabled={false}
-      tabBarOptions={{
-        showIcon: true,
-        showLabel: false,
-        activeTintColor: '#FFFFFF',
-        inactiveTintColor: '#F8F8F8',
-        style: {
-          backgroundColor: argonTheme.COLORS.STEEM,
-        },
-        indicatorStyle: {
-          height: 0,
-        },
-        // iconStyle: {
-        //   height: 30,
-        // }
+      labeled={true}
+      barStyle={{
+        backgroundColor: argonTheme.COLORS.STEEM,
       }}
     >
       <Tab.Screen
@@ -400,6 +424,29 @@ const AuthorStack = () => {
           },
         }}
       />
+
+      <Stack.Screen
+        name="PostDetails"
+        component={PostDetails}
+        options={{
+          header: ({ navigation }) => {
+            return <Header title="Post" navigation={navigation} back={true} />;
+          },
+        }}
+      />
+
+      <Stack.Screen
+        name="Profile"
+        component={Profile}
+        options={{
+          header: ({ navigation }) => {
+            return (
+              <Header title="Profile" navigation={navigation} back={false} />
+            );
+          },
+        }}
+      />
+
     </Stack.Navigator>
   );
 };
