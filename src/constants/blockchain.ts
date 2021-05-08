@@ -49,7 +49,7 @@ export const TOP_TAGS = [
   ['hive-120412', 'LifeStyle'],
 ];
 
-export const POSTING_POSTFIX = '<br /> > Posted using PLAYSTEEM ![](https://playsteem.app)';
+export const POSTING_POSTFIX = '<br /><br /><blockquote><p>Posted using PLAY STEEM <a href="https://playsteem.app">https://playsteem.app</a></p></blockquote>';
 // export const BLURT_CHAIN_ID =
 //   'cd8d90f29ae273abec3eaa7731e25934c63eb654d55080caff2ebb7f5df6381f';
 // export const BLURT_CHAIN_PREFIX = 'BLT';

@@ -3,11 +3,11 @@ import Config from 'react-native-config';
 //
 import axios from 'axios';
 //
-import {Client as NotiClient} from '@busyorg/busyjs';
+import { Client as NotiClient } from '@busyorg/busyjs';
 
 // crypto-js
 import CryptoJS from 'crypto-js';
-import {get, has, cloneDeep} from 'lodash';
+import { get, has, cloneDeep } from 'lodash';
 // dsteem api
 import {
   Client,
@@ -23,9 +23,9 @@ import {
   Signature,
 } from '@hiveio/dhive';
 
-import {PrivateKey as PrivateKey2} from '@esteemapp/dhive';
+import { PrivateKey as PrivateKey2 } from '@esteemapp/dhive';
 
-import {PostsActionTypes, ProfileData, KeyTypes} from '~/contexts/types';
+import { PostsActionTypes, ProfileData, KeyTypes } from '~/contexts/types';
 
 import {
   PostingContent,
@@ -47,7 +47,7 @@ import {
   NUM_FETCH_COMMENTS,
 } from '~/constants/blockchain';
 
-import {jsonStringify} from '~/utils/jsonUtils';
+import { jsonStringify } from '~/utils/jsonUtils';
 
 // get current server from storage
 // put the server first in the list
@@ -131,7 +131,7 @@ import {
   filterNSFWPosts,
   parseComment,
 } from '~/utils/postParser';
-import {estimateVoteAmount} from '~/utils/estimateVoteAmount';
+import { estimateVoteAmount } from '~/utils/estimateVoteAmount';
 import AsyncStorage from '@react-native-community/async-storage';
 
 global.Buffer = global.Buffer || require('buffer').Buffer;
@@ -247,61 +247,67 @@ export const verifyPassoword = async (username: string, password: string) => {
     console.log('failed to get account', error);
   }
   if (!account) {
-    return {account: null, keyType: null};
+    return { account: null, keyType: null };
   }
   console.log('account', account);
   // get public posting key
   const postingPublicKey = account.posting.key_auths[0][0];
 
-  //// handle master password
-  // TODO: the master password might not start with 'P', then how??
-  if (password[0] != '5') {
-    // if the password is the master key, then it can deduce the public posting key
-    // compute private posting key using username and password, and then get wif
-    const postingPrivateKey = PrivateKey.fromLogin(
-      username,
-      password,
-      'posting',
-    ).toString();
-    // check validity
-    const valid = wifIsValid(postingPrivateKey, postingPublicKey);
-    if (valid) {
-      console.log('master password is valid');
-      return {account, keyType: KeyTypes.MASTER};
+  try {
+    //// handle master password
+    // TODO: the master password might not start with 'P', then how??
+    if (password[0] != '5') {
+      // if the password is the master key, then it can deduce the public posting key
+      // compute private posting key using username and password, and then get wif
+      const postingPrivateKey = PrivateKey.fromLogin(
+        username,
+        password,
+        'posting',
+      ).toString();
+      // check validity
+      const valid = wifIsValid(postingPrivateKey, postingPublicKey);
+      if (valid) {
+        console.log('master password is valid');
+        return { account, keyType: KeyTypes.MASTER };
+      } else {
+        console.log('master password is not valid');
+        return { account: null, keyType: null };
+      }
     } else {
-      console.log('master password is not valid');
-      return {account: null, keyType: null};
+      ////// handle posting/active/owner private key
+      //// check posting key
+      // check validity if the input password is the private posting key
+      let valid = wifIsValid(password, postingPublicKey);
+      if (valid) {
+        console.log('input is the posting private key, which is valid');
+        return { account, keyType: KeyTypes.POSTING };
+      }
+      //// check active key
+      // get publich active key
+      const activePublicKey = account.active.key_auths[0][0];
+      // check validity if the input password is the private active key
+      valid = wifIsValid(password, activePublicKey);
+      if (valid) {
+        console.log('input is the active private key, which is valid');
+        return { account, keyType: KeyTypes.ACTIVE };
+      }
+      //// check owner key
+      // get public owner key
+      const ownerPublicKey = account.owner.key_auths[0][0];
+      // check validity
+      valid = wifIsValid(password, ownerPublicKey);
+      if (valid) {
+        console.log('input is the owner private key, which is valid');
+        return { account, keyType: KeyTypes.OWNER };
+      }
+      // input password is not valid
+      console.log('input password is not valid');
+      return { account: null, keyType: null };
     }
-  } else {
-    ////// handle posting/active/owner private key
-    //// check posting key
-    // check validity if the input password is the private posting key
-    let valid = wifIsValid(password, postingPublicKey);
-    if (valid) {
-      console.log('input is the posting private key, which is valid');
-      return {account, keyType: KeyTypes.POSTING};
-    }
-    //// check active key
-    // get publich active key
-    const activePublicKey = account.active.key_auths[0][0];
-    // check validity if the input password is the private active key
-    valid = wifIsValid(password, activePublicKey);
-    if (valid) {
-      console.log('input is the active private key, which is valid');
-      return {account, keyType: KeyTypes.ACTIVE};
-    }
-    //// check owner key
-    // get public owner key
-    const ownerPublicKey = account.owner.key_auths[0][0];
-    // check validity
-    valid = wifIsValid(password, ownerPublicKey);
-    if (valid) {
-      console.log('input is the owner private key, which is valid');
-      return {account, keyType: KeyTypes.OWNER};
-    }
+  } catch (error) {
     // input password is not valid
-    console.log('input password is not valid');
-    return {account: null, keyType: null};
+    console.log('[verifyPassword] something is wrong.', error);
+    return { account: null, keyType: null };
   }
 };
 
@@ -629,7 +635,7 @@ export const updateFollow = async (
   action: string,
 ) => {
   // verify the key
-  const {account} = await verifyPassoword(follower, password);
+  const { account } = await verifyPassoword(follower, password);
   if (!account) {
     return null;
   }
@@ -638,7 +644,7 @@ export const updateFollow = async (
 
   if (privateKey) {
     const what = action ? [action] : [];
-    const json = ['follow', {follower, following, what}];
+    const json = ['follow', { follower, following, what }];
     let operation = {
       required_auths: [],
       required_posting_auths: [follower],
@@ -731,7 +737,7 @@ export const isFollowing = async (username: string, author: string) => {
 //// steem price
 export const fetchPrice = async () => {
   try {
-    const {data} = await axios.get(PRICE_ENDPOINT, {
+    const { data } = await axios.get(PRICE_ENDPOINT, {
       timeout: 5000,
     });
     if (data) return data;
@@ -905,12 +911,12 @@ export const fetchPost = async (
 
     return post
       ? await parsePost(
-          post,
-          currentUserName,
-          IMAGE_SERVERS[0],
-          //          blockchainSettings.image,
-          isPromoted,
-        )
+        post,
+        currentUserName,
+        IMAGE_SERVERS[0],
+        //          blockchainSettings.image,
+        isPromoted,
+      )
       : null;
   } catch (error) {
     return error;
@@ -1035,7 +1041,7 @@ export const fetchRecursiveComments = async (
         results[i].author,
         results[i].permlink,
       );
-      comments[i] = {...comments[i], comments: children};
+      comments[i] = { ...comments[i], comments: children };
     }
   }
   return comments;
@@ -1050,7 +1056,7 @@ export const broadcastPost = async (
   options?: any[],
 ) => {
   // verify the key
-  const {account} = await verifyPassoword(postingData.author, password);
+  const { account } = await verifyPassoword(postingData.author, password);
   if (!account) {
     return null;
   }
@@ -1095,16 +1101,16 @@ export const broadcastPostUpdate = async (
   // check validity of the password
   // verify the key
   // @todo check sanity of argument: exits? (it happend the empty post)
-  const {account} = await verifyPassoword(postingContent.author, password);
+  const { account } = await verifyPassoword(postingContent.author, password);
   if (!account) {
-    return {success: false, message: 'the password is invalid'};
+    return { success: false, message: 'the password is invalid' };
   }
 
   //// create a patch
   const text = originalBody;
   // handle no text or null
   if (!text && text === '') {
-    return {success: false, message: 'Nothing in the body'};
+    return { success: false, message: 'Nothing in the body' };
   }
   // get list of patches to turn text to newPost
   const patch_make = dmp.patch_make(text, postingContent.body);
@@ -1160,7 +1166,7 @@ export const signImage = async (photo, username, password) => {
   // verify the user and password
   // @test
   //  password = Config.ETAINCLUB_POSTING_WIF;
-  const {account} = await verifyPassoword(username, password);
+  const { account } = await verifyPassoword(username, password);
   if (!account) {
     console.log('[signImage] failed to verify password');
     return null;
@@ -1218,15 +1224,15 @@ export const reblog = async (
   permlink: string,
 ) => {
   // verify the key
-  const {account} = await verifyPassoword(username, password);
+  const { account } = await verifyPassoword(username, password);
   if (!account) {
-    return {success: false, message: 'the password is invalid'};
+    return { success: false, message: 'the password is invalid' };
   }
   // get privake key from password
   const privateKey = PrivateKey.from(password);
 
   if (privateKey) {
-    const json = ['reblog', {account: username, author, permlink}];
+    const json = ['reblog', { account: username, author, permlink }];
     let operation = {
       required_auths: [],
       required_posting_auths: [username],
@@ -1258,7 +1264,7 @@ export const submitVote = async (
     weight: votingWeight * 100,
   };
   // verify the key
-  const {account} = await verifyPassoword(voter, password);
+  const { account } = await verifyPassoword(voter, password);
   if (!account) {
     return null;
   }
@@ -1291,9 +1297,9 @@ export const broadcastProfileUpdate = async (
   params: {},
 ) => {
   // verify the key, require active or above
-  const {account} = await verifyPassoword(username, password);
+  const { account } = await verifyPassoword(username, password);
   if (!account) {
-    return {success: false, message: 'the password is invalid'};
+    return { success: false, message: 'the password is invalid' };
   }
 
   // get privake key from password wif
@@ -1306,8 +1312,8 @@ export const broadcastProfileUpdate = async (
         'account_update2',
         {
           account: username,
-          json_metadata: jsonStringify({profile: params}),
-          posting_json_metadata: jsonStringify({profile: params}),
+          json_metadata: jsonStringify({ profile: params }),
+          posting_json_metadata: jsonStringify({ profile: params }),
           extensions: [],
         },
       ],
@@ -1436,9 +1442,9 @@ export const claimRewardBalance = async (
   username: string,
   password: string,
 ) => {
-  const {account} = await verifyPassoword(username, password);
+  const { account } = await verifyPassoword(username, password);
   if (!account) {
-    return {success: false, message: 'the password is invalid'};
+    return { success: false, message: 'the password is invalid' };
   }
   // get privake key from password wif
   const privateKey = PrivateKey.from(password);
@@ -1493,7 +1499,7 @@ export const transferToken = async (
   },
 ): Promise<TransactionReturnCodes> => {
   // get key type
-  const {account, keyType} = await verifyPassoword(username, password);
+  const { account, keyType } = await verifyPassoword(username, password);
   // check sanity
   if (!account) {
     return TransactionReturnCodes.NO_ACCOUNT;
@@ -1535,7 +1541,7 @@ export const transferToVesting = async (
   },
 ): Promise<TransactionReturnCodes> => {
   // get key type
-  const {account, keyType} = await verifyPassoword(username, password);
+  const { account, keyType } = await verifyPassoword(username, password);
   // check sanity
   if (!account) {
     return TransactionReturnCodes.NO_ACCOUNT;
@@ -1623,7 +1629,7 @@ export const fetchProfile = async (author: string) =>
     }
   });
 
-  
+
 export const getAccount0 = async (username: string) => {
   try {
     const data = {
@@ -1705,7 +1711,7 @@ export const fetchComments = async (author: string, permlink: string) => {
             while(!found) {
         //   pop a comment
         const comment = q.shift();
-        //   try matching, 
+        //   try matching,
         if (comment.author === postRef.author && comment.permlink === postRef.permlink) {
           // if success, update the payout, active_votes, votes_count
           payout = parseFloat(state[postIndex].postUserState.payout);
@@ -1719,7 +1725,7 @@ export const fetchComments = async (author: string, permlink: string) => {
           newPosts[postIndex].postUserState.payout = newPayout.toFixed(2);
           newPosts[postIndex].postUserState.votes_count = newVotesCount;
           newPosts[postIndex].postUserState.active_votes = newVoters;
-          return newPosts;    
+          return newPosts;
         } else {
           // if failed, push the child of the comment to the queue
         }

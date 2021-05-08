@@ -213,8 +213,10 @@ const Posting = (props: Props): JSX.Element => {
     let _tagString = tags;
     // get community tag. check if it is a blog
     if (communityIndex !== 0) {
-      // put the community tag at first
-      _tagString = `${postsState.communityList[communityIndex][0]} ${tags}`;
+      // put the community tag at first for the new post
+      if (!originalPost) {
+        _tagString = `${postsState.communityList[communityIndex][0]} ${tags}`;
+      }
     } else {
       // check sanity: tags
       if (!_tagString) {
@@ -262,7 +264,7 @@ const Posting = (props: Props): JSX.Element => {
     const postingContent: PostingContent = {
       author: username,
       title: title,
-      body: body + POSTING_POSTFIX,
+      body: body,
       parent_author: '',
       parent_permlink: _tags[0],
       json_metadata: JSON.stringify(jsonMeta) || '',
@@ -294,14 +296,17 @@ const Posting = (props: Props): JSX.Element => {
           },
           {
             text: intl.formatMessage({ id: 'yes' }),
-            onPress: () =>
+            onPress: () => {
+              // add postfix
+              postingContent.body += POSTING_POSTFIX;
               _submitPost(
                 postingContent,
                 communityIndex,
                 options,
                 username,
                 password,
-              ),
+              );
+            }
           },
         ],
         { cancelable: true },
