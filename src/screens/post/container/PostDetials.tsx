@@ -73,7 +73,6 @@ const PostDetails = (props: Props): JSX.Element => {
   const [parentPost, setParentPost] = useState<PostData>(null);
   const [needFetching, setNeedFetching] = useState(false);
   const [commentY, setCommentY] = useState(0);
-  const [hideHeader, setHideHeader] = useState(false);
   //////// events
   // event: account change
   useEffect(() => {
@@ -133,8 +132,6 @@ const PostDetails = (props: Props): JSX.Element => {
       speakBody('', true);
       // reset comment height
       setCommentY(0);
-      // reset hide header
-      setHideHeader(false);
     });
     return unsubscribe;
   }, [navigation]);
@@ -368,8 +365,6 @@ const PostDetails = (props: Props): JSX.Element => {
       index={postIndex}
       comments={comments}
       commentY={commentY}
-      hideHeader={hideHeader}
-      toggleHideHeader={(value) => setHideHeader(value)}
       updateCommentY={(height) => setCommentY(height)}
       handleRefresh={_onRefresh}
       handleSubmitComment={_onSubmitComment}
