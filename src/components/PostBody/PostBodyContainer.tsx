@@ -40,9 +40,6 @@ const PostBodyContainer = (props: Props): JSX.Element => {
   const linkActionRef = useRef(null);
   const imageActionRef = useRef(null);
 
-  // @test
-  console.log('settingsState.ui.fontIndex', settingsState.ui.fontIndex);
-
   //// handle post press
   const _handlePostPress = (author: string, permlink: string) => {
     if (permlink) {
@@ -249,7 +246,7 @@ const PostBodyContainer = (props: Props): JSX.Element => {
       addAndroidDownloads: {
         useDownloadManager: true,
         notification: true,
-        title: 'Play Steem',
+        title: 'PLAY STEEM',
         description: 'image downloaded',
         mime: 'image/png',
       },

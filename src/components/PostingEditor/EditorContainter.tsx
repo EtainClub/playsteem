@@ -1,16 +1,16 @@
-import React, {useState, useContext, useEffect} from 'react';
-import {AuthContext, PostsContext, UIContext, UserContext} from '~/contexts';
+import React, { useState, useContext, useEffect } from 'react';
+import { AuthContext, PostsContext, UIContext, UserContext } from '~/contexts';
 //// navigation
 //// UIs
-import {Block, Icon, Button, Input, Text, theme} from 'galio-framework';
+import { Block, Icon, Button, Input, Text, theme } from 'galio-framework';
 //// components
-import {AuthorList} from '~/components';
+import { AuthorList } from '~/components';
 //// screens, views
-import {EditorView} from './EditorView';
-import {Platform} from 'react-native';
+import { EditorView } from './EditorView';
+import { Platform } from 'react-native';
 //// utils
 //// constants
-import {MIN_EDITOR_HEIGHT} from '~/constants/utils';
+import { MIN_EDITOR_HEIGHT } from '~/constants/utils';
 
 //// types
 type Position = {
@@ -30,10 +30,10 @@ interface Props {
 }
 const EditorContainer = (props: Props): JSX.Element => {
   //// props
-  const {clearBody, originalBody} = props;
+  const { clearBody, originalBody } = props;
   //// language
   //// contexts
-  const {userState} = useContext(UserContext);
+  const { userState } = useContext(UserContext);
   //// states
   const [body, setBody] = useState(originalBody);
   const [editable, setEditable] = useState(false);
@@ -82,7 +82,7 @@ const EditorContainer = (props: Props): JSX.Element => {
       if (body) {
         const _body =
           body.substring(0, bodySelection.start) +
-          uploadedImageUrl +
+          uploadedImageUrl + ' <br /> ' +
           body.substring(bodySelection.end);
         _handleBodyChange(_body);
       } else {
@@ -92,8 +92,8 @@ const EditorContainer = (props: Props): JSX.Element => {
   }, [uploadedImageUrl]);
 
   //// handle press key event and catch '@' key
-  const _handlePressKey = ({nativeEvent}) => {
-    const {key} = nativeEvent;
+  const _handlePressKey = ({ nativeEvent }) => {
+    const { key } = nativeEvent;
     if (key === '@') {
       setShowAuthorsModal(true);
     } else {
@@ -220,4 +220,4 @@ const EditorContainer = (props: Props): JSX.Element => {
   );
 };
 
-export {EditorContainer};
+export { EditorContainer };
