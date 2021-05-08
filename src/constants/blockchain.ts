@@ -10,7 +10,7 @@ export const TRUNCATE_BODY_LENGTH = 1000;
 export const POST_CATEGORY = ['trending', 'created', 'feed', 'blog'];
 
 export const TARGET_BLOCKCHAIN = 'steem';
-export const TARGET_APP = 'steem';
+export const TARGET_APP = 'PLAYSTEEM';
 
 export const CHAIN_ID =
   '0000000000000000000000000000000000000000000000000000000000000000';
@@ -49,6 +49,7 @@ export const TOP_TAGS = [
   ['hive-120412', 'LifeStyle'],
 ];
 
+export const POSTING_POSTFIX = '<br /> > Posted using PLAYSTEEM ![](https://playsteem.app)';
 // export const BLURT_CHAIN_ID =
 //   'cd8d90f29ae273abec3eaa7731e25934c63eb654d55080caff2ebb7f5df6381f';
 // export const BLURT_CHAIN_PREFIX = 'BLT';

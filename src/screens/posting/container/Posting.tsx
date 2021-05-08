@@ -1,10 +1,10 @@
-import React, {useState, useContext, useEffect, useCallback} from 'react';
-import {Alert} from 'react-native';
+import React, { useState, useContext, useEffect, useCallback } from 'react';
+import { Alert } from 'react-native';
 //// react navigation
-import {useFocusEffect} from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 //// storage
 import AsyncStorage from '@react-native-community/async-storage';
-import {useIntl} from 'react-intl';
+import { useIntl } from 'react-intl';
 import {
   AuthContext,
   PostsContext,
@@ -12,21 +12,21 @@ import {
   UIContext,
   UserContext,
 } from '~/contexts';
-import {PostingScreen} from '../screen/Posting';
-import {fetchRawPost} from '~/providers/steem/dsteemApi';
-import {Discussion} from '@hiveio/dhive';
-import {PostingContent, StorageSchema} from '~/contexts/types';
+import { PostingScreen } from '../screen/Posting';
+import { fetchRawPost } from '~/providers/steem/dsteemApi';
+import { Discussion } from '@hiveio/dhive';
+import { PostingContent, StorageSchema } from '~/contexts/types';
 //// navigation
-import {navigate} from '~/navigation/service';
+import { navigate } from '~/navigation/service';
 //// UIs
-import {Block} from 'galio-framework';
+import { Block } from 'galio-framework';
 //// components
-import {Beneficiary} from '~/components';
-import {BeneficiaryItem} from '~/components/Beneficiary/BeneficiaryContainer';
+import { Beneficiary } from '~/components';
+import { BeneficiaryItem } from '~/components/Beneficiary/BeneficiaryContainer';
 //// constants
-import {BENEFICIARY_WEIGHT, MAX_NUM_TAGS, MAX_TAGS_HISTORY} from '~/constants';
+import { BENEFICIARY_WEIGHT, MAX_NUM_TAGS, MAX_TAGS_HISTORY, POSTING_POSTFIX } from '~/constants';
 // types
-import {PostRef, PostsState, PostsTypes} from '~/contexts/types';
+import { PostRef, PostsState, PostsTypes } from '~/contexts/types';
 //// utils
 import renderPostBody from '~/utils/render-helpers/markdown-2-html';
 import {
@@ -50,20 +50,20 @@ interface Props {
 }
 const Posting = (props: Props): JSX.Element => {
   //// props
-  const {navigation} = props;
+  const { navigation } = props;
   //// language
   const intl = useIntl();
   //// contexts
-  const {authState} = useContext(AuthContext);
-  const {uiState, setToastMessage, setEditMode} = useContext(UIContext);
+  const { authState } = useContext(AuthContext);
+  const { uiState, setToastMessage, setEditMode } = useContext(UIContext);
   const {
     postsState,
     submitPost,
     setTagAndFilter,
     setCommunityIndex,
   } = useContext(PostsContext);
-  const {userState, getFollowings} = useContext(UserContext);
-  const {settingsState, updateSettingSchema} = useContext(SettingsContext);
+  const { userState, getFollowings } = useContext(UserContext);
+  const { settingsState, updateSettingSchema } = useContext(SettingsContext);
   // states
   //  const [editMode, setEditMode] = useState(route.params?.editMode);
   const [title, setTitle] = useState('');
@@ -90,7 +90,7 @@ const Posting = (props: Props): JSX.Element => {
   useEffect(() => {
     // get following
     if (authState.loggedIn) {
-      const {username} = authState.currentCredentials;
+      const { username } = authState.currentCredentials;
       // get draft only if not edit mode
       if (!uiState.editMode) _getDraftFromStorage();
       // get following list
@@ -118,9 +118,9 @@ const Posting = (props: Props): JSX.Element => {
   //// event: edit mode
   useEffect(() => {
     console.log('[Posting] edit event. uiState', uiState);
-    const {username} = authState.currentCredentials;
+    const { username } = authState.currentCredentials;
     if (uiState.editMode) {
-      const {postDetails} = postsState;
+      const { postDetails } = postsState;
       // check if original post exists
       // get the post details
       setOriginalPost(postDetails);
@@ -165,19 +165,19 @@ const Posting = (props: Props): JSX.Element => {
 
   //// initialize beneficiary
   const _initBeneficiaries = () => {
-    const {username} = authState.currentCredentials;
+    const { username } = authState.currentCredentials;
 
     // add default beneficairy
     if (username === 'playsteemit') {
       setBeneficiaries([
-        {account: username, weight: 5000},
-        {account: 'etainclub', weight: 5000},
+        { account: username, weight: 5000 },
+        { account: 'etainclub', weight: 5000 },
       ]);
     } else {
       const userWeight = 10000 - DEFAULT_BENEFICIARY.weight;
       setBeneficiaries([
         DEFAULT_BENEFICIARY,
-        {account: username, weight: userWeight},
+        { account: username, weight: userWeight },
       ]);
     }
   };
@@ -192,7 +192,7 @@ const Posting = (props: Props): JSX.Element => {
   //// set community index to posts state
   const _setCommunityIndex = () => {
     // get community index from settings
-    const {communityIndex} = settingsState.ui;
+    const { communityIndex } = settingsState.ui;
     // set it to the posts state community
     setCommunityIndex(communityIndex);
   };
@@ -203,11 +203,11 @@ const Posting = (props: Props): JSX.Element => {
     if (!authState.loggedIn) return;
 
     // get community index from postsState
-    const {communityIndex} = postsState;
+    const { communityIndex } = postsState;
 
     // check sanity: title, body
     if (!body || !title) {
-      setToastMessage(intl.formatMessage({id: 'Posting.missing'}));
+      setToastMessage(intl.formatMessage({ id: 'Posting.missing' }));
       return;
     }
     let _tagString = tags;
@@ -218,20 +218,20 @@ const Posting = (props: Props): JSX.Element => {
     } else {
       // check sanity: tags
       if (!_tagString) {
-        setToastMessage(intl.formatMessage({id: 'Posting.missing'}));
+        setToastMessage(intl.formatMessage({ id: 'Posting.missing' }));
         return;
       }
     }
 
     // check validity of tags
     if (tagMessage !== '') {
-      setToastMessage(intl.formatMessage({id: 'Posting.tag_error'}));
+      setToastMessage(intl.formatMessage({ id: 'Posting.tag_error' }));
       return;
     }
 
     ////// build a post
     // author is the user
-    const {username, password} = authState.currentCredentials;
+    const { username, password } = authState.currentCredentials;
     // extract meta
     const _meta = extractMetadata(body);
     // split tags by space
@@ -262,7 +262,7 @@ const Posting = (props: Props): JSX.Element => {
     const postingContent: PostingContent = {
       author: username,
       title: title,
-      body: body,
+      body: body + POSTING_POSTFIX,
       parent_author: '',
       parent_permlink: _tags[0],
       json_metadata: JSON.stringify(jsonMeta) || '',
@@ -281,19 +281,19 @@ const Posting = (props: Props): JSX.Element => {
     } else {
       //// show confirm modal
       Alert.alert(
-        intl.formatMessage({id: 'Posting.confirm_title'}),
+        intl.formatMessage({ id: 'Posting.confirm_title' }),
         intl.formatMessage(
-          {id: 'Posting.community'},
-          {what: postsState.communityList[communityIndex][1]},
+          { id: 'Posting.community' },
+          { what: postsState.communityList[communityIndex][1] },
         ),
         [
           {
-            text: intl.formatMessage({id: 'no'}),
-            onPress: () => {},
+            text: intl.formatMessage({ id: 'no' }),
+            onPress: () => { },
             style: 'cancel',
           },
           {
-            text: intl.formatMessage({id: 'yes'}),
+            text: intl.formatMessage({ id: 'yes' }),
             onPress: () =>
               _submitPost(
                 postingContent,
@@ -304,7 +304,7 @@ const Posting = (props: Props): JSX.Element => {
               ),
           },
         ],
-        {cancelable: true},
+        { cancelable: true },
       );
     }
   };
@@ -329,8 +329,8 @@ const Posting = (props: Props): JSX.Element => {
       // initialie beneficiaries
       if (username === 'playsteemit') {
         setBeneficiaries([
-          {account: username, weight: 5000},
-          {account: 'etainclub', weight: 5000},
+          { account: username, weight: 5000 },
+          { account: 'etainclub', weight: 5000 },
         ]);
       } else {
         setBeneficiaries([
@@ -364,13 +364,13 @@ const Posting = (props: Props): JSX.Element => {
       // clear all
       _clearAll();
       // navigate feed
-      navigate({name: 'Feed'});
+      navigate({ name: 'Feed' });
       return;
     }
     // clear posting flag
     setPosting(false);
     // toast message: failed
-    setToastMessage(intl.formatMessage({id: 'failed'}));
+    setToastMessage(intl.formatMessage({ id: 'failed' }));
   };
 
   const _handlePressBeneficiary = () => {
@@ -426,29 +426,29 @@ const Posting = (props: Props): JSX.Element => {
   const _validateTags = (tags: string[]) => {
     if (tags.length > 0) {
       tags.length > MAX_NUM_TAGS
-        ? setTagMessage(intl.formatMessage({id: 'Posting.limited_tags'}))
+        ? setTagMessage(intl.formatMessage({ id: 'Posting.limited_tags' }))
         : tags.find((c) => c.length > 24)
-        ? setTagMessage(intl.formatMessage({id: 'Posting.limited_length'}))
-        : tags.find((c) => c.split('-').length > 2)
-        ? setTagMessage(intl.formatMessage({id: 'Posting.limited_dash'}))
-        : tags.find((c) => c.indexOf(',') >= 0)
-        ? setTagMessage(intl.formatMessage({id: 'Posting.limited_space'}))
-        : tags.find((c) => /[A-Z]/.test(c))
-        ? setTagMessage(intl.formatMessage({id: 'Posting.limited_lowercase'}))
-        : tags.find((c) => !/^[a-z0-9-#]+$/.test(c))
-        ? setTagMessage(intl.formatMessage({id: 'Posting.limited_characters'}))
-        : tags.find((c) => !/^[a-z-#]/.test(c))
-        ? setTagMessage(intl.formatMessage({id: 'Posting.limited_firstchar'}))
-        : tags.find((c) => !/[a-z0-9]$/.test(c))
-        ? setTagMessage(intl.formatMessage({id: 'Posting.limited_lastchar'}))
-        : setTagMessage('');
+          ? setTagMessage(intl.formatMessage({ id: 'Posting.limited_length' }))
+          : tags.find((c) => c.split('-').length > 2)
+            ? setTagMessage(intl.formatMessage({ id: 'Posting.limited_dash' }))
+            : tags.find((c) => c.indexOf(',') >= 0)
+              ? setTagMessage(intl.formatMessage({ id: 'Posting.limited_space' }))
+              : tags.find((c) => /[A-Z]/.test(c))
+                ? setTagMessage(intl.formatMessage({ id: 'Posting.limited_lowercase' }))
+                : tags.find((c) => !/^[a-z0-9-#]+$/.test(c))
+                  ? setTagMessage(intl.formatMessage({ id: 'Posting.limited_characters' }))
+                  : tags.find((c) => !/^[a-z-#]/.test(c))
+                    ? setTagMessage(intl.formatMessage({ id: 'Posting.limited_firstchar' }))
+                    : tags.find((c) => !/[a-z0-9]$/.test(c))
+                      ? setTagMessage(intl.formatMessage({ id: 'Posting.limited_lastchar' }))
+                      : setTagMessage('');
     }
   };
 
   //// save draft
   const _saveDraft = (_title: string, _body: string, _tags: string) => {
     console.log('_saveDraft');
-    const {username} = authState.currentCredentials;
+    const { username } = authState.currentCredentials;
     const data = {
       title: _title,
       body: _body,
@@ -461,7 +461,7 @@ const Posting = (props: Props): JSX.Element => {
   const _savePostingTags = async (newTags: string) => {
     console.log('_savePostingTags. newTags', newTags);
 
-    const {username} = authState.currentCredentials;
+    const { username } = authState.currentCredentials;
     // get the current history
     const key = `${username}_${StorageSchema.POSTING_TAGS}`;
 
@@ -508,7 +508,7 @@ const Posting = (props: Props): JSX.Element => {
 
   //// get posting tags history from storage
   const _getPostingTagsHistory = async () => {
-    const {username} = authState.currentCredentials;
+    const { username } = authState.currentCredentials;
     // get the current history
     const key = `${username}_${StorageSchema.POSTING_TAGS}`;
 
@@ -523,7 +523,7 @@ const Posting = (props: Props): JSX.Element => {
 
   //// get a single item from storage
   const _getDraftFromStorage = async () => {
-    const {username} = authState.currentCredentials;
+    const { username } = authState.currentCredentials;
     const key = `${username}_${StorageSchema.DRAFT}`;
     const data = await _getItemFromStorage(key);
     console.log('_getDraftFromStorage. data', data);
@@ -608,4 +608,4 @@ const Posting = (props: Props): JSX.Element => {
   );
 };
 
-export {Posting};
+export { Posting };

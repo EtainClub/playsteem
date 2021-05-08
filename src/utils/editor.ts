@@ -1,7 +1,7 @@
 import getSlug from 'speakingurl';
-import {diff_match_patch as diffMatchPatch} from 'diff-match-patch';
+import { diff_match_patch as diffMatchPatch } from 'diff-match-patch';
 import VersionNumber from 'react-native-version-number';
-import {TARGET_APP} from '~/constants/blockchain';
+import { TARGET_APP } from '~/constants/blockchain';
 
 export const getWordsCount = (text) =>
   text && typeof text === 'string'
@@ -52,10 +52,10 @@ export const generateCommentPermlink = (toAuthor) => {
   ).toString()}${t
     .getDate()
     .toString()}t${t
-    .getHours()
-    .toString()}${t
-    .getMinutes()
-    .toString()}${t.getSeconds().toString()}${t.getMilliseconds().toString()}z`;
+      .getHours()
+      .toString()}${t
+        .getMinutes()
+        .toString()}${t.getSeconds().toString()}${t.getMilliseconds().toString()}z`;
 
   return `re-${toAuthor.replace(/\./g, '')}-${timeFormat}`;
 };
@@ -100,7 +100,7 @@ export const addPostingOptions = (
     percent_steem_dollars: 10000,
     allow_votes: true,
     allow_curation_rewards: true,
-    extensions: [[0, {beneficiaries: sortedBeneficiaries}]], // 5%
+    extensions: [[0, { beneficiaries: sortedBeneficiaries }]], // 5%
   };
 
   switch (operationType) {
@@ -130,22 +130,22 @@ export const addPostingOptions = (
 
 export const makeJsonMetadataComment = (tags) => ({
   tags,
-  app: `${TARGET_APP}/${VersionNumber.appVersion}-mobile`,
+  app: `${TARGET_APP}/${VersionNumber.appVersion}`,
   format: 'markdown+html',
 });
 
 export const makeJsonMetadata = (meta, tags) =>
   Object.assign({}, meta, {
     tags,
-    app: `${TARGET_APP}/${VersionNumber.appVersion}-mobile`,
+    app: `${TARGET_APP}/${VersionNumber.appVersion}`,
     format: 'markdown+html',
   });
 
 export const makeJsonMetadataForUpdate = (oldJson, meta, tags) => {
-  const {meta: oldMeta} = oldJson;
+  const { meta: oldMeta } = oldJson;
   const mergedMeta = Object.assign({}, oldMeta, meta);
 
-  return Object.assign({}, oldJson, mergedMeta, {tags});
+  return Object.assign({}, oldJson, mergedMeta, { tags });
 };
 
 export const extractMetadata = (body: string) => {
