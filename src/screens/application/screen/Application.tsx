@@ -1,19 +1,19 @@
 // set top level navigation
 // show notification
 
-import React, {useState, useEffect, useRef, useContext} from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import {
   NavigationContainer,
   NavigationContainerRef,
 } from '@react-navigation/native';
 // SafeAreaView provider
-import {SafeAreaProvider} from 'react-native-safe-area-context';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 // routes
 import Screens from '~/navigation/routes';
 // navigation helper
-import {setTopLevelNavigator} from '~/navigation/service';
+import { setTopLevelNavigator } from '~/navigation/service';
 //
-import {Toast} from '~/components/Toast';
+import { Toast } from '~/components/Toast';
 
 interface Props {
   toastMessage: string;
@@ -41,12 +41,13 @@ const ApplicationScreen = ({
   };
 
   return (
-    <SafeAreaProvider style={{flex: 1}}>
+    <SafeAreaProvider style={{ flex: 1 }}>
       <NavigationContainer
         ref={(navigationRef: NavigationContainerRef) => {
           setTopLevelNavigator(navigationRef);
         }}
-        onReady={handleBgPushMessage}>
+      // onReady={handleBgPushMessage}
+      >
         <Screens />
       </NavigationContainer>
       {showToastMessage && (
@@ -60,4 +61,4 @@ const ApplicationScreen = ({
   );
 };
 
-export {ApplicationScreen};
+export { ApplicationScreen };

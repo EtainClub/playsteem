@@ -27,13 +27,13 @@ import { StorageSchema } from '~/contexts/types';
 // set background notification listener
 messaging().setBackgroundMessageHandler(async (message: RemoteMessage) => {
   console.log('[PlaySteem] bgMsgListener, message', message);
-  // save the message in storage
-  const bgPushMessage = JSON.stringify(message);
-  if (bgPushMessage)
-    await AsyncStorage.setItem(
-      StorageSchema.BG_PUSH_MESSAGE || 'bgPushMessage',
-      bgPushMessage,
-    );
+  // // save the message in storage
+  // const bgPushMessage = JSON.stringify(message);
+  // if (bgPushMessage)
+  //   await AsyncStorage.setItem(
+  //     StorageSchema.BG_PUSH_MESSAGE || 'bgPushMessage',
+  //     bgPushMessage,
+  //   );
 });
 
 let firebaseOnNotificationOpenedAppListener = null;
@@ -59,26 +59,25 @@ export const AppContainer = (props: Props): JSX.Element => {
     // set foreground notification listener
     const fgMsgListener = messaging().onMessage((message: RemoteMessage) => {
       console.log('[Foreground] Notification Listener', message);
-      console.log('[App Closed] Notification Listener');
       handleRemoteMessages(message, false);
     });
 
     // background notifications open handler
     firebaseOnNotificationOpenedAppListener = messaging().onNotificationOpenedApp(
       (message) => {
-        console.log('[Background] Notification Listener', message);
+        console.log('[Background] Notification Open Listener', message);
         if (message) handleRemoteMessages(message, true);
       },
     );
 
-    // app closed notification listener
-    // (async () =>
-    //   await messaging()
-    //     .getInitialNotification()
-    //     .then((message) => {
-    //       console.log('[App Closed] Notification Listener', message);
-    //       if (message) _handleRemoteMessages(message, true);
-    //     }))();
+    // app closed notification open listener
+    (async () =>
+      await messaging()
+        .getInitialNotification()
+        .then((message) => {
+          console.log('[App Closed] Notification Open Listener', message);
+          if (message) handleRemoteMessages(message, false);
+        }))();
 
     return () => {
       if (__DEV__) console.log('unsubscribe notification listener');
@@ -98,7 +97,7 @@ export const AppContainer = (props: Props): JSX.Element => {
     }
   }, [navigate]);
 
-  ////
+  //// not used
   const _handleBgPushMessage = async () => {
     // // check if background push message exists
     const _message = await AsyncStorage.getItem(
@@ -116,7 +115,8 @@ export const AppContainer = (props: Props): JSX.Element => {
       // TODO: how much time is required??? move this to the resolve auth?
       setTimeout(() => {
         console.log('timeout. now navigate');
-        handleRemoteMessages(bgPushMessage, true);
+        // show alert dialog
+        handleRemoteMessages(bgPushMessage, false);
       }, 3000);
     }
   };

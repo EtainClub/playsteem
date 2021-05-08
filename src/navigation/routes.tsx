@@ -316,6 +316,7 @@ const TabNavigator = (props) => {
         component={TabFeedStack}
         listeners={({ navigation, route }) => ({
           tabPress: (e) => {
+            //            e.preventDefault();
             navigation.navigate('Feed');
           },
         })}
