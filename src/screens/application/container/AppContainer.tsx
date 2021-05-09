@@ -76,7 +76,7 @@ export const AppContainer = (props: Props): JSX.Element => {
         .getInitialNotification()
         .then((message) => {
           console.log('[App Closed] Notification Open Listener', message);
-          if (message) handleRemoteMessages(message, false);
+          if (message) handleRemoteMessages(message, true);
         }))();
 
     return () => {
