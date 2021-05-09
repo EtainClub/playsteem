@@ -76,7 +76,7 @@ export const AppContainer = (props: Props): JSX.Element => {
         .getInitialNotification()
         .then((message) => {
           console.log('[App Closed] Notification Open Listener', message);
-          if (message) handleRemoteMessages(message, true);
+          if (message) handleRemoteMessages(message, false);
         }))();
 
     return () => {
@@ -129,7 +129,7 @@ export const AppContainer = (props: Props): JSX.Element => {
     console.log('handleRemoteMessages. message', message);
 
     // remove app-closed message in storage
-    AsyncStorage.removeItem(StorageSchema.BG_PUSH_MESSAGE || 'bgPushMessage');
+    //    AsyncStorage.removeItem(StorageSchema.BG_PUSH_MESSAGE || 'bgPushMessage');
 
     // get notification data
     const msgData = message.data;
