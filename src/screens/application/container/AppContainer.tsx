@@ -155,8 +155,10 @@ export const AppContainer = (props: Props): JSX.Element => {
         //// navigate
         // set route name
         route = 'PostDetails';
-        // set post ref to the context
-        setPostRef({ author, permlink });
+        // set post ref to the context only for background message
+        // when the app is in post details, this caused fetching post in postDetails
+        if (background)
+          setPostRef({ author, permlink });
         break;
       case SettingUITypes.FOLLOW:
         //// navigate to the author profile
@@ -183,27 +185,6 @@ export const AppContainer = (props: Props): JSX.Element => {
     } else {
       console.log('fg push');
       // handle foreground message
-      await AsyncAlert(route, body);
-      // Alert.alert(
-      //   intl.formatMessage({id: 'App.push_title'}),
-      //   intl.formatMessage({id: 'App.push_body'}, {what: body}),
-      //   [
-      //     {text: intl.formatMessage({id: 'no'}), style: 'cancel'},
-      //     {
-      //       text: intl.formatMessage({id: 'yes'}),
-      //       onPress: () => {
-      //         console.log('yes. pressed');
-      //         navigate({name: route});
-      //       },
-      //     },
-      //   ],
-      //   {cancelable: true},
-      // );
-    }
-  };
-
-  const AsyncAlert = async (route: string, body: string) =>
-    new Promise(() => {
       Alert.alert(
         intl.formatMessage({ id: 'App.push_title' }),
         intl.formatMessage({ id: 'App.push_body' }, { what: body }),
@@ -212,6 +193,7 @@ export const AppContainer = (props: Props): JSX.Element => {
           {
             text: intl.formatMessage({ id: 'yes' }),
             onPress: () => {
+              setPostRef({ author, permlink });
               console.log('yes. pressed');
               navigate({ name: route });
             },
@@ -219,7 +201,8 @@ export const AppContainer = (props: Props): JSX.Element => {
         ],
         { cancelable: true },
       );
-    });
+    }
+  };
 
   // clear toast message
   const _clearMessage = () => {

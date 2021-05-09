@@ -283,7 +283,7 @@ export const verifyPassword = async (username: string, password: string) => {
         return { account, keyType: KeyTypes.POSTING };
       }
       //// check active key
-      // get publich active key
+      // get public active key
       const activePublicKey = account.active.key_auths[0][0];
       // check validity if the input password is the private active key
       valid = wifIsValid(password, activePublicKey);
@@ -291,6 +291,16 @@ export const verifyPassword = async (username: string, password: string) => {
         console.log('input is the active private key, which is valid');
         return { account, keyType: KeyTypes.ACTIVE };
       }
+      //// check memo key
+      // get public memo key
+      const memoPublicKey = account.memo_key;
+      // check validity if the input password is the private memo key
+      valid = wifIsValid(password, memoPublicKey);
+      if (valid) {
+        console.log('input is the memo private key, which is valid');
+        return { account, keyType: KeyTypes.MEMO };
+      }
+
       //// check owner key
       // get public owner key
       const ownerPublicKey = account.owner.key_auths[0][0];

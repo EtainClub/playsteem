@@ -55,7 +55,7 @@ const ImageUploadContainer = (props: Props): JSX.Element => {
       includeBase64: true,
       multiple: true,
       mediaType: 'photo',
-      //      smartAlbums: ['UserLibrary', 'Favorites', 'PhotoStream', 'Panoramas', 'Bursts'],
+      smartAlbums: ['UserLibrary', 'Favorites', 'PhotoStream', 'Panoramas', 'Bursts'],
     })
       .then((images) => {
         console.log('[_handlePhotoUpload]. selected images', images);

@@ -20,7 +20,7 @@ const client = new dsteem.Client(MAINNET_OFFICIAL, {
 // proxy for google custom search
 exports.searchRequest = functions.https.onCall(async (data, res) => {
   console.log('input data', data);
-  const {query, startAt = 1, num = 10, sort = 'date'} = data;
+  const { query, startAt = 1, num = 10, sort = 'date' } = data;
   const encoding = 'utf8';
   const key = functions.config().search.key;
   const cx = functions.config().search.cx;
@@ -58,7 +58,7 @@ exports.getTranslationLanguagesRequest = functions.https.onCall(async () => {
 // proxy for google translation v3
 exports.translationRequest = functions.https.onCall(async (data, context) => {
   //  console.log('input data', data);
-  const {text, targetLang, format} = data;
+  const { text, targetLang, format } = data;
 
   const options = {
     target: targetLang,
@@ -111,7 +111,7 @@ exports.createAccountByACTRequest = functions.https.onCall(
     // in case no ACT, then request to create
     if (numACTs < 1) {
       // reqeust ACT
-      const success = _claimAccountCreationToken(creator, creatorWif);
+      const success = await _claimAccountCreationToken(creator, creatorWif);
       if (!success) {
         console.log('failed to claim ACT');
         return null;
@@ -120,7 +120,7 @@ exports.createAccountByACTRequest = functions.https.onCall(
 
     /////// now we have ACT to create an account
     // get account data to be created
-    const {username, password} = data;
+    const { username, password } = data;
     // private active key of creator account
     const creatorKey = dsteem.PrivateKey.fromString(creatorWif);
     // create keys
@@ -198,7 +198,7 @@ exports.createAccountRequest = functions.https.onCall(async (data, context) => {
   const creator = functions.config().creator.account;
   const creatorWif = functions.config().creator.wif;
   // get user data
-  const {username, password, creationFee} = data;
+  const { username, password, creationFee } = data;
   // private active key of creator account
   const creatorKey = dsteem.PrivateKey.fromString(creatorWif);
   // create keys
@@ -316,7 +316,7 @@ const _updateACTs = (creator) => {
         console.log('updateACTs. doc', doc.data());
         const numACTs = await _checkClaimedToken(creator);
         console.log('_updateACTs. ACT_API', numACTs);
-        statsDocRef.update({act: numACTs});
+        statsDocRef.update({ act: numACTs });
       }
     })
     .catch((error) => console.log('failed to update the ACT', error));
