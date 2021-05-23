@@ -1,17 +1,18 @@
 //// react
-import React, {useState, useEffect, useContext} from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 //// react native
-import {Share} from 'react-native';
+import { Share } from 'react-native';
 //// config
 //// language
-import {useIntl} from 'react-intl';
-import {navigate} from '~/navigation/service';
-import {PostState, PostsTypes} from '~/contexts/types';
-import {AuthContext, PostsContext, UserContext, UIContext} from '~/contexts';
-import {ActionBarView} from './ActionBarView';
-import {ActionBarStyle} from '~/constants/actionBarTypes';
-import {reblog} from '~/providers/steem/dsteemApi';
-import {BASE_URL} from '~/constants';
+import { useIntl } from 'react-intl';
+import { navigate } from '~/navigation/service';
+import { PostState, PostsTypes } from '~/contexts/types';
+import { AuthContext, PostsContext, UserContext, UIContext, SettingsContext } from '~/contexts';
+import { StorageSchema } from '~/contexts/types';
+import { ActionBarView } from './ActionBarView';
+import { ActionBarStyle } from '~/constants/actionBarTypes';
+import { reblog } from '~/providers/steem/dsteemApi';
+import { BASE_URL } from '~/constants';
 interface Props {
   actionBarStyle: ActionBarStyle;
   postState: PostState;
@@ -27,21 +28,22 @@ interface Props {
 
 const ActionBarContainer = (props: Props): JSX.Element => {
   //// props
-  const {actionBarStyle, postUrl, postsType, postIndex, ttsText} = props;
+  const { actionBarStyle, postUrl, postsType, postIndex, ttsText } = props;
   //// language
   const intl = useIntl();
   //// contexts
-  const {upvote, bookmarkPost} = useContext(PostsContext);
-  const {authState} = useContext(AuthContext);
-  const {userState} = useContext(UserContext);
-  const {uiState, setToastMessage, setAuthorParam, setEditMode} = useContext(
+  const { upvote, bookmarkPost } = useContext(PostsContext);
+  const { authState } = useContext(AuthContext);
+  const { userState } = useContext(UserContext);
+  const { settingsState, updateSettingSchema } = useContext(SettingsContext);
+  const { uiState, setToastMessage, setAuthorParam, setEditMode } = useContext(
     UIContext,
   );
   //// states
   const [postState, setPostState] = useState<PostState>(props.postState);
   const [voting, setVoting] = useState(false);
   const [downvoting, setDownvoting] = useState(false);
-  const [votingWeight, setVotingWeight] = useState(100);
+  const [votingWeight, setVotingWeight] = useState(settingsState.ui.votingWeight);
   const [votingDollar, setVotingDollar] = useState<string>('0');
   const [showVotingModal, setShowVotingModal] = useState(false);
   const [showDownvoting, setShowDownvoting] = useState(false);
@@ -73,14 +75,14 @@ const ActionBarContainer = (props: Props): JSX.Element => {
     setVotingDollar(voteAmount.toFixed(2));
     if (!authState.loggedIn) {
       console.log('You need to login to vote');
-      setToastMessage(intl.formatMessage({id: 'Actionbar.vote_wo_login'}));
+      setToastMessage(intl.formatMessage({ id: 'Actionbar.vote_wo_login' }));
       return;
     }
     console.log('[_onPressVoteIcon] voted', postState.voted);
     // check if the user votes before
     if (postState.voted) {
       console.log('You already voted on this post');
-      setToastMessage(intl.formatMessage({id: 'Actionbar.vote_again'}));
+      setToastMessage(intl.formatMessage({ id: 'Actionbar.vote_again' }));
       return;
     }
     console.log('vote amount', voteAmount);
@@ -91,6 +93,9 @@ const ActionBarContainer = (props: Props): JSX.Element => {
     _updateVoteAmount();
     // show voting modal
     setShowVotingModal(true);
+    // get voting weight from settings state
+    console.log('settings voting weight', settingsState.ui.votingWeight);
+    setVotingWeight(settingsState.ui.votingWeight);
   };
 
   //// handle press the vote button in the voting modal
@@ -98,7 +103,7 @@ const ActionBarContainer = (props: Props): JSX.Element => {
     // check sanity
     if (!authState.loggedIn) return;
     // get credentials
-    const {username, password} = authState.currentCredentials;
+    const { username, password } = authState.currentCredentials;
     // hide voting modal
     setShowVotingModal(false);
     let results = null;
@@ -133,8 +138,13 @@ const ActionBarContainer = (props: Props): JSX.Element => {
     console.log('[ActionBarContainer|_processVoting] results', results);
     if (results) {
       // show toast
-      setToastMessage(intl.formatMessage({id: 'Actionbar.voted'}));
+      setToastMessage(intl.formatMessage({ id: 'Actionbar.voted' }));
       //// update voting related states
+      // store the voting weight
+      const _ui = { ...settingsState.ui, votingWeight: votingWeight };
+      console.log('store voting weight. ui', _ui);
+      // update in context state
+      updateSettingSchema(username, StorageSchema.UI, _ui);
       // get vote amount of ther user
       const voteAmount = parseFloat(userState.profileData.profile.voteAmount);
       // new payout estimate
@@ -187,9 +197,9 @@ const ActionBarContainer = (props: Props): JSX.Element => {
     setAuthorParam(voter);
     // if the author is the user, then navigate to the profile, otherwise, navigate to the author profile
     if (authState.currentCredentials.username === voter) {
-      navigate({name: 'Profile'});
+      navigate({ name: 'Profile' });
     } else {
-      navigate({name: 'AuthorProfile'});
+      navigate({ name: 'AuthorProfile' });
     }
   };
 
@@ -204,7 +214,7 @@ const ActionBarContainer = (props: Props): JSX.Element => {
     // set edit mode in the UIContext
     setEditMode(true);
     // navigate to the posting
-    navigate({name: 'Posting'});
+    navigate({ name: 'Posting' });
   };
 
   //// handle press bookmark
@@ -218,7 +228,7 @@ const ActionBarContainer = (props: Props): JSX.Element => {
       postState.title,
     );
     // update the post state
-    const _state = {...postState, bookmarked: true};
+    const _state = { ...postState, bookmarked: true };
     setPostState(_state);
   };
 
@@ -226,14 +236,14 @@ const ActionBarContainer = (props: Props): JSX.Element => {
   const _handlePressReblog = async () => {
     // check sanity
     if (!authState.loggedIn) return;
-    const {username, password} = authState.currentCredentials;
-    const {author, permlink} = postState.post_ref;
-    const {chainProps} = userState.globalProps;
+    const { username, password } = authState.currentCredentials;
+    const { author, permlink } = postState.post_ref;
+    const { chainProps } = userState.globalProps;
     // submit reblog transaction
     const result = await reblog(username, password, author, permlink);
     // handle the result
     if (result) {
-      setToastMessage(intl.formatMessage({id: 'Actionbar.reblogged'}));
+      setToastMessage(intl.formatMessage({ id: 'Actionbar.reblogged' }));
     }
   };
 
@@ -251,7 +261,7 @@ const ActionBarContainer = (props: Props): JSX.Element => {
     const message = `${BASE_URL}${postUrl}`;
     console.log('_handlePressShare. message', message);
     Share.share({
-      title: intl.formatMessage({id: 'title'}),
+      title: intl.formatMessage({ id: 'title' }),
       message: message,
     });
   };
@@ -270,7 +280,7 @@ const ActionBarContainer = (props: Props): JSX.Element => {
     setShowVotingModal(false);
     setShowDownvoting(false);
     // reset voting weight
-    _resetVoting();
+    //_resetVoting();
   };
 
   const _resetVoting = () => {
@@ -321,4 +331,4 @@ const ActionBarContainer = (props: Props): JSX.Element => {
   );
 };
 
-export {ActionBarContainer};
+export { ActionBarContainer };

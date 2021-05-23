@@ -8,19 +8,19 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
 } from 'react-native';
-import {Block, Icon, Button, Text, theme} from 'galio-framework';
+import { Block, Icon, Button, Text, theme } from 'galio-framework';
 // html render
-const {width} = Dimensions.get('screen');
-import {useIntl} from 'react-intl';
+const { width } = Dimensions.get('screen');
+import { useIntl } from 'react-intl';
 import Modal from 'react-native-modal';
 import Slider from '@react-native-community/slider';
-import {argonTheme} from '~/constants/argonTheme';
+import { argonTheme } from '~/constants/argonTheme';
 
-import {ActionBarStyle} from '~/constants/actionBarTypes';
-import {PostState} from '~/contexts/types';
+import { ActionBarStyle } from '~/constants/actionBarTypes';
+import { PostState } from '~/contexts/types';
 import ModalDropdown from 'react-native-modal-dropdown';
-import {MAX_ACTIVE_VOTERS} from '~/constants';
-import {TTS} from '~/components';
+import { MAX_ACTIVE_VOTERS } from '~/constants';
+import { TTS } from '~/components';
 
 //// props
 interface Props {
@@ -68,6 +68,7 @@ const ActionBarView = (props: Props): JSX.Element => {
     ttsText,
     voting,
     downvoting,
+    votingWeight,
   } = props;
   // language
   const intl = useIntl();
@@ -78,9 +79,8 @@ const ActionBarView = (props: Props): JSX.Element => {
     // // limit the number of items
     if (postState.voters.length > MAX_ACTIVE_VOTERS) {
       voters = postState.voters.slice(0, MAX_ACTIVE_VOTERS);
-      voters[MAX_ACTIVE_VOTERS] = `and ${
-        postState.voters.length - MAX_ACTIVE_VOTERS
-      } more`;
+      voters[MAX_ACTIVE_VOTERS] = `and ${postState.voters.length - MAX_ACTIVE_VOTERS
+        } more`;
     }
     return voters;
   };
@@ -103,8 +103,8 @@ const ActionBarView = (props: Props): JSX.Element => {
           </Text>
 
           <Slider
-            style={{width: width * 0.5, height: 40}}
-            value={100}
+            style={{ width: width * 0.5, height: 40 }}
+            value={votingWeight}
             onValueChange={(weight) =>
               props.handleVotingSlidingComplete(weight)
             }
@@ -125,8 +125,8 @@ const ActionBarView = (props: Props): JSX.Element => {
   };
 
   const _renderVoterRow = (option, index, isSelect) => (
-    <View style={{backgroundColor: argonTheme.COLORS.DEFAULT}}>
-      <Text color="white" style={{margin: 5}}>
+    <View style={{ backgroundColor: argonTheme.COLORS.DEFAULT }}>
+      <Text color="white" style={{ margin: 5 }}>
         {option}
       </Text>
     </View>
@@ -158,13 +158,13 @@ const ActionBarView = (props: Props): JSX.Element => {
             }}
             color="red"
             size={30}>
-            {intl.formatMessage({id: 'Actionbar.warning'})}
+            {intl.formatMessage({ id: 'Actionbar.warning' })}
           </Text>
           <Text color={argonTheme.COLORS.FACEBOOK}>
             -{props.votingWeight} % ({props.votingDollar})
           </Text>
           <Slider
-            style={{width: width * 0.5, height: 40}}
+            style={{ width: width * 0.5, height: 40 }}
             value={100}
             onValueChange={(weight) =>
               props.handleVotingSlidingComplete(weight)
@@ -173,8 +173,8 @@ const ActionBarView = (props: Props): JSX.Element => {
             maximumValue={100}
             step={1}
           />
-          <Text style={{padding: 5}} color="black">
-            {intl.formatMessage({id: 'Actionbar.downvote_warning'})}
+          <Text style={{ padding: 5 }} color="black">
+            {intl.formatMessage({ id: 'Actionbar.downvote_warning' })}
           </Text>
           <Icon
             size={40}
@@ -191,11 +191,11 @@ const ActionBarView = (props: Props): JSX.Element => {
   return (
     <Block>
       <Block row style={actionBarStyle.styles}>
-        <Block row style={{paddingRight: 5}}>
+        <Block row style={{ paddingRight: 5 }}>
           <Text
             size={actionBarStyle.textSize}
             color={argonTheme.COLORS.ERROR}
-            style={{paddingRight: 5}}>
+            style={{ paddingRight: 5 }}>
             {postState.payout}
           </Text>
           <Button
@@ -226,7 +226,7 @@ const ActionBarView = (props: Props): JSX.Element => {
             const voter = value.split(' ')[0];
             props.handlePressVoter(voter);
           }}>
-          <Block row style={{paddingRight: 10}}>
+          <Block row style={{ paddingRight: 10 }}>
             <Icon
               size={actionBarStyle.iconSize}
               color={theme.COLORS.MUTED}
@@ -242,17 +242,17 @@ const ActionBarView = (props: Props): JSX.Element => {
         {actionBarStyle.reply ? (
           <Block row>
             <TouchableWithoutFeedback onPress={props.handlePressReply}>
-              <Block row style={{paddingRight: 10}}>
+              <Block row style={{ paddingRight: 10 }}>
                 <Text size={actionBarStyle.textSize}>
-                  {intl.formatMessage({id: 'reply'})}
+                  {intl.formatMessage({ id: 'reply' })}
                 </Text>
               </Block>
             </TouchableWithoutFeedback>
             {props.isUser && (
               <TouchableWithoutFeedback onPress={props.handlePressEditComment}>
-                <Block row style={{paddingRight: 10}}>
+                <Block row style={{ paddingRight: 10 }}>
                   <Text size={actionBarStyle.textSize}>
-                    {intl.formatMessage({id: 'edit'})}
+                    {intl.formatMessage({ id: 'edit' })}
                   </Text>
                 </Block>
               </TouchableWithoutFeedback>
@@ -260,13 +260,13 @@ const ActionBarView = (props: Props): JSX.Element => {
           </Block>
         ) : (
           <TouchableWithoutFeedback onPress={props.handlePressComments}>
-            <Block row style={{paddingRight: 10}}>
+            <Block row style={{ paddingRight: 10 }}>
               <Icon
                 size={actionBarStyle.iconSize}
                 color={theme.COLORS.MUTED}
                 name="commenting-o"
                 family="font-awesome"
-                style={{paddingRight: 2}}
+                style={{ paddingRight: 2 }}
               />
               <Text size={actionBarStyle.textSize}>
                 {postState.comment_count}
@@ -276,46 +276,46 @@ const ActionBarView = (props: Props): JSX.Element => {
         )}
         {actionBarStyle.bookmark && (
           <TouchableWithoutFeedback onPress={props.handlePressBookmark}>
-            <Block row style={{paddingRight: 5}}>
+            <Block row style={{ paddingRight: 5 }}>
               <Icon
                 size={actionBarStyle.iconSize}
                 color={argonTheme.COLORS.ERROR}
                 name={postState.bookmarked ? 'heart' : 'hearto'}
                 family="antdesign"
-                style={{paddingHorizontal: 10}}
+                style={{ paddingHorizontal: 10 }}
               />
             </Block>
           </TouchableWithoutFeedback>
         )}
         {actionBarStyle.resteem && (
           <TouchableOpacity onPress={props.handlePressReblog}>
-            <Block row style={{paddingRight: 5}}>
+            <Block row style={{ paddingRight: 5 }}>
               <Icon
                 size={actionBarStyle.iconSize}
                 color={argonTheme.COLORS.ERROR}
                 name="repeat"
                 family="material-community"
-                style={{paddingHorizontal: 5}}
+                style={{ paddingHorizontal: 5 }}
               />
             </Block>
           </TouchableOpacity>
         )}
         {actionBarStyle.share && (
           <TouchableWithoutFeedback onPress={props.handlePressShare}>
-            <Block row style={{paddingRight: 5}}>
+            <Block row style={{ paddingRight: 5 }}>
               <Icon
                 size={actionBarStyle.iconSize}
                 color={argonTheme.COLORS.ERROR}
                 name="sharealt"
                 family="antdesign"
-                style={{paddingHorizontal: 5}}
+                style={{ paddingHorizontal: 5 }}
               />
             </Block>
           </TouchableWithoutFeedback>
         )}
         {actionBarStyle.translation && (
           <TouchableWithoutFeedback onPress={props.handlePressTranslation}>
-            <Block row style={{top: 0}}>
+            <Block row style={{ top: 0 }}>
               <Icon
                 size={18}
                 color={
@@ -325,7 +325,7 @@ const ActionBarView = (props: Props): JSX.Element => {
                 }
                 name="translate"
                 family="material-community"
-                style={{paddingHorizontal: 5}}
+                style={{ paddingHorizontal: 5 }}
               />
             </Block>
           </TouchableWithoutFeedback>
@@ -336,7 +336,7 @@ const ActionBarView = (props: Props): JSX.Element => {
             color={argonTheme.COLORS.ERROR}
             name="sound"
             family="antdesign"
-            style={{paddingHorizontal: 5}}
+            style={{ paddingHorizontal: 5 }}
             onPress={props.handlePressSpeakIcon}
           />
         )}
@@ -346,7 +346,7 @@ const ActionBarView = (props: Props): JSX.Element => {
             color={argonTheme.COLORS.ERROR}
             name="pencil"
             family="font-awesome"
-            style={{paddingHorizontal: 5}}
+            style={{ paddingHorizontal: 5 }}
             onPress={props.handlePressEditPost}
           />
         )}
@@ -376,7 +376,7 @@ const ActionBarView = (props: Props): JSX.Element => {
   );
 };
 
-export {ActionBarView};
+export { ActionBarView };
 
 const styles = StyleSheet.create({
   votingContainer: {

@@ -44,7 +44,7 @@ export const AppContainer = (props: Props): JSX.Element => {
   //// language
   const intl = useIntl();
   //// contexts
-  const { setPostRef } = useContext(PostsContext);
+  const { setPostRef, setPostDetails } = useContext(PostsContext);
   const { uiState, setToastMessage, setAuthorParam } = useContext(UIContext);
 
   useEffect(() => {
@@ -168,6 +168,8 @@ export const AppContainer = (props: Props): JSX.Element => {
       case SettingUITypes.REPLY:
       case SettingUITypes.VOTE:
         //// navigate
+        // clear post details
+        setPostDetails(null);
         // set route name
         route = 'PostDetails';
         // set post ref to the context only for background message
