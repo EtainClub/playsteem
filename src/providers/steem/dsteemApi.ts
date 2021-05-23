@@ -1175,38 +1175,43 @@ export const broadcastPostUpdate = async (
 export const signImage = async (photo, username, password) => {
   // verify the user and password
   // @test
-  //  password = Config.ETAINCLUB_POSTING_WIF;
   const { account } = await verifyPassword(username, password);
   if (!account) {
     console.log('[signImage] failed to verify password');
     return null;
   }
 
-  // create a buffer of image data
-  const photoBuf = Buffer.from(photo.data, 'base64');
-  // prefix buffer to upload an image to steemitimages.com
-  const prefix = Buffer.from('ImageSigningChallenge');
-  // build data to be signed
-  const data = Buffer.concat([prefix, photoBuf]);
 
-  //  console.log('[signImage] buf', buf);
-  // get ec private key from wif pasword
-  const privateKey = PrivateKey.fromString(password);
-  // compute hash of the data
-  const hash = cryptoUtils.sha256(data);
-  //  console.log('[signImage] hash, type', hash, typeof hash);
-  // sign the hash
-  const signature = privateKey.sign(hash);
+  try {
+    // create a buffer of image data
+    const photoBuf = Buffer.from(photo.data, 'base64');
+    // prefix buffer to upload an image to steemitimages.com
+    const prefix = Buffer.from('ImageSigningChallenge');
+    // build data to be signed
+    const data = Buffer.concat([prefix, photoBuf]);
 
-  //  console.log('[signImage] signature', signature, typeof signature);
+    //  console.log('[signImage] buf', buf);
+    // get ec private key from wif pasword
+    const privateKey = PrivateKey.fromString(password);
+    // compute hash of the data
+    const hash = cryptoUtils.sha256(data);
+    //  console.log('[signImage] hash, type', hash, typeof hash);
+    // sign the hash
+    const signature = privateKey.sign(hash);
 
-  // verify the signature
-  if (!privateKey.createPublic().verify(hash, signature)) {
-    console.error('signaure is invalid');
+    console.log('[signImage] signature', signature, typeof signature);
+
+    // verify the signature
+    if (!privateKey.createPublic().verify(hash, signature)) {
+      console.error('signaure is invalid');
+    }
+    //    console.log('sig is valid, sig', signature);
+
+    return signature;
+  } catch (error) {
+    console.log('failed to sign images', error);
+    return null;
   }
-  //  console.log('sig is valid, sig', signature);
-
-  return signature;
 };
 
 //// votes

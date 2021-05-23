@@ -78,7 +78,8 @@ const ImageUploadContainer = (props: Props): JSX.Element => {
       compressImageMaxWidth: 1280,
     })
       .then((image) => {
-        _handleImageUpload(image);
+        console.log('[_handleCameraUpload]. selected images', image);
+        _handleImageUpload([image]);
       })
       .catch((error) => {
         _handleSelectionFailure(error);
