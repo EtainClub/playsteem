@@ -52,7 +52,6 @@ interface Props {
 }
 
 const PostingScreen = (props: Props): JSX.Element => {
-  console.log('posting screen props', props);
   //// props
   const {
     loggedIn,

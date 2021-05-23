@@ -1,5 +1,5 @@
-import {Platform} from 'react-native';
-import {get, has} from 'lodash';
+import { Platform } from 'react-native';
+import { get, has } from 'lodash';
 import isEmpty from 'lodash/isEmpty';
 import forEach from 'lodash/forEach';
 import {
@@ -7,13 +7,13 @@ import {
   calculateReputation,
   fetchProfile,
 } from '~/providers/steem/dsteemApi';
-import {Discussion} from '@hiveio/dhive';
-import {renderPostBody, postBodySummary} from './render-helpers';
-import {getResizedAvatar, getResizedImage} from './image';
-import {IMAGE_SERVERS} from '~/constants';
-import {PostState, PostData, CommentData, MetaData} from '~/contexts/types';
+import { Discussion } from '@hiveio/dhive';
+import { renderPostBody, postBodySummary } from './render-helpers';
+import { getResizedAvatar, getResizedImage } from './image';
+import { IMAGE_SERVERS } from '~/constants';
+import { PostState, PostData, CommentData, MetaData } from '~/contexts/types';
 
-const POST_SUMMARY_LENGTH = 80;
+const POST_SUMMARY_LENGTH = 70;
 const webp = Platform.OS === 'ios' ? false : true;
 let IMAGE_SERVER = IMAGE_SERVERS[0];
 

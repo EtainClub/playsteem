@@ -125,12 +125,13 @@ const Posting = (props: Props): JSX.Element => {
       // check if original post exists
       // get the post details
       setOriginalPost(postDetails);
+
+      console.log('edit mode. postDetails', postDetails);
       // set title
       setTitle(postDetails.state.title);
       // set body
       setBody(postDetails.markdownBody);
       // tags
-      console.log('postDetails.meta data', postDetails.metadata);
       try {
         const _tags = postDetails.metadata.tags.reduce(
           (tagString, tag) => tagString + tag + ' ',

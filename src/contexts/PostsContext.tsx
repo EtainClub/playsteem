@@ -1,7 +1,7 @@
 //// react
-import React, {useReducer, createContext, useContext} from 'react';
+import React, { useReducer, createContext, useContext } from 'react';
 //// language
-import {useIntl} from 'react-intl';
+import { useIntl } from 'react-intl';
 //// blockchain api
 import {
   fetchPostsSummary,
@@ -14,7 +14,7 @@ import {
   fetchCommunityList,
   fetchCommunity,
 } from '~/providers/steem/dsteemApi';
-import {renderPostBody} from '~/utils/render-helpers';
+import { renderPostBody } from '~/utils/render-helpers';
 import firestore from '@react-native-firebase/firestore';
 import {
   NUM_FETCH_POSTS,
@@ -39,9 +39,9 @@ import {
   INIT_ALL_TAG,
   FilterTypes,
 } from '~/contexts/types';
-import {defaults, filter} from 'lodash';
+import { defaults, filter } from 'lodash';
 
-import {UIContext} from '~/contexts';
+import { UIContext } from '~/contexts';
 
 const MAX_RETRY = 3;
 
@@ -124,17 +124,17 @@ const postsReducer = (state: PostsState, action: PostsAction) => {
         },
       };
     case PostsActionTypes.RETRY_FETCHING:
-      return {...state, retryCount: state.retryCount++};
+      return { ...state, retryCount: state.retryCount++ };
 
     case PostsActionTypes.SET_FETCHED:
       console.log('[postsReducer] set fetched. payload', action.payload);
-      return {...state, fetched: action.payload};
+      return { ...state, fetched: action.payload };
 
     case PostsActionTypes.SET_NEED_FETCH:
-      return {...state, needToFetch: action.payload};
+      return { ...state, needToFetch: action.payload };
 
     case PostsActionTypes.SET_POST_REF:
-      return {...state, postRef: action.payload};
+      return { ...state, postRef: action.payload };
 
     case PostsActionTypes.CLEAR_POSTS:
       console.log('[postsReducer] clearing posts. type', action.payload);
@@ -159,7 +159,7 @@ const postsReducer = (state: PostsState, action: PostsAction) => {
         needToFetch: true,
       };
     case PostsActionTypes.SET_TAG_INDEX:
-      return {...state, tagIndex: action.payload, needToFetch: true};
+      return { ...state, tagIndex: action.payload, needToFetch: true };
 
     case PostsActionTypes.APPEND_TAG:
       return {
@@ -171,10 +171,10 @@ const postsReducer = (state: PostsState, action: PostsAction) => {
         needToFetch: true,
       };
     case PostsActionTypes.SET_FILTER_INDEX:
-      return {...state, filterIndex: action.payload, needToFetch: true};
+      return { ...state, filterIndex: action.payload, needToFetch: true };
 
     case PostsActionTypes.SET_COMMUNITY_INDEX:
-      return {...state, communityIndex: action.payload};
+      return { ...state, communityIndex: action.payload };
 
     case PostsActionTypes.SET_POST_DETAILS:
       return {
@@ -207,11 +207,11 @@ const postsReducer = (state: PostsState, action: PostsAction) => {
             // post: PostData
             index === action.payload.postIndex
               ? {
-                  // set the previous values to the object, PostData
-                  ...state[action.payload.postsType].posts[index],
-                  // update the state
-                  state: action.payload.postState,
-                }
+                // set the previous values to the object, PostData
+                ...state[action.payload.postsType].posts[index],
+                // update the state
+                state: action.payload.postState,
+              }
               : post,
           ),
         },
@@ -237,7 +237,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-const PostsProvider = ({children}: Props) => {
+const PostsProvider = ({ children }: Props) => {
   // userReducer hook
   // set auth reducer with initial state of auth state
   const [postsState, dispatch] = useReducer(postsReducer, initialState);
@@ -246,7 +246,7 @@ const PostsProvider = ({children}: Props) => {
   const intl = useIntl();
   //// contexts
   // toast message function from UI contexts
-  const {setToastMessage} = useContext(UIContext);
+  const { setToastMessage } = useContext(UIContext);
 
   ////// action creators
   //// fetch tag list
@@ -497,7 +497,7 @@ const PostsProvider = ({children}: Props) => {
       });
       return post;
     }
-    setToastMessage(intl.formatMessage({id: 'fetch_error'}));
+    setToastMessage(intl.formatMessage({ id: 'fetch_error' }));
     return null;
   };
 
@@ -605,7 +605,7 @@ const PostsProvider = ({children}: Props) => {
     // check result
     console.log('[upvote] results', results);
     if (!results) {
-      setToastMessage(intl.formatMessage({id: 'transaction_error'}));
+      setToastMessage(intl.formatMessage({ id: 'transaction_error' }));
       return null;
     }
 
@@ -658,7 +658,7 @@ const PostsProvider = ({children}: Props) => {
 
   //// helper function to find the comment
   const _updateComments = (comments, postRef) => {
-    const {author, permlink} = comments[0];
+    const { author, permlink } = comments[0];
     if (author === postRef.author && permlink === postRef.permlink) {
       // found, update the comment
       // comment.payout = newPayout
@@ -687,7 +687,7 @@ const PostsProvider = ({children}: Props) => {
       // TODO; distinguish post and comment
       return result;
     }
-    setToastMessage(intl.formatMessage({id: 'transaction_error'}));
+    setToastMessage(intl.formatMessage({ id: 'transaction_error' }));
     return null;
   };
 
@@ -711,7 +711,7 @@ const PostsProvider = ({children}: Props) => {
     );
     console.log('[updatePost] result', result);
     if (!result) {
-      setToastMessage(intl.formatMessage({id: 'transaction_error'}));
+      setToastMessage(intl.formatMessage({ id: 'transaction_error' }));
       return null;
     }
     let action = PostsActionTypes.SET_POST_DETAILS;
@@ -749,12 +749,12 @@ const PostsProvider = ({children}: Props) => {
       bookmark = await docRef.get();
     } catch (error) {
       console.log('failed to get bookmarks', error);
-      setToastMessage(intl.formatMessage({id: 'fetch_error'}));
+      setToastMessage(intl.formatMessage({ id: 'fetch_error' }));
       return;
     }
     if (bookmark.exists) {
       console.log('[addBookmark] User bookmarked already');
-      setToastMessage(intl.formatMessage({id: 'Bookmark.already'}));
+      setToastMessage(intl.formatMessage({ id: 'Bookmark.already' }));
       return;
     }
     // add new doc
@@ -770,7 +770,7 @@ const PostsProvider = ({children}: Props) => {
       payload: true,
     });
     //
-    setToastMessage(intl.formatMessage({id: 'Bookmark.added'}));
+    setToastMessage(intl.formatMessage({ id: 'Bookmark.added' }));
   };
 
   //// fetch database state
@@ -807,9 +807,11 @@ const PostsProvider = ({children}: Props) => {
   const fetchBookmarks = async (username: string) => {
     // get user's bookmarks collection
     let bookmarks = [];
+    // order by latest
     await firestore()
       .doc(`users/${username}`)
       .collection('bookmarks')
+      .orderBy('createdAt', 'desc')
       .get()
       .then((snapshot) => {
         snapshot.forEach((doc) => {
@@ -817,7 +819,7 @@ const PostsProvider = ({children}: Props) => {
         });
       })
       .catch((e) => {
-        setToastMessage(intl.formatMessage({id: 'fetch_error'}));
+        setToastMessage(intl.formatMessage({ id: 'fetch_error' }));
         console.log('failed to get bookmarks', e);
       });
     return bookmarks;
@@ -842,11 +844,11 @@ const PostsProvider = ({children}: Props) => {
       docRef
         .delete()
         .then(() => {
-          setToastMessage(intl.formatMessage({id: 'Profile.unfavorite_ok'}));
+          setToastMessage(intl.formatMessage({ id: 'Profile.unfavorite_ok' }));
           return true;
         })
         .catch((error) => {
-          setToastMessage(intl.formatMessage({id: 'unfavorite_error'}));
+          setToastMessage(intl.formatMessage({ id: 'unfavorite_error' }));
           return false;
         });
     } else {
@@ -855,7 +857,7 @@ const PostsProvider = ({children}: Props) => {
         const favorite = await docRef.get();
         if (favorite.exists) {
           console.log('[favoriteAuthor] User favorited the author already');
-          setToastMessage(intl.formatMessage({id: 'Favorite.already'}));
+          setToastMessage(intl.formatMessage({ id: 'Favorite.already' }));
           return false;
         }
         // add new doc
@@ -866,7 +868,7 @@ const PostsProvider = ({children}: Props) => {
         return true;
       } catch (error) {
         console.log('[favoriteAuthor] failed to set new favorite', error);
-        setToastMessage(intl.formatMessage({id: 'unfavorite_error'}));
+        setToastMessage(intl.formatMessage({ id: 'unfavorite_error' }));
         return false;
       }
     }
@@ -886,7 +888,7 @@ const PostsProvider = ({children}: Props) => {
         });
       })
       .catch((e) => {
-        setToastMessage(intl.formatMessage({id: 'fetch_error'}));
+        setToastMessage(intl.formatMessage({ id: 'fetch_error' }));
         console.log('failed to get bookmarks', e);
       });
     return favorites;
@@ -902,7 +904,7 @@ const PostsProvider = ({children}: Props) => {
       reporter,
       createdAt: new Date(),
     });
-    setToastMessage(intl.formatMessage({id: 'PostDetails.flagged'}));
+    setToastMessage(intl.formatMessage({ id: 'PostDetails.flagged' }));
   };
 
   //// check if the author is in the favorite list
@@ -1003,4 +1005,4 @@ const _fetchPosts = async (
 };
 
 ////
-export {PostsContext, PostsProvider};
+export { PostsContext, PostsProvider };
