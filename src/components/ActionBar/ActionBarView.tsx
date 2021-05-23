@@ -89,7 +89,6 @@ const ActionBarView = (props: Props): JSX.Element => {
   const _renderVotingModal = () => {
     // return if voting finishes
     if (postState.voted) return null;
-    console.log('upvote modal. props', props);
 
     return (
       <Modal

@@ -69,8 +69,8 @@ const ActionBarContainer = (props: Props): JSX.Element => {
   const _updateVoteAmount = () => {
     console.log('user state', userState);
     // get vote amount of the user
-    const voteAmount = parseFloat(userState.profileData.profile.voteAmount);
-    console.log('[Action] _onPressVoteIcon');
+    const voteAmount = parseFloat(userState.profileData.profile.voteAmount) * votingWeight * 0.01;
+    console.log('[Action] _onPressVoteIcon. voteAmount', voteAmount.toFixed(2));
     // set vote amount to string state which is a string
     setVotingDollar(voteAmount.toFixed(2));
     if (!authState.loggedIn) {
@@ -85,17 +85,17 @@ const ActionBarContainer = (props: Props): JSX.Element => {
       setToastMessage(intl.formatMessage({ id: 'Actionbar.vote_again' }));
       return;
     }
-    console.log('vote amount', voteAmount);
   };
 
   //// handle press vote icon of action bar
   const _handlePressVoteIcon = () => {
-    _updateVoteAmount();
-    // show voting modal
-    setShowVotingModal(true);
     // get voting weight from settings state
     console.log('settings voting weight', settingsState.ui.votingWeight);
     setVotingWeight(settingsState.ui.votingWeight);
+    // update voting amount
+    _updateVoteAmount();
+    // show voting modal
+    setShowVotingModal(true);
   };
 
   //// handle press the vote button in the voting modal
