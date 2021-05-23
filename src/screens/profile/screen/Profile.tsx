@@ -12,26 +12,27 @@ import {
   Platform,
   Dimensions,
 } from 'react-native';
-import {Block, Icon, Button, Input, Text, theme} from 'galio-framework';
-import {TabView, SceneMap} from 'react-native-tab-view';
-import {useIntl} from 'react-intl';
-import {navigate} from '~/navigation/service';
-import {Images, argonTheme} from '~/constants';
-import {HeaderHeight, LIST_TITLE_LENGTH} from '~/constants/utils';
-import {getNumberStat} from '~/utils/stats';
-import {Feed} from '~/screens';
-import {PostsListView, ProfileContainer, DraggableList} from '~/components';
-import {PostsTypes, PostData, PostRef, ProfileData} from '~/contexts/types';
-import {sliceByByte} from '~/utils/strings';
+import { Block, Icon, Button, Input, Text, theme } from 'galio-framework';
+import { TabView, SceneMap } from 'react-native-tab-view';
+import { useIntl } from 'react-intl';
+import { navigate } from '~/navigation/service';
+import { Images, argonTheme } from '~/constants';
+import { HeaderHeight, LIST_TITLE_LENGTH } from '~/constants/utils';
+import { getNumberStat } from '~/utils/stats';
+import { Feed } from '~/screens';
+import { PostsListView, ProfileContainer, DraggableList } from '~/components';
+import { PostsTypes, PostData, PostRef, ProfileData } from '~/contexts/types';
+import { sliceByByte } from '~/utils/strings';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const BACKGROUND_COLORS = [
   argonTheme.COLORS.BORDER,
   argonTheme.COLORS.SECONDARY,
 ];
-const {width, height} = Dimensions.get('screen');
+const { width, height } = Dimensions.get('screen');
 const thumbMeasure = (width - 48 - 32) / 3;
 
-const initialLayout = {width: Dimensions.get('window').width};
+const initialLayout = { width: Dimensions.get('window').width };
 
 interface Props {
   profileData: ProfileData;
@@ -40,6 +41,7 @@ interface Props {
   favorites: any[];
   imageServer: string;
   refreshing: boolean;
+  hideResteem: boolean;
   handlePressAuthor: (author: string) => void;
   handlePressEdit: () => void;
   handlePressBookmark: (postRef: PostRef) => void;
@@ -49,27 +51,38 @@ interface Props {
   refreshBookmarks: () => void;
   refreshFavorites: () => void;
   clearPosts: () => void;
+  handleHideResteem: () => void;
 }
 const ProfileScreen = (props: Props): JSX.Element => {
   //// props
-  const {refreshing} = props;
+  const { refreshing, hideResteem } = props;
   const intl = useIntl();
 
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
-    {key: 'bookmarks', title: intl.formatMessage({id: 'Profile.bookmark_tab'})},
-    {key: 'blogs', title: intl.formatMessage({id: 'Profile.blog_tab'})},
-    {key: 'favorites', title: intl.formatMessage({id: 'Profile.favorite_tab'})},
+    { key: 'bookmarks', title: intl.formatMessage({ id: 'Profile.bookmark_tab' }) },
+    { key: 'blogs', title: intl.formatMessage({ id: 'Profile.blog_tab' }) },
+    { key: 'favorites', title: intl.formatMessage({ id: 'Profile.favorite_tab' }) },
   ]);
 
   const BlogList = () =>
     props.blogs && (
-      <PostsListView
-        posts={props.blogs}
-        isUser
-        refreshing={refreshing}
-        refreshPosts={props.refreshPosts}
-      />
+      <Block>
+        <TouchableOpacity
+          onPress={props.handleHideResteem}
+          style={{ marginTop: 5, marginLeft: 5 }}>
+          {
+            hideResteem ?
+              <Text color='blue'>Show Resteem</Text> : <Text color='blue'>Hide Resteem</Text>
+          }
+        </TouchableOpacity>
+        <PostsListView
+          posts={props.blogs}
+          isUser
+          refreshing={refreshing}
+          refreshPosts={props.refreshPosts}
+        />
+      </Block>
     );
 
   const BookmarkList = () =>
@@ -97,7 +110,7 @@ const ProfileScreen = (props: Props): JSX.Element => {
   });
 
   ////
-  const _renderBookmarkItem = ({item, index, drag, isActive}) => {
+  const _renderBookmarkItem = ({ item, index, drag, isActive }) => {
     const avatar = `${props.imageServer}/u/${item.author}/avatar`;
     return (
       <Block
@@ -109,7 +122,7 @@ const ProfileScreen = (props: Props): JSX.Element => {
           padding: 5,
           backgroundColor: BACKGROUND_COLORS[index % BACKGROUND_COLORS.length],
         }}>
-        <Block row middle style={{left: -20}}>
+        <Block row middle style={{ left: -20 }}>
           <TouchableWithoutFeedback
             onPress={() => props.handlePressAuthor(item.author)}>
             <Block center width={120}>
@@ -141,7 +154,7 @@ const ProfileScreen = (props: Props): JSX.Element => {
   };
 
   ////
-  const _renderFavoriteItem = ({item, index, drag, isActive}) => {
+  const _renderFavoriteItem = ({ item, index, drag, isActive }) => {
     const avatar = `${props.imageServer}/u/${item.author}/avatar`;
     return (
       <Block
@@ -192,7 +205,7 @@ const ProfileScreen = (props: Props): JSX.Element => {
           handlePressEdit={props.handlePressEdit}
         />
         <TabView
-          navigationState={{index, routes}}
+          navigationState={{ index, routes }}
           renderScene={renderScene}
           onIndexChange={setIndex}
           tabBarPosition="top"
@@ -202,7 +215,7 @@ const ProfileScreen = (props: Props): JSX.Element => {
   );
 };
 
-export {ProfileScreen};
+export { ProfileScreen };
 
 const styles = StyleSheet.create({
   profileScreen: {
@@ -230,7 +243,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 6,
     backgroundColor: theme.COLORS.WHITE,
     shadowColor: 'black',
-    shadowOffset: {width: 0, height: 0},
+    shadowOffset: { width: 0, height: 0 },
     shadowRadius: 8,
     shadowOpacity: 0.2,
     zIndex: 2,

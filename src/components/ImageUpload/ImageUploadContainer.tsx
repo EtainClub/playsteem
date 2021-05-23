@@ -161,6 +161,8 @@ const ImageUploadContainer = (props: Props): JSX.Element => {
         }
         // clear uploading
         setUploading(false);
+        // clear timeout
+        clearTimeout(timer);
         return;
       });
 

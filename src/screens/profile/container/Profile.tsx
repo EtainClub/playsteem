@@ -44,6 +44,7 @@ const Profile = ({ navigation }): JSX.Element => {
   const [profileData, setProfileData] = useState<ProfileData>(null);
   const [profileFetched, setProfileFetched] = useState(false);
   const [fetching, setFetching] = useState(false);
+  const [srcBlogs, setSrcBlogs] = useState(null);
   const [blogs, setBlogs] = useState(null);
   const [bookmarks, setBookmarks] = useState(null);
   const [favorites, setFavorites] = useState(null);
@@ -60,6 +61,7 @@ const Profile = ({ navigation }): JSX.Element => {
   const [location, setLocation] = useState('');
   const [website, setWebsite] = useState('');
 
+  const [hideResteem, setHideResteem] = useState(false);
   // useFocusEffect(
   //   useCallback(() => {
   //     if (authState.loggedIn && !fetching) {
@@ -136,6 +138,7 @@ const Profile = ({ navigation }): JSX.Element => {
       );
       console.log('[_getAuthorProfile] blog summarys', fetchedPosts);
       setBlogs(fetchedPosts);
+      setSrcBlogs(fetchedPosts);
       setProfileFetched(true);
       setFetching(false);
     }
@@ -350,10 +353,13 @@ const Profile = ({ navigation }): JSX.Element => {
   const _refreshPosts = async () => {
     // clear blogs
     setBlogs(null);
+    setSrcBlogs(null);
     setRefreshing(true);
     const { username } = authState.currentCredentials;
     await _getUserProfileData(username, true);
     setRefreshing(false);
+    // reset hide resteem
+    setHideResteem(false);
   };
 
   //// refresh bookmarks
@@ -394,6 +400,24 @@ const Profile = ({ navigation }): JSX.Element => {
 
   if (!authState.loggedIn) return <View></View>;
 
+  ////
+  const _handleHideResteem = () => {
+    // toggle the hide state
+    const _hide = !hideResteem;
+    // update the state
+    setHideResteem(_hide);
+    console.log('hide resteem?', hideResteem);
+    // filter blogs only if hide resteem
+    if (_hide) {
+      const _blogs = blogs.filter(
+        (blog: PostData) => blog.state.post_ref.author === authState.currentCredentials.username);
+      setBlogs(_blogs);
+    } else {
+      // set src blogs
+      setBlogs(srcBlogs);
+    }
+  }
+
   return !editMode ? (
     profileData ? (
       <ProfileScreen
@@ -402,6 +426,8 @@ const Profile = ({ navigation }): JSX.Element => {
         bookmarks={bookmarks}
         favorites={favorites}
         imageServer={settingsState.blockchains.image}
+        hideResteem={hideResteem}
+        handleHideResteem={_handleHideResteem}
         handlePressAuthor={_handlePressAuthor}
         refreshing={refreshing}
         refreshPosts={_refreshPosts}
