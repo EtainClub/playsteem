@@ -128,6 +128,7 @@ const ImageUploadContainer = (props: Props): JSX.Element => {
       return;
     }
 
+    let timer = null;
     //// upload an image
     uploadImage(image, username, sign)
       .then((res) => {
@@ -143,6 +144,8 @@ const ImageUploadContainer = (props: Props): JSX.Element => {
           const url = `![](${res.data.url})`;
           props.getImageURL(url);
         }
+        // clear timeout
+        clearTimeout(timer);
         return;
       })
       .catch((error) => {
@@ -162,7 +165,7 @@ const ImageUploadContainer = (props: Props): JSX.Element => {
       });
 
     // set timeout (15 seconds)
-    setTimeout(() => {
+    timer = setTimeout(() => {
       // clear uploading
       setUploading(false);
       // toast
