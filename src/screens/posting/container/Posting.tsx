@@ -61,6 +61,7 @@ const Posting = (props: Props): JSX.Element => {
     submitPost,
     setTagAndFilter,
     setCommunityIndex,
+    setNeedToFetch,
   } = useContext(PostsContext);
   const { userState, getFollowings } = useContext(UserContext);
   const { settingsState, updateSettingSchema } = useContext(SettingsContext);
@@ -129,11 +130,20 @@ const Posting = (props: Props): JSX.Element => {
       // set body
       setBody(postDetails.markdownBody);
       // tags
-      const _tags = postDetails.metadata.tags.reduce(
-        (tagString, tag) => tagString + tag + ' ',
-        '',
-      );
-      setTags(_tags);
+      console.log('postDetails.meta data', postDetails.metadata);
+      try {
+        const _tags = postDetails.metadata.tags.reduce(
+          (tagString, tag) => tagString + tag + ' ',
+          '',
+        );
+        setTags(_tags);
+      } catch (error) {
+        console.log('no tags in meta data');
+        // TODO: need to change post fetching api and update the post data model
+        // use category data
+        //        setTags(postDetails.state)
+      }
+
       // get html from markdown
       const _body = renderPostBody(postDetails.markdownBody, true);
       // set preview
@@ -368,7 +378,7 @@ const Posting = (props: Props): JSX.Element => {
       setPosting(false);
       // clear all
       _clearAll();
-      // navigate feed
+      // navigate feed. need to refresh
       navigate({ name: 'Feed' });
       return;
     }
@@ -540,6 +550,30 @@ const Posting = (props: Props): JSX.Element => {
     }
   };
 
+  //// handle clear all
+  const _handleClearAll = () => {
+    // alert
+    Alert.alert(
+      'Cancel Editing',
+      'Are you sure?',
+      [
+        {
+          text: 'No',
+          onPress: () => { },
+          style: 'cancel',
+        },
+        {
+          text: 'Yes',
+          onPress: () => {
+            // clear contents
+            _clearAll();
+          }
+        },
+      ],
+      { cancelable: true },
+    );
+  }
+
   //// clear contents
   const _clearAll = () => {
     console.log('handleClearAll');
@@ -564,12 +598,30 @@ const Posting = (props: Props): JSX.Element => {
   };
 
   const _handleCancelEditing = () => {
-    // reset edit mode
-    setEditMode(false);
-    // clear contents
-    _clearAll();
-    // go back
-    navigation.goBack();
+    // alert
+    Alert.alert(
+      'Cancel Editing',
+      'Are you sure?',
+      [
+        {
+          text: 'No',
+          onPress: () => { },
+          style: 'cancel',
+        },
+        {
+          text: 'Yes',
+          onPress: () => {
+            // reset edit mode
+            setEditMode(false);
+            // clear contents
+            _clearAll();
+            // go back
+            navigation.goBack();
+          }
+        },
+      ],
+      { cancelable: true },
+    );
   };
 
   return (
@@ -596,7 +648,7 @@ const Posting = (props: Props): JSX.Element => {
         handlePressPostSubmit={_handlePressPostSubmit}
         followingList={filteredFollowings}
         handlePressBeneficiary={_handlePressBeneficiary}
-        handleClearAll={_clearAll}
+        handleClearAll={_handleClearAll}
         handleCancelEditing={_handleCancelEditing}
       />
       {showBeneficiaryModal && (

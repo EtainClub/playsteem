@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
+import { Alert } from 'react-native';
 import { AuthContext, PostsContext, UIContext, UserContext } from '~/contexts';
 //// navigation
 //// UIs
@@ -7,7 +8,6 @@ import { Block, Icon, Button, Input, Text, theme } from 'galio-framework';
 import { AuthorList } from '~/components';
 //// screens, views
 import { EditorView } from './EditorView';
-import { Platform } from 'react-native';
 //// utils
 //// constants
 import { MIN_EDITOR_HEIGHT } from '~/constants/utils';
@@ -179,7 +179,23 @@ const EditorContainer = (props: Props): JSX.Element => {
 
   //// clear body
   const _handlePressClear = () => {
-    setBody('');
+    // alert
+    Alert.alert(
+      'Clear body',
+      'Are you sure?',
+      [
+        {
+          text: 'No',
+          onPress: () => { },
+          style: 'cancel',
+        },
+        {
+          text: 'Yes',
+          onPress: () => { setBody(''); }
+        },
+      ],
+      { cancelable: true },
+    );
   };
 
   //// cancel the editing

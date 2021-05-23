@@ -1,5 +1,5 @@
 //// react
-import React, {useState, useEffect, useRef, useContext} from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 //// react native
 import {
   View,
@@ -10,19 +10,19 @@ import {
   TouchableOpacity,
 } from 'react-native';
 //// language
-import {useIntl} from 'react-intl';
+import { useIntl } from 'react-intl';
 //// UIs
-import {Block, Icon, Button, Input, Text, theme} from 'galio-framework';
-import {DropdownModal} from '~/components/DropdownModal';
-import {argonTheme} from '~/constants/argonTheme';
+import { Block, Icon, Button, Input, Text, theme } from 'galio-framework';
+import { DropdownModal } from '~/components/DropdownModal';
+import { argonTheme } from '~/constants/argonTheme';
 //import Autocomplete from 'react-native-dropdown-autocomplete-textinput';
 import Autocomplete from 'react-native-autocomplete-input';
-const {width, height} = Dimensions.get('screen');
+const { width, height } = Dimensions.get('screen');
 //// contexts
-import {UserContext} from '~/contexts';
-import {PostData} from '~/contexts/types';
+import { UserContext } from '~/contexts';
+import { PostData } from '~/contexts/types';
 //// components
-import {PostBody, Editor} from '~/components';
+import { PostBody, Editor } from '~/components';
 //// constants
 
 interface Props {
@@ -52,6 +52,7 @@ interface Props {
 }
 
 const PostingScreen = (props: Props): JSX.Element => {
+  console.log('posting screen props', props);
   //// props
   const {
     loggedIn,
@@ -82,19 +83,19 @@ const PostingScreen = (props: Props): JSX.Element => {
   //// render preview of posting
   const _renderPreview = () => (
     <Block>
-      <Text style={{marginLeft: 5, borderTopWidth: 2, fontWeight: 'bold'}}>
-        {intl.formatMessage({id: 'Posting.preview'})}
+      <Text style={{ marginLeft: 5, borderTopWidth: 2, fontWeight: 'bold' }}>
+        {intl.formatMessage({ id: 'Posting.preview' })}
       </Text>
-      <Block card style={{margin: 10}}>
+      <Block card style={{ margin: 10 }}>
         <PostBody body={previewBody} />
       </Block>
     </Block>
   );
 
   const rewardOptions = [
-    intl.formatMessage({id: 'Posting.powerup_50'}),
-    intl.formatMessage({id: 'Posting.powerup_100'}),
-    intl.formatMessage({id: 'Posting.no_reward'}),
+    intl.formatMessage({ id: 'Posting.powerup_50' }),
+    intl.formatMessage({ id: 'Posting.powerup_100' }),
+    intl.formatMessage({ id: 'Posting.no_reward' }),
   ];
 
   const defaultOptionText = '';
@@ -102,7 +103,7 @@ const PostingScreen = (props: Props): JSX.Element => {
     <View>
       <ScrollView>
         <Block flex>
-          <Block style={{paddingHorizontal: theme.SIZES.BASE}}>
+          <Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
             <Input
               value={title}
               editable={titleEditable}
@@ -133,18 +134,20 @@ const PostingScreen = (props: Props): JSX.Element => {
             autoCorrect={false}
             inputContainerStyle={styles.tagsInput}
             listContainerStyle={styles.tagsInput}
-            placeholder={intl.formatMessage({id: 'Posting.tags_placeholder'})}
+            placeholder={intl.formatMessage({ id: 'Posting.tags_placeholder' })}
             placeholderTextColor={argonTheme.COLORS.FACEBOOK}
             bgColor="transparent"
             onChangeText={props.handleTagsChange}
-            renderItem={({item, i}) => (
+            onSubmitEditing={() => props.handleTagsChange(tags, true)}
+            onBlur={() => props.handleTagsChange(tags, true)}
+            renderItem={({ item, i }) => (
               <TouchableOpacity
                 onPress={() => props.handleTagsChange(item, true)}>
                 <Text>{item}</Text>
               </TouchableOpacity>
             )}
           />
-          <Text style={{paddingHorizontal: theme.SIZES.BASE}} color="red">
+          <Text style={{ paddingHorizontal: theme.SIZES.BASE }} color="red">
             {tagMessage}
           </Text>
 
@@ -169,7 +172,7 @@ const PostingScreen = (props: Props): JSX.Element => {
               }
               onPress={props.handlePressBeneficiary}
               shadowless>
-              {intl.formatMessage({id: 'Posting.beneficiary_button'})}
+              {intl.formatMessage({ id: 'Posting.beneficiary_button' })}
             </Button>
           </Block>
 
@@ -181,19 +184,19 @@ const PostingScreen = (props: Props): JSX.Element => {
               lodingSize="large"
               color={argonTheme.COLORS.STEEM}>
               {editMode
-                ? intl.formatMessage({id: 'Posting.update_button'})
-                : intl.formatMessage({id: 'Posting.post_button'})}
+                ? intl.formatMessage({ id: 'Posting.update_button' })
+                : intl.formatMessage({ id: 'Posting.post_button' })}
             </Button>
             {editMode ? (
               <Button
                 onPress={props.handleCancelEditing}
                 shadowless
                 color="gray">
-                {intl.formatMessage({id: 'Posting.cancel_button'})}
+                {intl.formatMessage({ id: 'Posting.cancel_button' })}
               </Button>
             ) : (
               <Button onPress={props.handleClearAll} shadowless color="gray">
-                {intl.formatMessage({id: 'Posting.clear_button'})}
+                {intl.formatMessage({ id: 'Posting.clear_button' })}
               </Button>
             )}
           </Block>
@@ -204,7 +207,7 @@ const PostingScreen = (props: Props): JSX.Element => {
   );
 };
 
-export {PostingScreen};
+export { PostingScreen };
 
 const styles = StyleSheet.create({
   components: {
