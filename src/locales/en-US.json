@@ -244,7 +244,6 @@
     "author_reward": "Author Reward",
     "claim_reward": "Claim Reward",
     "claim_reward_prefix": "Unclaimed reward: ",
-
     "comment_benefactor_reward": "Benefactor Reward",
     "claim_reward_balance": "Claim Reward ",
     "transfer_to_vesting": "To Vesting",
@@ -260,7 +259,6 @@
     "fill_convert_request": "Convert Executed",
     "fill_transfer_from_savings": "Savings Executed",
     "fill_vesting_withdraw": "PowerDown executed",
-
     "reward_steem": "Reward: {what} STEEM",
     "claim_ok": "Claimed Successfully",
     "claim_error": "Error on claiming rewards",
@@ -383,7 +381,8 @@
     "gallery": "Gallery",
     "camera": "Camera",
     "search": "Search Posts",
-    "search_placeholder": "Which posts are your looking for?"
+    "search_placeholder": "Which posts are your looking for?",
+    "view": "Gallery View"
   },
   "Alert": {
     "open_link_fail": "Failed to open the link",

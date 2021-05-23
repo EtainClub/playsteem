@@ -36,6 +36,8 @@ const PostBodyContainer = (props: Props): JSX.Element => {
   const [selectedLink, setSelectedLink] = useState(null);
   const [postImages, setPostImages] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [showGalleryModal, setShowGalleryModal] = useState(false);
+
   //// refs
   const linkActionRef = useRef(null);
   const imageActionRef = useRef(null);
@@ -265,6 +267,12 @@ const PostBodyContainer = (props: Props): JSX.Element => {
       });
   };
 
+  const _openImageGallery = (show: boolean) => {
+    imageActionRef.current?.setModalVisible(false);
+    console.log('_openImageGallery. show?', show);
+    setShowGalleryModal(show);
+  }
+
   return (
     <PostBodyView
       body={props.body}
@@ -272,11 +280,14 @@ const PostBodyContainer = (props: Props): JSX.Element => {
       linkActionRef={linkActionRef}
       imageActionRef={imageActionRef}
       bodyFontSize={BODY_FONT_SIZES[settingsState.ui.fontIndex].size}
+      showGalleryModal={showGalleryModal}
+      imagesUrl={postImages}
       handleLinkPress={_handleLinkPress}
       copyLinkToClipboard={_copyLinkToClipboard}
       openExternalLInk={_openExternalLInk}
       onSaveImage={_onSaveImage}
       closeActionSheet={_closeActionSheet}
+      openImageGallery={_openImageGallery}
     />
   );
 };

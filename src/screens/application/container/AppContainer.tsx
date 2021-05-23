@@ -74,8 +74,23 @@ export const AppContainer = (props: Props): JSX.Element => {
     (async () =>
       await messaging()
         .getInitialNotification()
-        .then((message) => {
+        .then(async (message) => {
           console.log('[App Closed] Notification Open Listener', message);
+
+          //// handle duplicated message
+          // get message id from storage
+          const prevMmessageId = await AsyncStorage.getItem('messageId');
+          if (prevMmessageId) {
+            // set message id to storage
+            await AsyncStorage.setItem('messageId', message.messageId);
+            // check duplication
+            if (message.messageId === prevMmessageId) {
+              console.log('the message is duplicated');
+              return;
+            }
+          }
+
+          // handle the message
           if (message) handleRemoteMessages(message, false);
         }))();
 

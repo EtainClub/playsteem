@@ -244,7 +244,6 @@
     "author_reward": "저자 보상",
     "claim_reward": "보상 청구",
     "claim_reward_prefix": "미청구 보상: ",
-
     "comment_benefactor_reward": "베네피셔리 보상",
     "claim_reward_balance": "보상 청구 ",
     "transfer_to_vesting": "파워 업",
@@ -260,7 +259,6 @@
     "fill_convert_request": "Convert Executed",
     "fill_transfer_from_savings": "Savings Executed",
     "fill_vesting_withdraw": "파워 다운 진행",
-
     "reward_steem": "보상: {what} STEEM",
     "claim_ok": "보상 청구 성공",
     "claim_error": "보상 청구 에러",
@@ -383,7 +381,8 @@
     "gallery": "갤러리",
     "camera": "카메라",
     "search": "포스트 검색",
-    "search_placeholder": "찾고자 하는 포스트를 입력하세요."
+    "search_placeholder": "찾고자 하는 포스트를 입력하세요.",
+    "view": "갤러리 보기"
   },
   "Alert": {
     "open_link_fail": "링크 열기 실패",

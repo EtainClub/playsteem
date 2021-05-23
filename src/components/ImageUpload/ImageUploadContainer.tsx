@@ -71,14 +71,14 @@ const ImageUploadContainer = (props: Props): JSX.Element => {
   const _handleCameraUpload = () => {
     // reset close action sheet flag
     setCloseActionSheet(false);
-    console.log('[_handleCameraUpload]');
+    //    console.log('[_handleCameraUpload]');
     ImagePicker.openCamera({
       includeBase64: true,
       mediaType: 'photo',
       compressImageMaxWidth: 1280,
     })
       .then((image) => {
-        console.log('[_handleCameraUpload]. selected images', image);
+        //        console.log('[_handleCameraUpload]. selected images', image);
         _handleImageUpload([image]);
       })
       .catch((error) => {
@@ -95,7 +95,7 @@ const ImageUploadContainer = (props: Props): JSX.Element => {
 
   //// handle image upload
   const _handleImageUpload = async (images: any) => {
-    console.log('[ImageUpload] _uploadPhoto. images', images);
+    //    console.log('[ImageUpload] _uploadPhoto. images', images);
     // close action sheet
     setCloseActionSheet(true);
     //
@@ -120,7 +120,7 @@ const ImageUploadContainer = (props: Props): JSX.Element => {
   const _uploadImage = async (image: ImageOrVideo, username: string, password: string) => {
     // sign the image
     let sign = await signImage(image, username, password);
-    console.log('[_uploadPhoto] sign', sign);
+    //    console.log('[_uploadPhoto] sign', sign);
     // check sanity
     if (!sign) {
       setUploading(false);
@@ -143,6 +143,7 @@ const ImageUploadContainer = (props: Props): JSX.Element => {
           const url = `![](${res.data.url})`;
           props.getImageURL(url);
         }
+        return;
       })
       .catch((error) => {
         console.log('Failed to upload image', error, error.message);
@@ -157,7 +158,16 @@ const ImageUploadContainer = (props: Props): JSX.Element => {
         }
         // clear uploading
         setUploading(false);
+        return;
       });
+
+    // set timeout (15 seconds)
+    setTimeout(() => {
+      // clear uploading
+      setUploading(false);
+      // toast
+      setToastMessage('uploading timeout (15 seconds)');
+    }, 15000);
   };
 
   return (
