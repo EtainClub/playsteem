@@ -631,6 +631,7 @@ const SettingsContainer = (props: Props): JSX.Element => {
       if (result.data) {
         // update the db
         setToastMessage(intl.formatMessage({ id: 'Easter.claim_act_success' }));
+        setNumACTs(numACTs + 1);
       } else {
         setToastMessage(intl.formatMessage({ id: 'Easter.claim_act_fail' }));
       }
