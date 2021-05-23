@@ -177,7 +177,7 @@ p {
 
   return (
     <Block flex>
-      <Modal key='0' visible={showGalleryModal} transparent={true}>
+      <Modal visible={showGalleryModal} transparent={true}>
         <ImageViewer
           imageUrls={imagesUrl}
           enableSwipeDown
