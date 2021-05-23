@@ -1,5 +1,5 @@
 //// react
-import React, {useState, useEffect, useContext} from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 //// react native
 import {
   Alert,
@@ -14,23 +14,23 @@ import {
   Linking,
 } from 'react-native';
 //// language
-import {useIntl} from 'react-intl';
+import { useIntl } from 'react-intl';
 //// firebase
-import {firebase} from '@react-native-firebase/functions';
+import { firebase } from '@react-native-firebase/functions';
 //// UIs
-import {Button, Icon, Block, Input, Text, theme} from 'galio-framework';
-import {materialTheme} from '~/constants/materialTheme';
-const {height, width} = Dimensions.get('window');
-import {DropdownModal} from '~/components';
+import { Button, Icon, Block, Input, Text, theme } from 'galio-framework';
+import { materialTheme } from '~/constants/materialTheme';
+const { height, width } = Dimensions.get('window');
+import { DropdownModal } from '~/components';
 import ModalDropdown from 'react-native-modal-dropdown';
 //// storage
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-community/async-storage';
 //// contexts
-import {AuthContext, SettingsContext, UIContext} from '~/contexts';
+import { AuthContext, SettingsContext, UIContext } from '~/contexts';
 //// screens
-import {SettingsScreen} from '../screen/Settings';
-import {DNDTimes} from '~/components';
+import { SettingsScreen } from '../screen/Settings';
+import { DNDTimes } from '~/components';
 //// constants
 import {
   TERMS_URL,
@@ -43,12 +43,12 @@ import {
   APP_ANDROID_VERSION,
   APP_IOS_VERSION,
 } from '~/constants';
-import {SUPPORTED_LOCALES} from '~/locales';
+import { SUPPORTED_LOCALES } from '~/locales';
 
 //// times
-import moment, {locale} from 'moment';
-import {StorageSchema} from '~/contexts/types';
-import {setBlockchainClient} from '~/providers/steem/dsteemApi';
+import moment, { locale } from 'moment';
+import { StorageSchema } from '~/contexts/types';
+import { setBlockchainClient } from '~/providers/steem/dsteemApi';
 //// constants
 // import {
 //   argonTheme,
@@ -102,19 +102,19 @@ export enum SettingUITypes {
 // app store, google play link
 const APP_LINK = Platform.OS === 'android' ? GOOGLEPLAY : APPSTORE;
 
-interface Props {}
+interface Props { }
 const SettingsContainer = (props: Props): JSX.Element => {
   //// props
   //// language
   const intl = useIntl();
   //// contexts
-  const {authState, processLogout} = useContext(AuthContext);
+  const { authState, processLogout } = useContext(AuthContext);
   const {
     settingsState,
     updateSettingSchema,
     getAllSettingsFromStorage,
   } = useContext(SettingsContext);
-  const {uiState, setLanguageParam, setToastMessage} = useContext(UIContext);
+  const { uiState, setLanguageParam, setToastMessage } = useContext(UIContext);
   //// states
   const [username, setUsername] = useState(null);
   // switches
@@ -182,10 +182,19 @@ const SettingsContainer = (props: Props): JSX.Element => {
         [SettingUITypes.FOLLOW]: false,
         [SettingUITypes.REBLOG]: false,
       };
-      // push notifications
-      pushNotifications.forEach((item: string) => {
-        _switchStates = {..._switchStates, [item]: true};
-      });
+      try {
+        // check if the push is object
+        let _pushNotifications = pushNotifications;
+        if (typeof _pushNotifications == 'object') {
+          _pushNotifications = Object.values(pushNotifications);
+        }
+        // push notifications
+        _pushNotifications.forEach((item: string) => {
+          _switchStates = { ..._switchStates, [item]: true };
+        });
+      } catch (error) {
+        console.log('failed to set switches of push notification', error);
+      }
       // securities: {useOTP, useAutoLogin}
       _switchStates = {
         ..._switchStates,
@@ -193,7 +202,7 @@ const SettingsContainer = (props: Props): JSX.Element => {
         [SettingUITypes.USE_AUTO_LOGIN]: securities.useAutoLogin,
       };
       // ui
-      _switchStates = {..._switchStates, [SettingUITypes.NSFW]: ui.nsfw};
+      _switchStates = { ..._switchStates, [SettingUITypes.NSFW]: ui.nsfw };
       //// dropdown states
       // blockchain rpc server
       setRPCServer(blockchains.rpc);
@@ -215,7 +224,7 @@ const SettingsContainer = (props: Props): JSX.Element => {
           dndTimes.endTime,
         );
         // switch
-        _switchStates = {..._switchStates, [SettingUITypes.DND_TIMES]: true};
+        _switchStates = { ..._switchStates, [SettingUITypes.DND_TIMES]: true };
       }
 
       // now set switch states
@@ -271,7 +280,7 @@ const SettingsContainer = (props: Props): JSX.Element => {
 
     console.log('[_handleToggleSwitch] key, value', key, value);
     // update the switch state
-    setSwitchStates({...switchStates, [key]: value});
+    setSwitchStates({ ...switchStates, [key]: value });
     // firebase user doc ref
     const userRef = firestore().doc(`users/${username}`);
     // securities
@@ -350,7 +359,7 @@ const SettingsContainer = (props: Props): JSX.Element => {
         break;
       case SettingUITypes.NSFW:
         // build structure
-        const _ui = {...settingsState.ui, nsfw: value};
+        const _ui = { ...settingsState.ui, nsfw: value };
         // update in context state
         updateSettingSchema(username, StorageSchema.UI, _ui);
         break;
@@ -386,17 +395,17 @@ const SettingsContainer = (props: Props): JSX.Element => {
         // update state
         setRPCServer(value);
         // build structure
-        _blockchains = {rpc: value, image: imageServer};
+        _blockchains = { rpc: value, image: imageServer };
         // update in context state
         updateSettingSchema(username, StorageSchema.BLOCKCHAINS, _blockchains);
         // set blockchain client
         const clientResult = await setBlockchainClient(value);
         if (!clientResult) {
-          setToastMessage(intl.formatMessage({id: 'blockchain_client_error'}));
+          setToastMessage(intl.formatMessage({ id: 'blockchain_client_error' }));
           return;
         }
         // show guide message
-        setToastMessage(intl.formatMessage({id: 'Settings.msg_restart'}));
+        setToastMessage(intl.formatMessage({ id: 'Settings.msg_restart' }));
         break;
       case SettingUITypes.IMAGE_SERVER:
         // check if the input value is the same as the current value
@@ -404,11 +413,11 @@ const SettingsContainer = (props: Props): JSX.Element => {
         // update state
         setImageServer(value);
         // build structure
-        _blockchains = {rpc: rpcServer, image: value};
+        _blockchains = { rpc: rpcServer, image: value };
         // update in context state
         updateSettingSchema(username, StorageSchema.BLOCKCHAINS, _blockchains);
         // show guide message
-        setToastMessage(intl.formatMessage({id: 'Settings.msg_restart'}));
+        setToastMessage(intl.formatMessage({ id: 'Settings.msg_restart' }));
         break;
       case SettingUITypes.LOCALE:
         // build structure
@@ -417,7 +426,7 @@ const SettingsContainer = (props: Props): JSX.Element => {
           _index = index;
           return item.name === value;
         }).locale;
-        _languages = {locale: _locale, translation: translation};
+        _languages = { locale: _locale, translation: translation };
         // update state
         setLocale(_locale);
         // update in firestore
@@ -429,7 +438,7 @@ const SettingsContainer = (props: Props): JSX.Element => {
         // update in context state
         updateSettingSchema(username, StorageSchema.LANGUAGES, _languages);
         // show guide message
-        setToastMessage(intl.formatMessage({id: 'Settings.msg_restart'}));
+        setToastMessage(intl.formatMessage({ id: 'Settings.msg_restart' }));
         break;
       case SettingUITypes.TRANSLATION:
         // check if the input value is the same as the current value
@@ -437,7 +446,7 @@ const SettingsContainer = (props: Props): JSX.Element => {
         // update state
         setTranslation(value);
         // build structure
-        _languages = {locale: locale, translation: value};
+        _languages = { locale: locale, translation: value };
         // update in context state
         updateSettingSchema(username, StorageSchema.LANGUAGES, _languages);
         break;
@@ -447,7 +456,7 @@ const SettingsContainer = (props: Props): JSX.Element => {
         // update state
         setFontIndex(index);
         // build structure
-        _ui = {...settingsState.ui, fontIndex: index};
+        _ui = { ...settingsState.ui, fontIndex: index };
         // update in context state
         updateSettingSchema(username, StorageSchema.UI, _ui);
         break;
@@ -479,31 +488,31 @@ const SettingsContainer = (props: Props): JSX.Element => {
           ) {
             // show update modal
             Alert.alert(
-              intl.formatMessage({id: 'Settings.app_version'}),
+              intl.formatMessage({ id: 'Settings.app_version' }),
               intl.formatMessage(
-                {id: 'Settings.version_update'},
-                {what: latestVersion},
+                { id: 'Settings.version_update' },
+                { what: latestVersion },
               ),
               [
-                {text: intl.formatMessage({id: 'no'}), style: 'cancel'},
+                { text: intl.formatMessage({ id: 'no' }), style: 'cancel' },
                 {
-                  text: intl.formatMessage({id: 'yes'}),
+                  text: intl.formatMessage({ id: 'yes' }),
                   onPress: () => Linking.openURL('https://playsteem.app'),
                 },
               ],
-              {cancelable: true},
+              { cancelable: true },
             );
           } else {
             // show confirm modal
             Alert.alert(
-              intl.formatMessage({id: 'Settings.app_version'}),
-              intl.formatMessage({id: 'Settings.version_body'}),
+              intl.formatMessage({ id: 'Settings.app_version' }),
+              intl.formatMessage({ id: 'Settings.version_body' }),
               [
                 {
-                  text: intl.formatMessage({id: 'yes'}),
+                  text: intl.formatMessage({ id: 'yes' }),
                 },
               ],
-              {cancelable: true},
+              { cancelable: true },
             );
           }
         });
@@ -540,31 +549,31 @@ const SettingsContainer = (props: Props): JSX.Element => {
           ) {
             // show update modal
             Alert.alert(
-              intl.formatMessage({id: 'Settings.app_version'}),
+              intl.formatMessage({ id: 'Settings.app_version' }),
               intl.formatMessage(
-                {id: 'Settings.version_update'},
-                {what: latestVersion},
+                { id: 'Settings.version_update' },
+                { what: latestVersion },
               ),
               [
-                {text: intl.formatMessage({id: 'no'}), style: 'cancel'},
+                { text: intl.formatMessage({ id: 'no' }), style: 'cancel' },
                 {
-                  text: intl.formatMessage({id: 'yes'}),
+                  text: intl.formatMessage({ id: 'yes' }),
                   onPress: () => Linking.openURL(APP_LINK),
                 },
               ],
-              {cancelable: true},
+              { cancelable: true },
             );
           } else {
             // show confirm modal
             Alert.alert(
-              intl.formatMessage({id: 'Settings.app_version'}),
-              intl.formatMessage({id: 'Settings.version_body'}),
+              intl.formatMessage({ id: 'Settings.app_version' }),
+              intl.formatMessage({ id: 'Settings.version_body' }),
               [
                 {
-                  text: intl.formatMessage({id: 'confirm'}),
+                  text: intl.formatMessage({ id: 'confirm' }),
                 },
               ],
-              {cancelable: true},
+              { cancelable: true },
             );
           }
         });
@@ -588,7 +597,7 @@ const SettingsContainer = (props: Props): JSX.Element => {
     if (_count >= THRESHOLD_EASTER_CLICKS) {
       //// activate the easter egg item
       // build structure
-      const _eggs = {...settingsState.easterEggs, claimACT: true};
+      const _eggs = { ...settingsState.easterEggs, claimACT: true };
       console.log('_handleEasterEgg. found. eggs', _eggs);
       // update in context state
       updateSettingSchema(username, StorageSchema.EASTER_EGGS, _eggs);
@@ -621,13 +630,13 @@ const SettingsContainer = (props: Props): JSX.Element => {
       console.log('_claimACT. result', result);
       if (result.data) {
         // update the db
-        setToastMessage(intl.formatMessage({id: 'Easter.claim_act_success'}));
+        setToastMessage(intl.formatMessage({ id: 'Easter.claim_act_success' }));
       } else {
-        setToastMessage(intl.formatMessage({id: 'Easter.claim_act_fail'}));
+        setToastMessage(intl.formatMessage({ id: 'Easter.claim_act_fail' }));
       }
     } catch (error) {
       console.log('failed to claim ACT');
-      setToastMessage(intl.formatMessage({id: 'Easter.claim_act_error'}));
+      setToastMessage(intl.formatMessage({ id: 'Easter.claim_act_error' }));
     }
   };
 
@@ -706,12 +715,12 @@ const SettingsContainer = (props: Props): JSX.Element => {
     return (
       <Block style={styles.rows}>
         <TouchableOpacity onPress={handlePressButton}>
-          <Block row middle space="between" style={{paddingTop: 7}}>
+          <Block row middle space="between" style={{ paddingTop: 7 }}>
             <Text size={14}>{text}</Text>
             <Icon
               name="angle-right"
               family="font-awesome"
-              style={{paddingRight: 5}}
+              style={{ paddingRight: 5 }}
             />
           </Block>
         </TouchableOpacity>
@@ -720,7 +729,7 @@ const SettingsContainer = (props: Props): JSX.Element => {
   };
 
   ////
-  const _renderItem = ({item}) => {
+  const _renderItem = ({ item }) => {
     // hide easter egg until it is not found
     if (item.easter && !settingsState.easterEggs.claimACT) return;
     switch (item.type) {
@@ -753,15 +762,15 @@ const SettingsContainer = (props: Props): JSX.Element => {
                   <Block card>
                     {_renderClockButton(
                       intl.formatMessage(
-                        {id: 'Settings.start_clock'},
-                        {what: _convertTime(startDNDTime)},
+                        { id: 'Settings.start_clock' },
+                        { what: _convertTime(startDNDTime) },
                       ),
                       () => setShowStartClock(true),
                     )}
                     {_renderClockButton(
                       intl.formatMessage(
-                        {id: 'Settings.end_clock'},
-                        {what: _convertTime(endDNDTime)},
+                        { id: 'Settings.end_clock' },
+                        { what: _convertTime(endDNDTime) },
                       ),
                       () => setShowEndClock(true),
                     )}
@@ -775,12 +784,12 @@ const SettingsContainer = (props: Props): JSX.Element => {
         return (
           <Block style={styles.rows}>
             <TouchableOpacity onPress={() => _handlePressButton(item.id)}>
-              <Block row middle space="between" style={{paddingTop: 7}}>
+              <Block row middle space="between" style={{ paddingTop: 7 }}>
                 <Text size={14}>{item.title}</Text>
                 <Icon
                   name="angle-right"
                   family="font-awesome"
-                  style={{paddingRight: 5}}
+                  style={{ paddingRight: 5 }}
                 />
               </Block>
             </TouchableOpacity>
@@ -813,7 +822,7 @@ const SettingsContainer = (props: Props): JSX.Element => {
         }
         return (
           <Block row middle space="between" style={styles.rows}>
-            <Text size={14} style={{top: 7}}>
+            <Text size={14} style={{ top: 7 }}>
               {item.title}
             </Text>
             <DropdownModal
@@ -847,7 +856,7 @@ const SettingsContainer = (props: Props): JSX.Element => {
         return (
           <Block style={styles.rows}>
             <TouchableOpacity onPress={() => _handlePressText(item.id)}>
-              <Block row middle space="between" style={{paddingTop: 7}}>
+              <Block row middle space="between" style={{ paddingTop: 7 }}>
                 <Text size={14}>{item.title}</Text>
                 <Text size={14}>{defaultText}</Text>
               </Block>
@@ -876,7 +885,7 @@ const SettingsContainer = (props: Props): JSX.Element => {
   );
 };
 
-export {SettingsContainer};
+export { SettingsContainer };
 
 const styles = StyleSheet.create({
   settings: {

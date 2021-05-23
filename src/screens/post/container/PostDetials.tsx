@@ -1,23 +1,23 @@
 // post details container
 //// react
-import React, {useState, useEffect, useContext} from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 //// react native
-import {View, ActivityIndicator, Platform} from 'react-native';
+import { View, ActivityIndicator, Platform } from 'react-native';
 //// language
-import {useIntl} from 'react-intl';
+import { useIntl } from 'react-intl';
 //// config
 import Config from 'react-native-config';
 //// firebase
-import {firebase} from '@react-native-firebase/functions';
+import { firebase } from '@react-native-firebase/functions';
 //// axios
 import axios from 'axios';
 //// components
 // screens
-import {PostDetailsScreen} from '../screen/PostDetails';
+import { PostDetailsScreen } from '../screen/PostDetails';
 // dsteem api
-import {fetchComments, fetchRecentComments} from '~/providers/steem/dsteemApi';
-import {argonTheme} from '~/constants/argonTheme';
-import {navigate} from '~/navigation/service';
+import { fetchComments, fetchRecentComments } from '~/providers/steem/dsteemApi';
+import { argonTheme } from '~/constants/argonTheme';
+import { navigate } from '~/navigation/service';
 import {
   PostRef,
   PostData,
@@ -32,8 +32,8 @@ import {
   UserContext,
   SettingsContext,
 } from '~/contexts';
-import {generateCommentPermlink, makeJsonMetadataComment} from '~/utils/editor';
-import {TARGET_BLOCKCHAIN} from '~/constants/blockchain';
+import { generateCommentPermlink, makeJsonMetadataComment } from '~/utils/editor';
+import { TARGET_BLOCKCHAIN } from '~/constants/blockchain';
 
 interface Props {
   navigation: any;
@@ -41,12 +41,12 @@ interface Props {
 
 const PostDetails = (props: Props): JSX.Element => {
   // props
-  const {navigation} = props;
+  const { navigation } = props;
   //// language
   const intl = useIntl();
   // contexts
-  const {authState} = useContext(AuthContext);
-  const {userState, updateVoteAmount} = useContext(UserContext);
+  const { authState } = useContext(AuthContext);
+  const { userState, updateVoteAmount } = useContext(UserContext);
   const {
     postsState,
     submitPost,
@@ -56,8 +56,8 @@ const PostDetails = (props: Props): JSX.Element => {
     flagPost,
   } = useContext(PostsContext);
   const postIndex = postsState[postsState.postsType].index;
-  const {setToastMessage, speakBody} = useContext(UIContext);
-  const {settingsState} = useContext(SettingsContext);
+  const { setToastMessage, speakBody } = useContext(UIContext);
+  const { settingsState } = useContext(SettingsContext);
   //// states
   const [loading, setLoading] = useState(true);
   const [postDetails, setPostDetails] = useState<PostData>(null);
@@ -73,6 +73,7 @@ const PostDetails = (props: Props): JSX.Element => {
   const [parentPost, setParentPost] = useState<PostData>(null);
   const [needFetching, setNeedFetching] = useState(false);
   const [commentY, setCommentY] = useState(0);
+  const [hideHeader, setHideHeader] = useState(false);
   //////// events
   // event: account change
   useEffect(() => {
@@ -175,7 +176,7 @@ const PostDetails = (props: Props): JSX.Element => {
     if (!details) return;
     // fetch database
     if (authState.loggedIn) {
-      const {bookmarked} = await fetchDatabaseState(
+      const { bookmarked } = await fetchDatabaseState(
         postsState.postRef,
         authState.currentCredentials.username,
       );
@@ -239,7 +240,7 @@ const PostDetails = (props: Props): JSX.Element => {
     // check sanity
     if (comment === '') return false;
 
-    const {username, password} = authState.currentCredentials;
+    const { username, password } = authState.currentCredentials;
     const permlink = generateCommentPermlink(username);
     const jsonMeta = makeJsonMetadataComment(
       postsState.postDetails.metadata.tags || [TARGET_BLOCKCHAIN],
@@ -272,13 +273,13 @@ const PostDetails = (props: Props): JSX.Element => {
     // append a new tag to tag list
     appendTag(tag);
     // navigate to feed by specifying the feed screen
-    props.navigation.navigate('Feed', {screen: 'Feed'});
+    props.navigation.navigate('Feed', { screen: 'Feed' });
   };
 
   const _translateLanguage = async () => {
     if (!authState.loggedIn) {
       console.log('you need to log in to translate a post');
-      setToastMessage(intl.formatMessage({id: 'PostDetails.need_login'}));
+      setToastMessage(intl.formatMessage({ id: 'PostDetails.need_login' }));
       return;
     }
     const _showOriginal = !showOriginal;
@@ -332,7 +333,7 @@ const PostDetails = (props: Props): JSX.Element => {
 
       const newPostDetails = {
         ...postDetails,
-        state: {...postDetails.state, title: translatedTitle},
+        state: { ...postDetails.state, title: translatedTitle },
         body: translatedBody,
       };
       // TODO: save the translation for re-translate
@@ -345,7 +346,7 @@ const PostDetails = (props: Props): JSX.Element => {
     } catch (error) {
       console.log('failed to translate', error);
       setToastMessage(
-        intl.formatMessage({id: 'PostDetails.translation_error'}),
+        intl.formatMessage({ id: 'PostDetails.translation_error' }),
       );
     }
   };
@@ -365,6 +366,8 @@ const PostDetails = (props: Props): JSX.Element => {
       index={postIndex}
       comments={comments}
       commentY={commentY}
+      hideHeader={hideHeader}
+      toggleHideHeader={(value) => setHideHeader(value)}
       updateCommentY={(height) => setCommentY(height)}
       handleRefresh={_onRefresh}
       handleSubmitComment={_onSubmitComment}
@@ -373,10 +376,10 @@ const PostDetails = (props: Props): JSX.Element => {
       flagPost={_flagPost}
     />
   ) : (
-    <View style={{top: 20}}>
+    <View style={{ top: 20 }}>
       <ActivityIndicator color={argonTheme.COLORS.ERROR} size="large" />
     </View>
   );
 };
 
-export {PostDetails};
+export { PostDetails };
