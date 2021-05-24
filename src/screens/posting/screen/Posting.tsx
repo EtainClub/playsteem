@@ -138,7 +138,7 @@ const PostingScreen = (props: Props): JSX.Element => {
             bgColor="transparent"
             onChangeText={props.handleTagsChange}
             onSubmitEditing={() => props.handleTagsChange(tags, true)}
-            onBlur={() => props.handleTagsChange(tags, true)}
+            // onBlur={() => props.handleHideTagsHistory(true)}
             renderItem={({ item, i }) => (
               <TouchableOpacity
                 onPress={() => props.handleTagsChange(item, true)}>

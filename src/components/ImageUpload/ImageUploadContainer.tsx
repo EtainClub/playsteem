@@ -56,7 +56,6 @@ const ImageUploadContainer = (props: Props): JSX.Element => {
       multiple: true,
       mediaType: 'photo',
       smartAlbums: ['UserLibrary', 'Favorites', 'PhotoStream', 'Panoramas', 'Bursts'],
-      compressImageMaxWidth: 1280,
     })
       .then((images) => {
         console.log('[_handlePhotoUpload]. selected images', images);
@@ -75,7 +74,6 @@ const ImageUploadContainer = (props: Props): JSX.Element => {
     ImagePicker.openCamera({
       includeBase64: true,
       mediaType: 'photo',
-      compressImageMaxWidth: 1280,
     })
       .then((image) => {
         //        console.log('[_handleCameraUpload]. selected images', image);
