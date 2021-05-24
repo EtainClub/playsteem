@@ -89,9 +89,12 @@ export const AppContainer = (props: Props): JSX.Element => {
               return;
             }
           }
-
-          // handle the message
-          if (message) handleRemoteMessages(message, false);
+          // wait for some seconds then handle the message
+          setTimeout(() => {
+            console.log('timeout. now navigate');
+            // handle the message
+            if (message) handleRemoteMessages(message, false);
+          }, 3000);
         }))();
 
     return () => {
@@ -115,25 +118,25 @@ export const AppContainer = (props: Props): JSX.Element => {
   //// not used
   const _handleBgPushMessage = async () => {
     // // check if background push message exists
-    const _message = await AsyncStorage.getItem(
-      StorageSchema.BG_PUSH_MESSAGE || 'bgPushMessage',
-    );
-    if (_message) {
-      // handle
-      const bgPushMessage = JSON.parse(_message);
-      console.log('_handleBgPushMessage', bgPushMessage);
-      // remove the bg message
-      await AsyncStorage.removeItem(
-        StorageSchema.BG_PUSH_MESSAGE || 'bgPushMessage',
-      );
-      // navigate
-      // TODO: how much time is required??? move this to the resolve auth?
-      setTimeout(() => {
-        console.log('timeout. now navigate');
-        // show alert dialog
-        handleRemoteMessages(bgPushMessage, false);
-      }, 3000);
-    }
+    // const _message = await AsyncStorage.getItem(
+    //   StorageSchema.BG_PUSH_MESSAGE || 'bgPushMessage',
+    // );
+    // if (_message) {
+    //   // handle
+    //   const bgPushMessage = JSON.parse(_message);
+    //   console.log('_handleBgPushMessage', bgPushMessage);
+    //   // remove the bg message
+    //   await AsyncStorage.removeItem(
+    //     StorageSchema.BG_PUSH_MESSAGE || 'bgPushMessage',
+    //   );
+    //   // wait for navigation is ready
+    //   // TODO: how much time is required??? move this to the resolve auth?
+    //   setTimeout(() => {
+    //     console.log('timeout. now navigate');
+    //     // show alert dialog
+    //     handleRemoteMessages(bgPushMessage, false);
+    //   }, 3000);
+    // }
   };
 
   // handle push notification messages

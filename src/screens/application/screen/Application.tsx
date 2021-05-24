@@ -46,7 +46,7 @@ const ApplicationScreen = ({
         ref={(navigationRef: NavigationContainerRef) => {
           setTopLevelNavigator(navigationRef);
         }}
-      // onReady={handleBgPushMessage}
+        onReady={handleBgPushMessage}
       >
         <Screens />
       </NavigationContainer>
