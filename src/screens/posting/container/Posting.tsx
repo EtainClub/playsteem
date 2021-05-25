@@ -92,8 +92,12 @@ const Posting = (props: Props): JSX.Element => {
     // get following
     if (authState.loggedIn) {
       const { username } = authState.currentCredentials;
+
       // get draft only if not edit mode
-      if (!uiState.editMode) _getDraftFromStorage();
+      if (!uiState.editMode) {
+        console.log('effect. currentCredentials');
+        _getDraftFromStorage();
+      }
       // get following list
       _getFollowingList(username);
       // initialize beneficiaries
@@ -109,7 +113,10 @@ const Posting = (props: Props): JSX.Element => {
   useFocusEffect(
     useCallback(() => {
       if (authState.loggedIn) {
-        if (!uiState.editMode) _getDraftFromStorage();
+        if (!uiState.editMode) {
+          console.log('effect. focus callback');
+          _getDraftFromStorage();
+        }
         // get tags history of the user
         _getPostingTagsHistory();
       }
@@ -150,7 +157,9 @@ const Posting = (props: Props): JSX.Element => {
       // set preview
       setPreviewBody(_body);
     } else {
-      _getDraftFromStorage();
+      // no need to get draft in this event
+      //      console.log('effect. editMode');
+      //      _getDraftFromStorage();
     }
   }, [uiState.editMode]);
 
@@ -539,6 +548,11 @@ const Posting = (props: Props): JSX.Element => {
 
   //// get a single item from storage
   const _getDraftFromStorage = async () => {
+    // check sanity
+    if (uiState.editMode) {
+      return;
+    }
+
     const { username } = authState.currentCredentials;
     const key = `${username}_${StorageSchema.DRAFT}`;
     const data = await _getItemFromStorage(key);
