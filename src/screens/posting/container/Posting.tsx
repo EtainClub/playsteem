@@ -569,7 +569,7 @@ const Posting = (props: Props): JSX.Element => {
   const _handleClearAll = () => {
     // alert
     Alert.alert(
-      'Cancel Editing',
+      'Clear All',
       'Are you sure?',
       [
         {
