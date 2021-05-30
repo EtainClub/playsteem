@@ -1,5 +1,6 @@
 # custom
 .env
+functions/
 *.apk
 *.mp4
 android/app/google-services.json

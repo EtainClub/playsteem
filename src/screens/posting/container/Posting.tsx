@@ -368,6 +368,18 @@ const Posting = (props: Props): JSX.Element => {
       }
 
       ////// post process
+
+      //// auto vote the post
+      // get the last voting time from storage
+      // if it is within 24h, then request auto voting right away
+      // when the response of the request is received, then updat the last voting time from storage
+      // what if a user has multiple accounts? store the voting time with the account
+
+      // if it is not within 24h, request auto voting by setting timer
+      // how to get response? and update the voting time??
+      // store the voting time in firebase
+
+
       // store the community and posting indices in settings
       const postingSetting = {
         ...settingsState.ui,

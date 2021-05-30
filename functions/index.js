@@ -263,6 +263,14 @@ exports.createAccountRequest = functions.https.onCall(async (data, context) => {
   }
 });
 
+//// request to vote
+exports.voteRequest = functions.https.onCall(async (data, context) => {
+  // check if the user is not in the manual voting list, which is stored in firestore?
+  // get the last voting time from firestore of the user
+  // if it is within 24h, set timer to vote 
+  // if not, vote right away
+});
+
 /////// helper functions
 
 // check availabled claimed token
