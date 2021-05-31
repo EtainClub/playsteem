@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { Alert } from 'react-native';
 //// react navigation
 import { useFocusEffect } from '@react-navigation/native';
+import { firebase } from '@react-native-firebase/functions';
 //// storage
 import AsyncStorage from '@react-native-community/async-storage';
 import { useIntl } from 'react-intl';
@@ -400,6 +401,21 @@ const Posting = (props: Props): JSX.Element => {
       setPosting(false);
       // clear all
       _clearAll();
+
+      //// request to vote
+      // only for new post (not updating the post)
+      if (!originalPost) {
+        const voteOptions = {
+          author: postingContent.author,
+          permlink: postingContent.permlink,
+        };
+        // request
+        const firebaseResult = await firebase
+          .functions()
+          .httpsCallable('voteRequest')(voteOptions);
+        console.log('Posting. submitPost. vote Request result', firebaseResult);
+      }
+
       // navigate feed. need to refresh
       navigate({ name: 'Feed' });
       return;

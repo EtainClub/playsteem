@@ -265,10 +265,71 @@ exports.createAccountRequest = functions.https.onCall(async (data, context) => {
 
 //// request to vote
 exports.voteRequest = functions.https.onCall(async (data, context) => {
-  // check if the user is not in the manual voting list, which is stored in firestore?
-  // get the last voting time from firestore of the user
-  // if it is within 24h, set timer to vote 
-  // if not, vote right away
+  const VOTING_WEIGHT = 15;
+  const TIME_24H_MILLS = 3600 * 1000;
+  // get creator account
+  const creator = functions.config().creator.account;
+  // need to create new
+  const postingWif = functions.config().creator.postingwif;
+
+  //// get username requested the vote
+  const { author, permlink } = data;
+
+  //// check if the user is not in the manual voting list, which is stored in firestore?
+  const votingRef = admin.firestore().collection('manual_voting').doc(`${author}`);
+  votingRef.get().then((snapshot) => {
+    if (snapshot.exists) {
+      console.log('document exits. skip the process');
+      return;
+    }
+    console.log('the author does not exist in manual voting list');
+    // get user
+    const userRef = admin.firestore().doc(`users/${author}`);
+    userRef.get().then((doc) => {
+      console.log('user doc data', doc.data());
+      const lastVotingAt = doc.data().lastVotingAt;
+      if (!lastVotingAt) {
+        console.log('last voting does not exist');
+        // vote
+        _votePost({
+          voter: creator,
+          postingWif: postingWif,
+          author: author,
+          permlink: permlink,
+          weight: VOTING_WEIGHT
+        });
+      } else {
+        const currentTime = new Date().getTime();
+        console.log('current time', currentTime);
+        console.log('last voting time', lastVotingAt.toMillis());
+        const timeDiff = currentTime - lastVotingAt.toMillis();
+        console.log('time after the last voting in hours', timeDiff / (1000 * 3600));
+        if (timeDiff < TIME_24H_MILLS) {
+          // set timer to vote
+          setTimeout(() => {
+            console.log('vote by timeout in hours', (TIME_24H_MILLS - timeDiff) * 1000 * 3600);
+            _votePost({
+              voter: creator,
+              postingWif: postingWif,
+              author: author,
+              permlink: permlink,
+              weight: VOTING_WEIGHT
+            });
+          }, TIME_24H_MILLS - timeDiff);
+        } else {
+          // vote right away
+          // voteRightAway() -> update the lastVotingAt (if not exist, create one)
+          _votePost({
+            voter: creator,
+            postingWif: postingWif,
+            author: author,
+            permlink: permlink,
+            weight: VOTING_WEIGHT
+          });
+        }
+      }
+    });
+  });
 });
 
 /////// helper functions
@@ -329,3 +390,36 @@ const _updateACTs = (creator) => {
     })
     .catch((error) => console.log('failed to update the ACT', error));
 };
+
+// vote
+const _votePost = async ({ voter, postingWif, author, permlink, weight }) => {
+  //// vote
+  const vote = {
+    voter,
+    author,
+    permlink,
+    weight: weight * 100,
+  };
+
+  const privateKey = dsteem.PrivateKey.from(postingWif);
+
+  if (privateKey) {
+    try {
+      const result = await client.broadcast.vote(vote, privateKey);
+      if (result) {
+        console.log('voted');
+        // update the lastVotingAt of the author
+        // get user
+        const userRef = admin.firestore().doc(`users/${author}`);
+        await userRef.get().then((doc) => {
+          userRef.update({ lastVotingAt: new Date() });
+        });
+        return result;
+      }
+    } catch (error) {
+      console.log('failed to vote', error);
+    }
+    return null;
+  }
+  console.log('the private key is wrong');
+}
