@@ -265,8 +265,18 @@ exports.createAccountRequest = functions.https.onCall(async (data, context) => {
 
 //// request to vote
 exports.voteRequest = functions.https.onCall(async (data, context) => {
-  const VOTING_WEIGHT = 15;
   const TIME_24H_MILLS = 3600 * 1000;
+
+  let votingWeight = 1;
+  const votingWeightRef = admin.firestore().collection('settings').doc('voting');
+  await votingWeightRef.get().then((doc) => {
+    if (doc.exists) {
+      votingWeight = doc.data().weight;
+      console.log('voting weight', votingWeight);
+    }
+  })
+    .catch((error) => console.log('failed to get voting weight from firestore'));
+
   // get creator account
   const creator = functions.config().creator.account;
   // need to create new
@@ -296,7 +306,7 @@ exports.voteRequest = functions.https.onCall(async (data, context) => {
           postingWif: postingWif,
           author: author,
           permlink: permlink,
-          weight: VOTING_WEIGHT
+          weight: votingWeight
         });
       } else {
         const currentTime = new Date().getTime();
@@ -305,17 +315,17 @@ exports.voteRequest = functions.https.onCall(async (data, context) => {
         const timeDiff = currentTime - lastVotingAt.toMillis();
         console.log('time after the last voting in hours', timeDiff / (1000 * 3600));
         if (timeDiff < TIME_24H_MILLS) {
+          console.log('vote by timeout in hours', (TIME_24H_MILLS - timeDiff) * 1000 * 3600);
           // set timer to vote
-          setTimeout(() => {
-            console.log('vote by timeout in hours', (TIME_24H_MILLS - timeDiff) * 1000 * 3600);
-            _votePost({
-              voter: creator,
-              postingWif: postingWif,
-              author: author,
-              permlink: permlink,
-              weight: VOTING_WEIGHT
-            });
-          }, TIME_24H_MILLS - timeDiff);
+          // setTimeout(() => {
+          //   _votePost({
+          //     voter: creator,
+          //     postingWif: postingWif,
+          //     author: author,
+          //     permlink: permlink,
+          //     weight: votingWeight
+          //   });
+          // }, TIME_24H_MILLS - timeDiff);
         } else {
           // vote right away
           // voteRightAway() -> update the lastVotingAt (if not exist, create one)
@@ -324,7 +334,7 @@ exports.voteRequest = functions.https.onCall(async (data, context) => {
             postingWif: postingWif,
             author: author,
             permlink: permlink,
-            weight: VOTING_WEIGHT
+            weight: votingWeight
           });
         }
       }
