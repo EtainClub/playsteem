@@ -2,6 +2,7 @@ const functions = require('firebase-functions');
 const axios = require('axios');
 const dsteem = require('@hiveio/dhive');
 const admin = require('firebase-admin');
+const { forEach } = require('lodash');
 
 admin.initializeApp();
 
@@ -351,7 +352,106 @@ exports.voteRequest = functions.https.onCall(async (data, context) => {
   return message;
 });
 
+//// send push message to followers when a favorite author creates a new post
+exports.pushNewPostRequest = functions.https.onCall(async (data, context) => {
+  // get the author
+  const { author, permlink } = data;
+
+  //// collect push tokens of followers
+  // get all the followers of the author
+  const followersRef = admin.firestore().collection('favorites').doc(author).collection('followers');
+  // get snapshot of the followers
+  const followersSnapshot = await followersRef.get();
+  // check the followers
+  if (followersSnapshot.length < 1) return;
+
+  // build payload
+  const title = 'New post by favorite author';
+  const body = `author: @${author}'s new post: ${permlink}`
+  const payload = {
+    notification: {
+      title: title,
+      body: body,
+    },
+    data: {
+      title: title,
+      body: body,
+      operation: 'post_by_favorite',
+      author: author,
+      permlink: permlink,
+    },
+  };
+  console.log('push payload', payload);
+
+  // forEach는 await할 수 없어서 바로 넘어가는 문제 있음.. 해결법???
+  // 참고. https://stackoverflow.com/questions/37576685/using-async-await-with-a-foreach-loop
+  let userIds = [];
+  followersSnapshot.forEach((doc) => {
+    userIds.push(doc.id);
+  });
+
+  const promises = userIds.map(async (userId) => {
+    // get user ref
+    const userRef = admin.firestore().collection('users').doc(userId);
+    const userSnapshot = await userRef.get();
+    const pushToken = userSnapshot.data().pushToken;
+    // send push
+    _sendPushMessage(pushToken, payload);
+  });
+  await Promise.all(promises);
+
+
+  // send --> send messages in parallel (use promise all)
+  followersSnapshot.forEach(async (doc) => {
+    // get user ref
+    const userRef = admin.firestore().collection('users').doc(doc.id);
+    // get snapshot
+    const userSnapshot = await userRef.get();
+    // TODO: check if the user allows the push for favorite author's new posting
+    // if (
+    //   !userSnapshot.pushNotifications ||
+    //   !userSnapshot.pushNotifications.includes('favorite')
+    // ) { return;}
+    console.log('userSnapshot. pushToken', userSnapshot.data().pushToken);
+    // get push token
+    const pushToken = userSnapshot.data().pushToken;
+    // send push messages
+    try {
+      const response = await admin.messaging().sendToDevice(pushToken, payload, {
+        // Required for background/quit data-only messages on iOS
+        contentAvailable: true,
+        // Required for background/quit data-only messages on Android
+        priority: "high",
+      });
+      console.log('result. success count:', response.successCount);
+      if (response.failureCount > 0) {
+        console.log('failed to send', response.results[0].error.message);
+      }
+    } catch (error) {
+      console.error("failed to send push notifications for new post by favorite author", error);
+    }
+  });
+});
+
 /////// helper functions
+
+const _sendPushMessage = async (pushToken, payload) => {
+  try {
+    const response = await admin.messaging().sendToDevice(pushToken, payload, {
+      // Required for background/quit data-only messages on iOS
+      contentAvailable: true,
+      // Required for background/quit data-only messages on Android
+      priority: "high",
+    });
+    console.log('result. success count:', response.successCount);
+    if (response.failureCount > 0) {
+      console.log('failed to send', response.results[0].error.message);
+    }
+  } catch (error) {
+    console.error("failed to send push notifications for new post by favorite author", error);
+  }
+}
+
 
 // check availabled claimed token
 // @return availabivity of the token

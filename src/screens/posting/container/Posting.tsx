@@ -402,23 +402,43 @@ const Posting = (props: Props): JSX.Element => {
       // clear all
       _clearAll();
 
-      //// request to vote
+      //// request to send push and to vote
       // only for new post (not updating the post)
       if (!originalPost) {
+        //// request push notification to followers
+        // post author and permlink      
+        const pushOptions = {
+          author: postingContent.author,
+          permlink: postingContent.permlink,
+        };
+        // request to send push
+        try {
+          const pushResult = await firebase
+            .functions()
+            .httpsCallable('pushNewPostRequest')(pushOptions);
+          console.log('request push result', pushResult);
+        } catch (error) {
+          console.error('failed to request push for a new post.', error);
+        }
+        //// request to vote
         const voteOptions = {
           author: postingContent.author,
           permlink: postingContent.permlink,
         };
-        // request
-        const firebaseResult = await firebase
-          .functions()
-          .httpsCallable('voteRequest')(voteOptions);
-        console.log('Posting. submitPost. vote Request result', firebaseResult.data);
-        if (firebaseResult.data) {
-          console.log('Posting. submitPost. vote Request result', firebaseResult.data);
-          setToastMessage(firebaseResult.data);
-        } else {
-          setToastMessage('Voting Requested!');
+        try {
+          // request
+          const voteResult = await firebase
+            .functions()
+            .httpsCallable('voteRequest')(voteOptions);
+          console.log('Posting. submitPost. vote Request result', voteResult.data);
+          if (voteResult.data) {
+            console.log('Posting. submitPost. vote Request result', voteResult.data);
+            setToastMessage(voteResult.data);
+          } else {
+            setToastMessage('Voting Requested!');
+          }
+        } catch (error) {
+          console.error('failed to request vote', error);
         }
       }
 

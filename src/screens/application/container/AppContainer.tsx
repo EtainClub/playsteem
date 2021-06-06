@@ -170,6 +170,7 @@ export const AppContainer = (props: Props): JSX.Element => {
       case SettingUITypes.REBLOG:
       case SettingUITypes.REPLY:
       case SettingUITypes.VOTE:
+      case 'post_by_favorite':
         //// navigate
         // clear post details
         setPostDetails(null);
