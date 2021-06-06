@@ -4,9 +4,9 @@ import xmldom from 'xmldom';
 
 import proxifyImageSrc from './proxify-image-src';
 
-import {makeEntryCacheKey, whiteList} from './helper';
+import { makeEntryCacheKey, whiteList } from './helper';
 
-import {cacheGet, cacheSet} from './cache';
+import { cacheGet, cacheSet } from './cache';
 
 const xss = require('xss');
 
@@ -38,10 +38,10 @@ const md = new Remarkable({
 //});
 //md.use(linkify);
 
-const noop = () => {};
+const noop = () => { };
 
 const DOMParser = new xmldom.DOMParser({
-  errorHandler: {warning: noop, error: noop},
+  errorHandler: { warning: noop, error: noop },
 });
 
 const XMLSerializer = new xmldom.XMLSerializer();
@@ -141,6 +141,7 @@ export const sanitizeHtml = (_html) => {
     h5: [],
     h6: [],
     p: [],
+    q: [],
     center: [],
     ul: [],
     ol: [],
@@ -248,7 +249,7 @@ const a = (el, forApp, webp) => {
   if (
     href.match(imgRegex) &&
     href.trim().replace(/&amp;/g, '&') ===
-      innerHTML(el).trim().replace(/&amp;/g, '&')
+    innerHTML(el).trim().replace(/&amp;/g, '&')
   ) {
     if (forApp) {
       el.setAttribute('data-href', href);
@@ -269,7 +270,7 @@ const a = (el, forApp, webp) => {
   if (
     href.match(ipfsRegex) &&
     href.trim().replace(/&amp;/g, '&') ===
-      innerHTML(el).trim().replace(/&amp;/g, '&')
+    innerHTML(el).trim().replace(/&amp;/g, '&')
   ) {
     if (forApp) {
       el.setAttribute('data-href', href);

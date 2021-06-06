@@ -413,7 +413,13 @@ const Posting = (props: Props): JSX.Element => {
         const firebaseResult = await firebase
           .functions()
           .httpsCallable('voteRequest')(voteOptions);
-        console.log('Posting. submitPost. vote Request result', firebaseResult);
+        console.log('Posting. submitPost. vote Request result', firebaseResult.data);
+        if (firebaseResult.data) {
+          console.log('Posting. submitPost. vote Request result', firebaseResult.data);
+          setToastMessage(firebaseResult.data);
+        } else {
+          setToastMessage('Voting Requested!');
+        }
       }
 
       // navigate feed. need to refresh

@@ -265,7 +265,7 @@ exports.createAccountRequest = functions.https.onCall(async (data, context) => {
 
 //// request to vote
 exports.voteRequest = functions.https.onCall(async (data, context) => {
-  const TIME_24H_MILLS = 3600 * 1000;
+  const TIME_24H_MILLS = 24 * 3600 * 1000;
 
   let votingWeight = 1;
   const votingWeightRef = admin.firestore().collection('settings').doc('voting');
@@ -285,22 +285,59 @@ exports.voteRequest = functions.https.onCall(async (data, context) => {
   //// get username requested the vote
   const { author, permlink } = data;
 
-  //// check if the user is not in the manual voting list, which is stored in firestore?
+  //// check if the user is not in the manual voting list, which is stored in firestore
+  let skipVoting = false;
   const votingRef = admin.firestore().collection('manual_voting').doc(`${author}`);
   votingRef.get().then((snapshot) => {
     if (snapshot.exists) {
       console.log('document exits. skip the process');
-      return;
+      skipVoting = true;
     }
-    console.log('the author does not exist in manual voting list');
-    // get user
-    const userRef = admin.firestore().doc(`users/${author}`);
-    userRef.get().then((doc) => {
-      console.log('user doc data', doc.data());
-      const lastVotingAt = doc.data().lastVotingAt;
-      if (!lastVotingAt) {
-        console.log('last voting does not exist');
-        // vote
+  });
+  if (skipVoting) return null;
+
+  console.log('the author does not exist in manual voting list');
+  // message to return
+  let message = null;
+  // get user
+  const userRef = admin.firestore().doc(`users/${author}`);
+  await userRef.get().then((doc) => {
+    console.log('user doc data', doc.data());
+    const lastVotingAt = doc.data().lastVotingAt;
+    if (!lastVotingAt) {
+      console.log('last voting does not exist');
+      // vote
+      _votePost({
+        voter: creator,
+        postingWif: postingWif,
+        author: author,
+        permlink: permlink,
+        weight: votingWeight
+      });
+    } else {
+      const currentTime = new Date().getTime();
+      console.log('current time', currentTime);
+      console.log('last voting time', lastVotingAt.toMillis());
+      const timeDiff = currentTime - lastVotingAt.toMillis();
+      console.log('time after the last voting in hours', timeDiff / (1000 * 3600));
+      if (timeDiff < TIME_24H_MILLS) {
+        // next voting after this time (hours)
+        const nextVoting = ((TIME_24H_MILLS - timeDiff) / (1000 * 3600)).toFixed(1);
+        console.log('vote by timeout in hours', nextVoting);
+        message = `One voting per 24h. Next vote will be after ${nextVoting} hours`;
+        // set timer to vote
+        // setTimeout(() => {
+        //   _votePost({
+        //     voter: creator,
+        //     postingWif: postingWif,
+        //     author: author,
+        //     permlink: permlink,
+        //     weight: votingWeight
+        //   });
+        // }, TIME_24H_MILLS - timeDiff);
+      } else {
+        // vote right away
+        // voteRightAway() -> update the lastVotingAt (if not exist, create one)
         _votePost({
           voter: creator,
           postingWif: postingWif,
@@ -308,38 +345,10 @@ exports.voteRequest = functions.https.onCall(async (data, context) => {
           permlink: permlink,
           weight: votingWeight
         });
-      } else {
-        const currentTime = new Date().getTime();
-        console.log('current time', currentTime);
-        console.log('last voting time', lastVotingAt.toMillis());
-        const timeDiff = currentTime - lastVotingAt.toMillis();
-        console.log('time after the last voting in hours', timeDiff / (1000 * 3600));
-        if (timeDiff < TIME_24H_MILLS) {
-          console.log('vote by timeout in hours', (TIME_24H_MILLS - timeDiff) * 1000 * 3600);
-          // set timer to vote
-          // setTimeout(() => {
-          //   _votePost({
-          //     voter: creator,
-          //     postingWif: postingWif,
-          //     author: author,
-          //     permlink: permlink,
-          //     weight: votingWeight
-          //   });
-          // }, TIME_24H_MILLS - timeDiff);
-        } else {
-          // vote right away
-          // voteRightAway() -> update the lastVotingAt (if not exist, create one)
-          _votePost({
-            voter: creator,
-            postingWif: postingWif,
-            author: author,
-            permlink: permlink,
-            weight: votingWeight
-          });
-        }
       }
-    });
+    }
   });
+  return message;
 });
 
 /////// helper functions
