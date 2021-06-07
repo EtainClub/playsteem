@@ -622,6 +622,8 @@ const SettingsContainer = (props: Props): JSX.Element => {
 
   //// claim ACT
   const _claimACT = async () => {
+    // test: update user count doc
+    // _updateUserCount();
     // call firestore function to claim ACT
     try {
       const result = await firebase
@@ -640,6 +642,27 @@ const SettingsContainer = (props: Props): JSX.Element => {
       setToastMessage(intl.formatMessage({ id: 'Easter.claim_act_error' }));
     }
   };
+
+  const _updateUserCount = async () => {
+    try {
+      let count = 0;
+      await firestore().collection('users').get().then(snapshot => {
+        count = snapshot.size;
+        console.log('user count', count);
+      });
+      // update the db
+      const countRef = firestore().doc('stats/common');
+      countRef.get().then((doc) => {
+        if (doc.exists) {
+          console.log('updating the user count');
+          countRef.update({ userCount: count });
+        }
+      });
+
+    } catch (error) {
+      console.log('failed to update the user count');
+    }
+  }
 
   // convert the timestamp to time
   const _convertTime = (timestamp) => {
