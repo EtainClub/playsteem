@@ -387,10 +387,6 @@ exports.pushNewPostRequest = functions.https.onCall(async (data, context) => {
   // 참고. https://stackoverflow.com/questions/37576685/using-async-await-with-a-foreach-loop
   let userIds = [];
   followersSnapshot.forEach((doc) => {
-    //   // TODO: check if the user allows the push for favorite author's new posting
-    //   // if (
-    //   //   !userSnapshot.pushNotifications ||
-    //   //   !userSnapshot.pushNotifications.includes('favorite')
     userIds.push(doc.id);
   });
 
@@ -401,18 +397,16 @@ exports.pushNewPostRequest = functions.https.onCall(async (data, context) => {
     // get user ref
     const userRef = admin.firestore().collection('users').doc(userId);
     const userSnapshot = await userRef.get();
-    const pushToken = userSnapshot.data().pushToken;
-    console.log('[pushNewPostRequest] user, pushToken', userId, pushToken);
-
-    return admin.messaging().sendToDevice(pushToken, payload, {
-      // Required for background/quit data-only messages on iOS
-      contentAvailable: true,
-      // Required for background/quit data-only messages on Android
-      priority: "high",
-    });
-
-    // send push
-    //_sendPushMessage(pushToken, payload);
+    if (userSnapshot.data().pushNotifications.includes('new_post')) {
+      const pushToken = userSnapshot.data().pushToken;
+      console.log('[pushNewPostRequest] user, pushToken', userId, pushToken);
+      return admin.messaging().sendToDevice(pushToken, payload, {
+        // Required for background/quit data-only messages on iOS
+        contentAvailable: true,
+        // Required for background/quit data-only messages on Android
+        priority: "high",
+      });
+    }
   });
 
   const results = await Promise.all(promises);
