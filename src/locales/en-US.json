@@ -340,6 +340,7 @@
     "notify_follow": "Follow",
     "notify_beneficiary": "Beneficiary",
     "notify_reblog": "Reblog",
+    "notify_new_blog": "New Post",
     "general": "General",
     "notice": "Notice",
     "locale": "Language",

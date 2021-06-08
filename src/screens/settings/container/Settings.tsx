@@ -73,6 +73,8 @@ export enum SettingUITypes {
   MENTION = 'mention',
   FOLLOW = 'follow',
   REBLOG = 'reblog',
+  NEW_POST = "new_post",
+
   // dnd times
   DND_TIMES = 'dnd_times',
   // languages
@@ -249,6 +251,7 @@ const SettingsContainer = (props: Props): JSX.Element => {
     const transfer = switchStates[SettingUITypes.TRANSFER];
     const vote = switchStates[SettingUITypes.VOTE];
     const reblog = switchStates[SettingUITypes.REBLOG];
+    const newPost = switchStates[SettingUITypes.NEW_POST];
     // delegate
     let notifications = [];
     if (beneficiary) notifications.push(SettingUITypes.BENEFICIARY);
@@ -258,6 +261,7 @@ const SettingsContainer = (props: Props): JSX.Element => {
     if (transfer) notifications.push(SettingUITypes.TRANSFER);
     if (vote) notifications.push(SettingUITypes.VOTE);
     if (reblog) notifications.push(SettingUITypes.REBLOG);
+    if (newPost) notifications.push(SettingUITypes.NEW_POST);
 
     // handle the event item
     if (value) {
@@ -342,6 +346,7 @@ const SettingsContainer = (props: Props): JSX.Element => {
       case SettingUITypes.TRANSFER:
       case SettingUITypes.VOTE:
       case SettingUITypes.REBLOG:
+      case SettingUITypes.NEW_POST:
         // build push notification structure
         const _notifications = _buildNotificationsStates(key, value);
         // update in firestore
@@ -624,6 +629,7 @@ const SettingsContainer = (props: Props): JSX.Element => {
   const _claimACT = async () => {
     // test: update user count doc
     // _updateUserCount();
+    // pushNewPostRequest();
     // call firestore function to claim ACT
     try {
       const result = await firebase
@@ -662,6 +668,63 @@ const SettingsContainer = (props: Props): JSX.Element => {
     } catch (error) {
       console.log('failed to update the user count');
     }
+  }
+
+  // @temp
+  const pushNewPostRequest = async () => {
+    const author = 'etainclub';
+    const permlink = 'play-steem-x-webapp-fetching-notificfations';
+
+    //// collect push tokens of followers
+    // get all the followers of the author
+    const followersRef = firestore().collection('favorites').doc(author).collection('followers');
+    // get snapshot of the followers
+    const followersSnapshot = await followersRef.get();
+    // check the followers
+    if (followersSnapshot.size < 1) return;
+
+    // build payload
+    const title = 'New post by favorite author';
+    const body = `author: @${author}'s new post: ${permlink}`
+    const payload = {
+      notification: {
+        title: title,
+        body: body,
+      },
+      data: {
+        title: title,
+        body: body,
+        operation: 'post_by_favorite',
+        author: author,
+        permlink: permlink,
+      },
+    };
+    console.log('[pushNewPostRequest] push payload', payload);
+
+    // forEach는 await할 수 없어서 바로 넘어가는 문제 있음.. 해결법???
+    // 참고. https://stackoverflow.com/questions/37576685/using-async-await-with-a-foreach-loop
+    let userIds = [];
+    followersSnapshot.forEach((doc) => {
+      userIds.push(doc.id);
+    });
+
+    console.log('[pushNewPostRequest] followers Ids', userIds);
+
+    const promises = userIds.map(async (userId) => {
+      // get user ref
+      const userRef = firestore().collection('users').doc(userId);
+      const userSnapshot = await userRef.get();
+      console.log('[pushNewPostRequest] userSnapshot', userSnapshot);
+      const pushToken = userSnapshot.data().pushToken;
+      console.log('[pushNewPostRequest] user, pushToken', userId, pushToken);
+      return pushToken;
+      // send push
+      //      _sendPushMessage(pushToken, payload);
+    });
+
+    console.log('[pushNewPostRequest] promises', promises);
+    const result = await Promise.all(promises);
+    console.log('[pushNewPostRequest] promises all result', result);
   }
 
   // convert the timestamp to time

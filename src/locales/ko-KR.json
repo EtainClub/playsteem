@@ -340,6 +340,7 @@
     "notify_follow": "팔로우",
     "notify_beneficiary": "베네피셔리",
     "notify_reblog": "포스트 공유",
+    "notify_new_blog": "관심작가 새글",
     "general": "일반",
     "notice": "공지 사항",
     "locale": "메뉴 언어",

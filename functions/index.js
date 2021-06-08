@@ -367,7 +367,7 @@ exports.pushNewPostRequest = functions.https.onCall(async (data, context) => {
 
   // build payload
   const title = 'New post by favorite author';
-  const body = `author: @${author}'s new post: ${permlink}`
+  const body = `@${author}: ${permlink}`
   const payload = {
     notification: {
       title: title,
@@ -387,50 +387,68 @@ exports.pushNewPostRequest = functions.https.onCall(async (data, context) => {
   // 참고. https://stackoverflow.com/questions/37576685/using-async-await-with-a-foreach-loop
   let userIds = [];
   followersSnapshot.forEach((doc) => {
+    //   // TODO: check if the user allows the push for favorite author's new posting
+    //   // if (
+    //   //   !userSnapshot.pushNotifications ||
+    //   //   !userSnapshot.pushNotifications.includes('favorite')
     userIds.push(doc.id);
   });
 
+  console.log('[pushNewPostRequest] followers Ids', userIds);
+
+  // make promises
   const promises = userIds.map(async (userId) => {
     // get user ref
     const userRef = admin.firestore().collection('users').doc(userId);
     const userSnapshot = await userRef.get();
     const pushToken = userSnapshot.data().pushToken;
+    console.log('[pushNewPostRequest] user, pushToken', userId, pushToken);
+
+    return admin.messaging().sendToDevice(pushToken, payload, {
+      // Required for background/quit data-only messages on iOS
+      contentAvailable: true,
+      // Required for background/quit data-only messages on Android
+      priority: "high",
+    });
+
     // send push
-    _sendPushMessage(pushToken, payload);
+    //_sendPushMessage(pushToken, payload);
   });
-  await Promise.all(promises);
+
+  const results = await Promise.all(promises);
+  console.log('[pushNewPostRequest] promise results', results);
 
 
   // send --> send messages in parallel (use promise all)
-  followersSnapshot.forEach(async (doc) => {
-    // get user ref
-    const userRef = admin.firestore().collection('users').doc(doc.id);
-    // get snapshot
-    const userSnapshot = await userRef.get();
-    // TODO: check if the user allows the push for favorite author's new posting
-    // if (
-    //   !userSnapshot.pushNotifications ||
-    //   !userSnapshot.pushNotifications.includes('favorite')
-    // ) { return;}
-    console.log('userSnapshot. pushToken', userSnapshot.data().pushToken);
-    // get push token
-    const pushToken = userSnapshot.data().pushToken;
-    // send push messages
-    try {
-      const response = await admin.messaging().sendToDevice(pushToken, payload, {
-        // Required for background/quit data-only messages on iOS
-        contentAvailable: true,
-        // Required for background/quit data-only messages on Android
-        priority: "high",
-      });
-      console.log('result. success count:', response.successCount);
-      if (response.failureCount > 0) {
-        console.log('failed to send', response.results[0].error.message);
-      }
-    } catch (error) {
-      console.error("failed to send push notifications for new post by favorite author", error);
-    }
-  });
+  // followersSnapshot.forEach(async (doc) => {
+  //   // get user ref
+  //   const userRef = admin.firestore().collection('users').doc(doc.id);
+  //   // get snapshot
+  //   const userSnapshot = await userRef.get();
+  //   // TODO: check if the user allows the push for favorite author's new posting
+  //   // if (
+  //   //   !userSnapshot.pushNotifications ||
+  //   //   !userSnapshot.pushNotifications.includes('favorite')
+  //   // ) { return;}
+  //   console.log('userSnapshot. pushToken', userSnapshot.data().pushToken);
+  //   // get push token
+  //   const pushToken = userSnapshot.data().pushToken;
+  //   // send push messages
+  //   try {
+  //     const response = await admin.messaging().sendToDevice(pushToken, payload, {
+  //       // Required for background/quit data-only messages on iOS
+  //       contentAvailable: true,
+  //       // Required for background/quit data-only messages on Android
+  //       priority: "high",
+  //     });
+  //     console.log('result. success count:', response.successCount);
+  //     if (response.failureCount > 0) {
+  //       console.log('failed to send', response.results[0].error.message);
+  //     }
+  //   } catch (error) {
+  //     console.error("failed to send push notifications for new post by favorite author", error);
+  //   }
+  // });
 });
 
 /////// helper functions

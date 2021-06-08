@@ -1,5 +1,5 @@
 //// react
-import React, {useState, useContext, useEffect} from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 //// react native
 import {
   TouchableHighlight,
@@ -11,17 +11,17 @@ import {
   Platform,
 } from 'react-native';
 //// language
-import {useIntl} from 'react-intl';
+import { useIntl } from 'react-intl';
 ////
-import {navigate} from '~/navigation/service';
+import { navigate } from '~/navigation/service';
 //// UIs
-import {Button, Icon, Block, Input, Text, theme} from 'galio-framework';
-const {height, width} = Dimensions.get('window');
-import {RPC_SERVERS, IMAGE_SERVERS} from '~/constants/blockchain';
-import {APP_IOS_VERSION, APP_ANDROID_VERSION} from '~/constants/app';
-import {SUPPORTED_LOCALES, LOCALE} from '~/locales';
-import {SettingUITypes} from '../container/Settings';
-import {BODY_FONT_SIZES} from '~/constants';
+import { Button, Icon, Block, Input, Text, theme } from 'galio-framework';
+const { height, width } = Dimensions.get('window');
+import { RPC_SERVERS, IMAGE_SERVERS } from '~/constants/blockchain';
+import { APP_IOS_VERSION, APP_ANDROID_VERSION } from '~/constants/app';
+import { SUPPORTED_LOCALES, LOCALE } from '~/locales';
+import { SettingUITypes } from '../container/Settings';
+import { BODY_FONT_SIZES } from '~/constants';
 
 //// props
 interface Props {
@@ -39,14 +39,14 @@ const SettingsScreen = (props: Props): JSX.Element => {
   // blockchains
   const blockchainItems = [
     {
-      title: intl.formatMessage({id: 'Settings.rpc_server'}),
+      title: intl.formatMessage({ id: 'Settings.rpc_server' }),
       id: SettingUITypes.RPC_SERVER,
       type: 'dropdown',
       defaultText: RPC_SERVERS[0],
       options: RPC_SERVERS,
     },
     {
-      title: intl.formatMessage({id: 'Settings.image_server'}),
+      title: intl.formatMessage({ id: 'Settings.image_server' }),
       id: SettingUITypes.IMAGE_SERVER,
       type: 'dropdown',
       defaultText: IMAGE_SERVERS[0],
@@ -57,12 +57,12 @@ const SettingsScreen = (props: Props): JSX.Element => {
   // securities
   const securityItems = [
     {
-      title: intl.formatMessage({id: 'Settings.auto_login'}),
+      title: intl.formatMessage({ id: 'Settings.auto_login' }),
       id: SettingUITypes.USE_AUTO_LOGIN,
       type: 'switch',
     },
     {
-      title: intl.formatMessage({id: 'Settings.use_otp'}),
+      title: intl.formatMessage({ id: 'Settings.use_otp' }),
       id: SettingUITypes.USE_OTP,
       type: 'switch',
     },
@@ -70,40 +70,46 @@ const SettingsScreen = (props: Props): JSX.Element => {
   // push notifications
   const notificationItems = [
     {
-      title: intl.formatMessage({id: 'Settings.dnd'}),
+      title: intl.formatMessage({ id: 'Settings.dnd' }),
       id: SettingUITypes.DND_TIMES,
       type: 'switch',
     },
     {
-      title: intl.formatMessage({id: 'Settings.notify_beneficiary'}),
+      title: intl.formatMessage({ id: 'Settings.notify_beneficiary' }),
       id: SettingUITypes.BENEFICIARY,
       type: 'switch',
     },
     {
-      title: intl.formatMessage({id: 'Settings.notify_reply'}),
+      title: intl.formatMessage({ id: 'Settings.notify_reply' }),
       id: SettingUITypes.REPLY,
       type: 'switch',
     },
     {
-      title: intl.formatMessage({id: 'Settings.notify_mention'}),
+      title: intl.formatMessage({ id: 'Settings.notify_mention' }),
       id: SettingUITypes.MENTION,
       type: 'switch',
     },
     {
-      title: intl.formatMessage({id: 'Settings.notify_follow'}),
+      title: intl.formatMessage({ id: 'Settings.notify_follow' }),
       id: SettingUITypes.FOLLOW,
       type: 'switch',
     },
     {
-      title: intl.formatMessage({id: 'Settings.notify_transfer'}),
+      title: intl.formatMessage({ id: 'Settings.notify_transfer' }),
       id: SettingUITypes.TRANSFER,
       type: 'switch',
     },
     {
-      title: intl.formatMessage({id: 'Settings.notify_reblog'}),
+      title: intl.formatMessage({ id: 'Settings.notify_reblog' }),
       id: SettingUITypes.REBLOG,
       type: 'switch',
     },
+    {
+      title: intl.formatMessage({ id: 'Settings.notify_new_blog' }),
+      id: SettingUITypes.NEW_POST,
+      type: 'switch',
+    },
+
     // {
     //   title: intl.formatMessage({id: 'Settings.notify_vote'}),
     //   id: SettingUITypes.VOTE,
@@ -113,72 +119,72 @@ const SettingsScreen = (props: Props): JSX.Element => {
 
   const generalItems = [
     {
-      title: intl.formatMessage({id: 'Settings.locale'}),
+      title: intl.formatMessage({ id: 'Settings.locale' }),
       id: SettingUITypes.LOCALE,
       type: 'dropdown',
       defaultText: SUPPORTED_LOCALES[0].name,
       options: SUPPORTED_LOCALES.map((item) => item.name),
     },
     {
-      title: intl.formatMessage({id: 'Settings.translation'}),
+      title: intl.formatMessage({ id: 'Settings.translation' }),
       id: SettingUITypes.TRANSLATION,
       type: 'dropdown',
       defaultText: 'EN',
       options: props.translationLanguages,
     },
     {
-      title: intl.formatMessage({id: 'Settings.font_size'}),
+      title: intl.formatMessage({ id: 'Settings.font_size' }),
       id: SettingUITypes.FONT_SIZE,
       type: 'dropdown',
       defaultText: BODY_FONT_SIZES[1].name,
       options: BODY_FONT_SIZES.map((item) => item.name),
     },
     {
-      title: intl.formatMessage({id: 'Settings.notice'}),
+      title: intl.formatMessage({ id: 'Settings.notice' }),
       id: SettingUITypes.NOTICE,
       type: 'button',
     },
     {
-      title: intl.formatMessage({id: 'Settings.rate_app'}),
+      title: intl.formatMessage({ id: 'Settings.rate_app' }),
       id: SettingUITypes.RATE_APP,
       type: 'button',
     },
     {
-      title: intl.formatMessage({id: 'Settings.share'}),
+      title: intl.formatMessage({ id: 'Settings.share' }),
       id: SettingUITypes.SHARE,
       type: 'button',
     },
     {
-      title: intl.formatMessage({id: 'Settings.feedback'}),
+      title: intl.formatMessage({ id: 'Settings.feedback' }),
       id: SettingUITypes.FEEDBACK,
       type: 'button',
     },
     {
-      title: intl.formatMessage({id: 'Settings.app_version'}),
+      title: intl.formatMessage({ id: 'Settings.app_version' }),
       id: SettingUITypes.APP_VERSION,
       type: 'text',
       defaultText:
         Platform.OS == 'android' ? APP_ANDROID_VERSION : APP_IOS_VERSION,
     },
     {
-      title: intl.formatMessage({id: 'Settings.claim_act'}),
+      title: intl.formatMessage({ id: 'Settings.claim_act' }),
       id: SettingUITypes.CLAIM_ACT,
       type: 'text',
       defaultText: '0',
       easter: true,
     },
     {
-      title: intl.formatMessage({id: 'Settings.terms'}),
+      title: intl.formatMessage({ id: 'Settings.terms' }),
       id: SettingUITypes.TERMS,
       type: 'button',
     },
     {
-      title: intl.formatMessage({id: 'Settings.privacy'}),
+      title: intl.formatMessage({ id: 'Settings.privacy' }),
       id: SettingUITypes.PRIVACY,
       type: 'button',
     },
     {
-      title: intl.formatMessage({id: 'Settings.source_code'}),
+      title: intl.formatMessage({ id: 'Settings.source_code' }),
       id: SettingUITypes.SOURCE,
       type: 'button',
     },
@@ -192,8 +198,8 @@ const SettingsScreen = (props: Props): JSX.Element => {
         renderItem={props.renderItem}
         ListHeaderComponent={
           <Block center style={styles.title}>
-            <Text bold size={theme.SIZES.BASE} style={{paddingBottom: 5}}>
-              {intl.formatMessage({id: 'Settings.blockchain_settings'})}
+            <Text bold size={theme.SIZES.BASE} style={{ paddingBottom: 5 }}>
+              {intl.formatMessage({ id: 'Settings.blockchain_settings' })}
             </Text>
           </Block>
         }
@@ -204,8 +210,8 @@ const SettingsScreen = (props: Props): JSX.Element => {
         renderItem={props.renderItem}
         ListHeaderComponent={
           <Block center style={styles.title}>
-            <Text bold size={theme.SIZES.BASE} style={{paddingBottom: 5}}>
-              {intl.formatMessage({id: 'Settings.security'})}
+            <Text bold size={theme.SIZES.BASE} style={{ paddingBottom: 5 }}>
+              {intl.formatMessage({ id: 'Settings.security' })}
             </Text>
           </Block>
         }
@@ -216,8 +222,8 @@ const SettingsScreen = (props: Props): JSX.Element => {
         renderItem={props.renderItem}
         ListHeaderComponent={
           <Block center style={styles.title}>
-            <Text bold size={theme.SIZES.BASE} style={{paddingBottom: 5}}>
-              {intl.formatMessage({id: 'Settings.notification'})}
+            <Text bold size={theme.SIZES.BASE} style={{ paddingBottom: 5 }}>
+              {intl.formatMessage({ id: 'Settings.notification' })}
             </Text>
           </Block>
         }
@@ -228,8 +234,8 @@ const SettingsScreen = (props: Props): JSX.Element => {
         renderItem={props.renderItem}
         ListHeaderComponent={
           <Block center style={styles.title}>
-            <Text bold size={theme.SIZES.BASE} style={{paddingBottom: 5}}>
-              {intl.formatMessage({id: 'Settings.general'})}
+            <Text bold size={theme.SIZES.BASE} style={{ paddingBottom: 5 }}>
+              {intl.formatMessage({ id: 'Settings.general' })}
             </Text>
           </Block>
         }
@@ -238,7 +244,7 @@ const SettingsScreen = (props: Props): JSX.Element => {
   );
 };
 
-export {SettingsScreen};
+export { SettingsScreen };
 
 const styles = StyleSheet.create({
   settings: {
