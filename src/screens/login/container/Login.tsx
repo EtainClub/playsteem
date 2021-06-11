@@ -60,14 +60,18 @@ const Login = (props: Props): JSX.Element => {
 
   //// handle username change
   const _handleUsernameChange = (value: string): void => {
+    // remove blank
+    const _value = value.replace(/ /g, '');
     // set username
-    setUsername(value);
+    setUsername(_value);
     // clear message
     setMessage('');
   };
 
   //// handle password change
   const _handlePasswordChange = (value: string): void => {
+    // remove blank
+    const _value = value.replace(/ /g, '');
     // set password
     setPasword(value);
     // clear message

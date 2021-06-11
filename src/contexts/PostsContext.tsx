@@ -845,6 +845,12 @@ const PostsProvider = ({ children }: Props) => {
         .delete()
         .then(() => {
           setToastMessage(intl.formatMessage({ id: 'Profile.unfavorite_ok' }));
+
+          //// update the favorites collection
+          // remove
+          firestore().doc(`favorites/${author}`).collection('followers').doc(`${username}`)
+            .delete()
+            .then(() => console.log('deleted the user in favorites collection'));
           return true;
         })
         .catch((error) => {
@@ -865,6 +871,11 @@ const PostsProvider = ({ children }: Props) => {
           author: author,
           createdAt: new Date(),
         });
+        //// update the favorites collection
+        // get reference to the author of favorites collection
+        firestore().doc(`favorites/${author}`).collection('followers').doc(`${username}`).set({});
+
+
         return true;
       } catch (error) {
         console.log('[favoriteAuthor] failed to set new favorite', error);
