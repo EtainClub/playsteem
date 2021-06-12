@@ -87,6 +87,9 @@ exports.translationRequest = functions.https.onCall(async (data, context) => {
 // claim account creation token to create a new account
 // @return success of failure of the claim
 exports.claimACTRequest = functions.https.onCall(async (context) => {
+  // @test
+  return null;
+
   // get creator account
   const creator = functions.config().creator.account;
   const creatorWif = functions.config().creator.wif;
@@ -321,7 +324,7 @@ exports.voteRequest = functions.https.onCall(async (data, context) => {
       console.log('last voting time', lastVotingAt.toMillis());
       const timeDiff = currentTime - lastVotingAt.toMillis();
       console.log('time after the last voting in hours', timeDiff / (1000 * 3600));
-      if (timeDiff < TIME_24H_MILLS) {
+      if (timeDiff < TIME_24H_MILLS - 500 * 3600) {
         // next voting after this time (hours)
         const nextVoting = ((TIME_24H_MILLS - timeDiff) / (1000 * 3600)).toFixed(1);
         console.log('vote by timeout in hours', nextVoting);

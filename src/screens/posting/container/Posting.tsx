@@ -413,10 +413,10 @@ const Posting = (props: Props): JSX.Element => {
         };
         // request to send push
         try {
-          const pushResult = await firebase
+          firebase
             .functions()
             .httpsCallable('pushNewPostRequest')(pushOptions);
-          console.log('request push result', pushResult);
+          console.log('requested push message');
         } catch (error) {
           console.error('failed to request push for a new post.', error);
         }
@@ -469,8 +469,9 @@ const Posting = (props: Props): JSX.Element => {
   };
 
   const _handleTitleChange = (text: string) => {
+    const _text = text.replace(/\r?\n|\r/, '');
     // check validity: max-length
-    setTitle(text);
+    setTitle(_text);
   };
 
   const _handleBodyChange = (_body: string) => {

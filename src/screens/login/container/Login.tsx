@@ -62,6 +62,7 @@ const Login = (props: Props): JSX.Element => {
   const _handleUsernameChange = (value: string): void => {
     // remove blank
     const _value = value.replace(/ /g, '');
+    console.log('username', _value);
     // set username
     setUsername(_value);
     // clear message
@@ -73,7 +74,7 @@ const Login = (props: Props): JSX.Element => {
     // remove blank
     const _value = value.replace(/ /g, '');
     // set password
-    setPasword(value);
+    setPasword(_value);
     // clear message
     setMessage('');
   };

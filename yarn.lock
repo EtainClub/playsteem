@@ -1284,6 +1284,11 @@
   resolved "https://registry.yarnpkg.com/@react-native-community/slider/-/slider-3.0.3.tgz#830167fd757ba70ac638747ba3169b2dbae60330"
   integrity sha512-8IeHfDwJ9/CTUwFs6x90VlobV3BfuPgNLjTgC6dRZovfCWigaZwVNIFFJnHBakK3pW2xErAPwhdvNR4JeNoYbw==
 
+"@react-native-firebase/analytics@^12.1.0":
+  version "12.1.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/analytics/-/analytics-12.1.0.tgz#fe748c89219b992487eceaf2a3317599f93ec488"
+  integrity sha512-n9UY50JeU4In0If+g9dEhIXYL14uPclqRxNK3tnUr24tmdY6Xbv76mdIELgcd8UW7npuU4st+kppmiyrIO7Qfw==
+
 "@react-native-firebase/app@^8.4.1":
   version "8.4.7"
   resolved "https://registry.yarnpkg.com/@react-native-firebase/app/-/app-8.4.7.tgz#7393ba7af36bd815bd5af7c64a20b0dd8a7e3341"
@@ -1313,6 +1318,11 @@
   version "10.8.1"
   resolved "https://registry.yarnpkg.com/@react-native-firebase/functions/-/functions-10.8.1.tgz#26780af3ff1afd8c473b0eed81a80a707a99083d"
   integrity sha512-g0WXUzeRLsNkgVkhHzHE1xsJZFScMz+9ZioO1GdQCqJ47hVa6IHquch3geF1X1ahqKDmbXgoIYUpBd1pHmFwyw==
+
+"@react-native-firebase/in-app-messaging@^12.1.0":
+  version "12.1.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/in-app-messaging/-/in-app-messaging-12.1.0.tgz#2272479c7d548a8724e07a0a5f2d92c1ec65f22c"
+  integrity sha512-fbVTKTvmqkwEBR9RdQvKRLhIhR/79q7zcILYYYEFsIs4bz5AooipWhlc2RXoTXWoQLhv/4NECWiPwPEcEG7RCw==
 
 "@react-native-firebase/messaging@^7.8.4":
   version "7.9.2"

@@ -10,6 +10,10 @@ target 'PlaySteem' do
 
   pod 'react-native-config', :path => '../node_modules/react-native-config'
 
+  pod 'Firebase'
+  pod 'Firebase/InAppMessaging'
+  pod 'Firebase/Analytics'
+
   target 'PlaySteemTests' do
     inherit! :complete
     # Pods for testing
