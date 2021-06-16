@@ -8,6 +8,7 @@ import { useIntl } from 'react-intl';
 import messaging, {
   FirebaseMessagingTypes,
 } from '@react-native-firebase/messaging';
+import inAppMessaging from "@react-native-firebase/in-app-messaging";
 import PushNotification from 'react-native-push-notification';
 import { navigate } from '~/navigation/service';
 

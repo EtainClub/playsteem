@@ -292,7 +292,7 @@ exports.voteRequest = functions.https.onCall(async (data, context) => {
   //// check if the user is not in the manual voting list, which is stored in firestore
   let skipVoting = false;
   const votingRef = admin.firestore().collection('manual_voting').doc(`${author}`);
-  votingRef.get().then((snapshot) => {
+  await votingRef.get().then((snapshot) => {
     if (snapshot.exists) {
       console.log('document exits. skip the process');
       skipVoting = true;
@@ -306,7 +306,7 @@ exports.voteRequest = functions.https.onCall(async (data, context) => {
   // get user
   const userRef = admin.firestore().doc(`users/${author}`);
   await userRef.get().then((doc) => {
-    console.log('user doc data', doc.data());
+    //console.log('user doc data', doc.data());
     const lastVotingAt = doc.data().lastVotingAt;
     if (!lastVotingAt) {
       console.log('last voting does not exist');
