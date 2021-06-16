@@ -149,7 +149,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
-        versionName "0.9.0"
+        versionName "1.1.0"
         //// added
         // Error while merging dex archives: The number of method references in a .dex file cannot exceed 64K
         multiDexEnabled true
