@@ -644,11 +644,11 @@ export const updateFollow = async (
   following: string,
   action: string,
 ) => {
-  // verify the key
-  const { account } = await verifyPassword(follower, password);
-  if (!account) {
-    return null;
-  }
+  // // verify the key
+  // const { account } = await verifyPassword(follower, password);
+  // if (!account) {
+  //   return null;
+  // }
   // get privake key from password
   const privateKey = PrivateKey.from(password);
 
@@ -1065,11 +1065,11 @@ export const broadcastPost = async (
   password: string,
   options?: any[],
 ) => {
-  // verify the key
-  const { account } = await verifyPassword(postingData.author, password);
-  if (!account) {
-    return null;
-  }
+  // // verify the key
+  // const { account } = await verifyPassword(postingData.author, password);
+  // if (!account) {
+  //   return null;
+  // }
   // build comment
   const opArray = [['comment', postingData]];
   // add options if exists
@@ -1111,10 +1111,10 @@ export const broadcastPostUpdate = async (
   // check validity of the password
   // verify the key
   // @todo check sanity of argument: exits? (it happend the empty post)
-  const { account } = await verifyPassword(postingContent.author, password);
-  if (!account) {
-    return { success: false, message: 'the password is invalid' };
-  }
+  // const { account } = await verifyPassword(postingContent.author, password);
+  // if (!account) {
+  //   return { success: false, message: 'the password is invalid' };
+  // }
 
   //// create a patch
   const text = originalBody;
@@ -1175,11 +1175,11 @@ export const broadcastPostUpdate = async (
 export const signImage = async (photo, username, password) => {
   // verify the user and password
   // @test
-  const { account } = await verifyPassword(username, password);
-  if (!account) {
-    console.log('[signImage] failed to verify password');
-    return null;
-  }
+  // const { account } = await verifyPassword(username, password);
+  // if (!account) {
+  //   console.log('[signImage] failed to verify password');
+  //   return null;
+  // }
 
 
   try {
@@ -1238,11 +1238,11 @@ export const reblog = async (
   author: string,
   permlink: string,
 ) => {
-  // verify the key
-  const { account } = await verifyPassword(username, password);
-  if (!account) {
-    return { success: false, message: 'the password is invalid' };
-  }
+  // // verify the key
+  // const { account } = await verifyPassword(username, password);
+  // if (!account) {
+  //   return { success: false, message: 'the password is invalid' };
+  // }
   // get privake key from password
   const privateKey = PrivateKey.from(password);
 
@@ -1278,11 +1278,11 @@ export const submitVote = async (
     permlink,
     weight: votingWeight * 100,
   };
-  // verify the key
-  const { account } = await verifyPassword(voter, password);
-  if (!account) {
-    return null;
-  }
+  // // verify the key
+  // const { account } = await verifyPassword(voter, password);
+  // if (!account) {
+  //   return null;
+  // }
 
   // get privake key from password
   const privateKey = PrivateKey.from(password);
@@ -1312,10 +1312,10 @@ export const broadcastProfileUpdate = async (
   params: {},
 ) => {
   // verify the key, require active or above
-  const { account } = await verifyPassword(username, password);
-  if (!account) {
-    return { success: false, message: 'the password is invalid' };
-  }
+  // const { account } = await verifyPassword(username, password);
+  // if (!account) {
+  //   return { success: false, message: 'the password is invalid' };
+  // }
 
   // get privake key from password wif
   const privateKey = PrivateKey.from(password);
@@ -1587,6 +1587,186 @@ export const transferToVesting = async (
       else return TransactionReturnCodes.TRANSACTION_ERROR;
     } catch (error) {
       console.log('failed to transfer to vesting', error);
+      return TransactionReturnCodes.TRANSACTION_ERROR;
+    }
+  }
+  return TransactionReturnCodes.INVALID_PASSWORD;
+};
+
+//// power down
+export const withdrawVesting = async (
+  username: string,
+  password: string,
+  params: {
+    amount: string;
+  },
+): Promise<TransactionReturnCodes> => {
+  // get key type
+  const { account, keyType } = await verifyPassword(username, password);
+  // check sanity
+  if (!account) {
+    return TransactionReturnCodes.NO_ACCOUNT;
+  }
+  // check key level: active or higher
+  if (keyType < KeyTypes.ACTIVE) {
+    return TransactionReturnCodes.NEED_HIGHER_PASSWORD;
+  }
+  // get privake key from password wif
+  const privateKey = PrivateKey.from(password);
+  // transfer
+  if (privateKey) {
+    const args = [
+      [
+        'withdraw_vesting',
+        {
+          account: username,
+          amount: get(params, 'amount'),
+        },
+      ],
+    ];
+    console.log('withdrawVesting. username, args', username, args);
+    try {
+      const result = await client.broadcast.sendOperations(args, privateKey);
+      console.log('[withdrawVesting] result', result);
+      if (result) return TransactionReturnCodes.TRANSACTION_SUCCESS;
+      else return TransactionReturnCodes.TRANSACTION_ERROR;
+    } catch (error) {
+      console.log('failed to power down', error);
+      return TransactionReturnCodes.TRANSACTION_ERROR;
+    }
+  }
+  return TransactionReturnCodes.INVALID_PASSWORD;
+};
+
+export const delegateVestingShares = async (
+  from: string,
+  to: string,
+  amount: string,
+  password: string,
+) => {
+  // get key type
+  const { account, keyType } = await verifyPassword(from, password);
+  // check sanity
+  if (!account) {
+    return TransactionReturnCodes.NO_ACCOUNT;
+  }
+  // check key level: active or higher
+  if (keyType < KeyTypes.ACTIVE) {
+    return TransactionReturnCodes.NEED_HIGHER_PASSWORD;
+  }
+  // get privake key from password wif
+  const privateKey = PrivateKey.from(password);
+  if (privateKey) {
+    const args = [
+      [
+        'delegate_vesting_shares',
+        {
+          delegator: from,
+          delegatee: to,
+          vesting_shares: amount,
+        },
+      ],
+    ];
+
+    try {
+      const result = await client.broadcast.sendOperations(args, privateKey);
+      console.log('[delegateVestingShares] result', result);
+      if (result) return TransactionReturnCodes.TRANSACTION_SUCCESS;
+      else return TransactionReturnCodes.TRANSACTION_ERROR;
+    } catch (error) {
+      console.log('failed to power down', error);
+      return TransactionReturnCodes.TRANSACTION_ERROR;
+    }
+  }
+  return TransactionReturnCodes.INVALID_PASSWORD;
+};
+
+export const transferToSavings = async (
+  from: string,
+  to: string,
+  amount: string,
+  memo: string,
+  password: string,
+) => {
+  // get key type
+  const { account, keyType } = await verifyPassword(from, password);
+  // check sanity
+  if (!account) {
+    return TransactionReturnCodes.NO_ACCOUNT;
+  }
+  // check key level: active or higher
+  if (keyType < KeyTypes.ACTIVE) {
+    return TransactionReturnCodes.NEED_HIGHER_PASSWORD;
+  }
+  // get privake key from password wif
+  const privateKey = PrivateKey.from(password);
+  if (privateKey) {
+    const args = [
+      [
+        'transfer_to_savings',
+        {
+          from: from,
+          to: to,
+          amount: amount,
+          memo: memo,
+        },
+      ],
+    ];
+
+    try {
+      const result = await client.broadcast.sendOperations(args, privateKey);
+      console.log('[transferToSavings] result', result);
+      if (result) return TransactionReturnCodes.TRANSACTION_SUCCESS;
+      else return TransactionReturnCodes.TRANSACTION_ERROR;
+    } catch (error) {
+      console.log('failed to transer to savings', error);
+      return TransactionReturnCodes.TRANSACTION_ERROR;
+    }
+  }
+  return TransactionReturnCodes.INVALID_PASSWORD;
+};
+
+export const transferFromSavings = async (
+  from: string,
+  to: string,
+  amount: string,
+  password: string,
+  requestId: string,
+  memo?: string,
+) => {
+  // get key type
+  const { account, keyType } = await verifyPassword(from, password);
+  // check sanity
+  if (!account) {
+    return TransactionReturnCodes.NO_ACCOUNT;
+  }
+  // check key level: active or higher
+  if (keyType < KeyTypes.ACTIVE) {
+    return TransactionReturnCodes.NEED_HIGHER_PASSWORD;
+  }
+  // get privake key from password wif
+  const privateKey = PrivateKey.from(password);
+  if (privateKey) {
+    const args = [
+      [
+        'transfer_from_savings',
+        {
+          from: from,
+          to: to,
+          amount: amount,
+          memo: memo,
+          request_id: requestId,
+        },
+      ],
+    ];
+
+    try {
+      const result = await client.broadcast.sendOperations(args, privateKey);
+      console.log('[transferFromSavings] result', result);
+      if (result) return TransactionReturnCodes.TRANSACTION_SUCCESS;
+      else return TransactionReturnCodes.TRANSACTION_ERROR;
+    } catch (error) {
+      console.log('failed to transer to savings', error);
       return TransactionReturnCodes.TRANSACTION_ERROR;
     }
   }

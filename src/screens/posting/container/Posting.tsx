@@ -407,19 +407,19 @@ const Posting = (props: Props): JSX.Element => {
       if (!originalPost) {
         //// request push notification to followers
         // post author and permlink      
-        const pushOptions = {
-          author: postingContent.author,
-          permlink: postingContent.permlink,
-        };
-        // request to send push
-        try {
-          firebase
-            .functions()
-            .httpsCallable('pushNewPostRequest')(pushOptions);
-          console.log('requested push message');
-        } catch (error) {
-          console.error('failed to request push for a new post.', error);
-        }
+        // const pushOptions = {
+        //   author: postingContent.author,
+        //   permlink: postingContent.permlink,
+        // };
+        // // request to send push
+        // try {
+        //   firebase
+        //     .functions()
+        //     .httpsCallable('pushNewPostRequest')(pushOptions);
+        //   console.log('requested push message');
+        // } catch (error) {
+        //   console.error('failed to request push for a new post.', error);
+        // }
         //// request to vote
         const voteOptions = {
           author: postingContent.author,
