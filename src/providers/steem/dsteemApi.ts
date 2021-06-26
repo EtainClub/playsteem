@@ -924,44 +924,44 @@ export const fetchRawPost = async (
   }
 };
 
-// fetch last comments
-// get_replies_by_last_update
-export const fetchRecentComments = async (
-  startAuthor: string,
-  startPermlink: string,
-  limit: number = NUM_FETCH_COMMENTS + 1,
-  username: string = null,
-) => {
-  let results;
-  //const query = [startAuthor, startPermlink, limit];
-  //blurtcurator/re-ya-soy-un-delfin-i-am-already-a-dolphin-20210131t000152z
-  const query = [
-    'blurtcurator',
-    're-ya-soy-un-delfin-i-am-already-a-dolphin-20210131t000152z',
-    50,
-  ];
-  try {
-    // get all comments of depth 1
-    results = await client.database.call('get_replies_by_last_update', query);
-  } catch (error) {
-    console.log('failed to fetch comments', error);
-  }
+// // fetch last comments
+// // get_replies_by_last_update
+// export const fetchRecentComments = async (
+//   startAuthor: string,
+//   startPermlink: string,
+//   limit: number = NUM_FETCH_COMMENTS + 1,
+//   username: string = null,
+// ) => {
+//   let results;
+//   //const query = [startAuthor, startPermlink, limit];
+//   //blurtcurator/re-ya-soy-un-delfin-i-am-already-a-dolphin-20210131t000152z
+//   const query = [
+//     'blurtcurator',
+//     're-ya-soy-un-delfin-i-am-already-a-dolphin-20210131t000152z',
+//     50,
+//   ];
+//   try {
+//     // get all comments of depth 1
+//     results = await client.database.call('get_replies_by_last_update', query);
+//   } catch (error) {
+//     console.log('failed to fetch comments', error);
+//   }
 
-  console.log('[fetchRecentComments] results', results);
-  // return if no comments
-  if (!results) return null;
+//   console.log('[fetchRecentComments] results', results);
+//   // return if no comments
+//   if (!results) return null;
 
-  // setup comments of parent
-  const comments = [];
-  // loop over children
-  for (let i = 0; i < results.length; i++) {
-    // parse comment
-    const extComment = await parseComment(results[i], username);
-    comments.push(extComment);
-  }
+//   // setup comments of parent
+//   const comments = [];
+//   // loop over children
+//   for (let i = 0; i < results.length; i++) {
+//     // parse comment
+//     const extComment = await parseComment(results[i], username);
+//     comments.push(extComment);
+//   }
 
-  return comments;
-};
+//   return comments;
+// };
 
 // fetch comments
 export const fetchComments = async (
@@ -995,45 +995,46 @@ export const fetchComments = async (
   return comments;
 };
 
-// fetch comments recursively
-export const fetchRecursiveComments = async (
-  author: string,
-  permlink: string,
-  username: string = null,
-) => {
-  let results;
-  try {
-    // get all comments of depth 1
-    results = await client.database.call('get_content_replies', [
-      author,
-      permlink,
-    ]);
-  } catch (error) {
-    console.log('failed to fetch comments', error);
-  }
 
-  // return if no comments
-  if (!results) return null;
+// // fetch comments recursively
+// export const fetchRecursiveComments = async (
+//   author: string,
+//   permlink: string,
+//   username: string = null,
+// ) => {
+//   let results;
+//   try {
+//     // get all comments of depth 1
+//     results = await client.database.call('get_content_replies', [
+//       author,
+//       permlink,
+//     ]);
+//   } catch (error) {
+//     console.log('failed to fetch comments', error);
+//   }
 
-  // setup comments of parent
-  const comments = [];
-  // loop over children
-  for (let i = 0; i < results.length; i++) {
-    // parse comment
-    const extComment = await parseComment(results[i], username);
-    comments.push(extComment);
+//   // return if no comments
+//   if (!results) return null;
 
-    // recursive call if a child exists
-    if (results[i].children > 0) {
-      const children = await fetchComments(
-        results[i].author,
-        results[i].permlink,
-      );
-      comments[i] = { ...comments[i], comments: children };
-    }
-  }
-  return comments;
-};
+//   // setup comments of parent
+//   const comments = [];
+//   // loop over children
+//   for (let i = 0; i < results.length; i++) {
+//     // parse comment
+//     const extComment = await parseComment(results[i], username);
+//     comments.push(extComment);
+
+//     // recursive call if a child exists
+//     if (results[i].children > 0) {
+//       const children = await fetchComments(
+//         results[i].author,
+//         results[i].permlink,
+//       );
+//       comments[i] = { ...comments[i], comments: children };
+//     }
+//   }
+//   return comments;
+// };
 
 //
 

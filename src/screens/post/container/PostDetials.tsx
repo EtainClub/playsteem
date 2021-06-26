@@ -15,7 +15,7 @@ import axios from 'axios';
 // screens
 import { PostDetailsScreen } from '../screen/PostDetails';
 // dsteem api
-import { fetchComments, fetchRecentComments } from '~/providers/steem/dsteemApi';
+import { fetchComments } from '~/providers/steem/dsteemApi';
 import { argonTheme } from '~/constants/argonTheme';
 import { navigate } from '~/navigation/service';
 import {
@@ -226,22 +226,6 @@ const PostDetails = (props: Props): JSX.Element => {
     setComments(_comments);
   };
 
-  // const _fetchRecentComments = async () => {
-  //   // get the first comment of the post
-  //   try {
-  //     const _lastComments = await fetchRecentComments(
-  //       postsState.postRef.author,
-  //       postsState.postRef.permlink,
-  //       50,
-  //       authState.currentCredentials.username,
-  //     );
-
-  //     console.log('_fetchComments. last comments', _lastComments);
-  //   } catch (error) {
-  //     console.log('failed to fetch recent comments');
-  //   }
-  // };
-
   const _onRefresh = async () => {
     // get fresh post details
     await _fetchPostDetailsEntry(true);
@@ -274,7 +258,7 @@ const PostDetails = (props: Props): JSX.Element => {
     if (result) {
       // fetch comments
       // @test if this is necessary
-      _fetchComments();
+      // _fetchComments();
       return true;
     }
     return false;

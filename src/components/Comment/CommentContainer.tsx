@@ -40,6 +40,7 @@ interface Props {
 const CommentContainer = (props: Props): JSX.Element => {
   //// props
   const _comment = props.contents[`${props.postRef}`];
+  console.log('CommentContainer. _comment', _comment);
   //// language
   const intl = useIntl();
   //// contexts
@@ -186,6 +187,7 @@ const CommentContainer = (props: Props): JSX.Element => {
 
   //// fetch children comments
   const _handlePressChildren = async () => {
+    setComment(_comment);
     // toggle
     setShowChildComments(!showChildComments);
   };
@@ -208,7 +210,8 @@ const CommentContainer = (props: Props): JSX.Element => {
         comment && (
           <CommentView
             key={comment.id}
-            comment={_comment}
+            contents={props.contents}
+            postRef={props.postRef}
             body={body}
             showChildComments={showChildComments}
             reputation={_comment.state.reputation}

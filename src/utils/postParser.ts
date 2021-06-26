@@ -12,6 +12,7 @@ import { renderPostBody, postBodySummary } from './render-helpers';
 import { getResizedAvatar, getResizedImage } from './image';
 import { IMAGE_SERVERS } from '~/constants';
 import { PostState, PostData, CommentData, MetaData } from '~/contexts/types';
+import { debug } from 'react-native-reanimated';
 
 const POST_SUMMARY_LENGTH = 70;
 const webp = Platform.OS === 'ios' ? false : true;
@@ -122,13 +123,12 @@ export const parsePostWithComments = (
   postData.state.nickname = get(profile, 'name');
   // get active voters
   postData.state.voters = _parseActiveVotes(post, username, postData);
-  // @test
-  postData.state.voters = [];
+
+  console.log('parse post with comments. voters', postData.state.voters);
 
   postData.state.isPromoted = false;
   // thumbnail image
   postData.image = postImage(postData.metadata, post.body);
-  postData.state.voters!.sort((a, b) => b.rshares - a.rshares);
   postData.state.vote_count = postData.state.voters.length;
 
   postData.state.avatar = getResizedAvatar(post.author, imageServer);
@@ -153,16 +153,18 @@ const _parseActiveVotes = (
 ) => {
   const totalPayout =
     parseFloat(post.pending_payout_value as string) +
-    parseFloat(post.total_payout_value as string) +
     parseFloat(post.curator_payout_value as string);
 
   postData.state.payout = totalPayout.toFixed(2);
 
-  const voteRshares = postData.state.voters.reduce(
+  const voteRshares = post.active_votes.reduce(
     (a, b) => a + parseFloat(b.rshares),
     0,
   );
   const ratio = totalPayout / voteRshares || 0;
+
+  // sort
+  post.active_votes.sort((a, b) => b.rshares - a.rshares);
 
   post.active_votes.forEach((value, index) => {
     value.value = (value.rshares * ratio).toFixed(2);

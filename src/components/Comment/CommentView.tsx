@@ -1,5 +1,5 @@
 //// react
-import React, {useState, useEffect, useContext} from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 //// react native
 import {
   View,
@@ -10,28 +10,27 @@ import {
   Animated,
   Alert,
   Image,
-  TouchableWithoutFeedback,
+  TouchableOpacity,
   ScrollView,
 } from 'react-native';
 //// language
-import {useIntl} from 'react-intl';
+import { useIntl } from 'react-intl';
 //// UIs
-import {Block, Icon, Button, Input, Text, theme} from 'galio-framework';
-import {argonTheme} from '~/constants/argonTheme';
-import {CommentData, PostRef, PostsTypes} from '~/contexts/types';
-import {Avatar, PostBody, ImageUpload, ActionBar} from '~/components';
-import {ActionBarStyleComment} from '~/constants/actionBarTypes';
+import { Block, Icon, Button, Input, Text, theme } from 'galio-framework';
+import { argonTheme } from '~/constants/argonTheme';
+import { PostData, PostRef, PostsTypes } from '~/contexts/types';
+import { Avatar, PostBody, ImageUpload, ActionBar } from '~/components';
+import { ActionBarStyleComment } from '~/constants/actionBarTypes';
 //// componetns
-import {Comments} from '~/components/Comments';
-import {Editor} from '~/components';
-import {CommentContainer} from './CommentContainer';
+import { Comment, Editor } from '~/components';
 //// utils
-import {getTimeFromNow} from '~/utils/time';
-const {height, width} = Dimensions.get('window');
+import { getTimeFromNow } from '~/utils/time';
+const { height, width } = Dimensions.get('window');
 
 // component
 interface Props {
-  comment: CommentData;
+  contents: PostData[];
+  postRef: string;
   body: string;
   showChildComments: boolean;
   reputation: string;
@@ -44,16 +43,17 @@ interface Props {
 }
 const CommentView = (props: Props): JSX.Element => {
   //// props
-  const {comment, showChildComments, reputation, body} = props;
+  const comment = props.contents[`${props.postRef}`];
+  const { postRef, showChildComments, reputation, body } = props;
   //// language
   const intl = useIntl();
 
   const formatedTime = comment && getTimeFromNow(comment.state.createdAt);
 
   return (
-    <View style={{marginTop: 30, marginLeft: 10}}>
+    <View style={{ marginTop: 30, marginLeft: 10 }}>
       <Block
-        style={{padding: 5}}
+        style={{ padding: 5 }}
         card
         shadow
         shadowColor="black"
@@ -69,10 +69,10 @@ const CommentView = (props: Props): JSX.Element => {
             truncate={false}
           />
           <Block row>
-            <Text style={{top: 10, marginRight: 20}}>{formatedTime}</Text>
+            <Text style={{ top: 10, marginRight: 20 }}>{formatedTime}</Text>
             <Icon
               onPress={props.flagPost}
-              style={{margin: 5}}
+              style={{ margin: 5 }}
               size={16}
               color={argonTheme.COLORS.MUTED}
               name="flag-outline"
@@ -93,14 +93,14 @@ const CommentView = (props: Props): JSX.Element => {
             handlePressTranslation={props.handlePressTranslation}
           />
           {comment.children > 0 && (
-            <TouchableWithoutFeedback onPress={props.handlePressChildren}>
-              <Block row style={{paddingLeft: 5}}>
+            <TouchableOpacity onPress={props.handlePressChildren}>
+              <Block row style={{ paddingLeft: 5 }}>
                 <Icon
                   size={ActionBarStyleComment.iconSize + 5}
                   color={theme.COLORS.FACEBOOK}
                   name="commenting-o"
                   family="font-awesome"
-                  style={{paddingRight: 2}}
+                  style={{ paddingRight: 2 }}
                 />
                 <Text
                   size={ActionBarStyleComment.textSize + 3}
@@ -108,18 +108,25 @@ const CommentView = (props: Props): JSX.Element => {
                   {comment.children}
                 </Text>
               </Block>
-            </TouchableWithoutFeedback>
+            </TouchableOpacity>
           )}
         </Block>
-        {showChildComments && comment.children > 0 && (
-          <Comments postRef={comment.state.post_ref} />
-        )}
+        {showChildComments && comment.replies.map((postRef) => {
+          console.log('CommentView. comment replies postRef', postRef);
+          return (
+            <Comment
+              key={postRef}
+              postRef={postRef}
+              contents={props.contents}
+            />
+          );
+        })}
       </Block>
     </View>
   );
 };
 
-export {CommentView};
+export { CommentView };
 
 const styles = StyleSheet.create({
   commentInput: {

@@ -24,10 +24,8 @@ import {
   Avatar,
   Comment,
   Editor,
-  ImageUpload,
   ParentPost,
   PostBody,
-  Comments,
 } from '~/components';
 import { argonTheme } from '~/constants/argonTheme';
 import { UIContext } from '~/contexts';
