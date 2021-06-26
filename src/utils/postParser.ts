@@ -36,6 +36,142 @@ export const parsePosts = async (
   return null;
 };
 
+export const parsePostWithComments = (
+  post: Discussion,
+  username: string,
+  imageServer: string,
+) => {
+  // create a post data object
+  const postData: PostData = {
+    // post
+    id: post.id,
+    body: post.body,
+    markdownBody: post.body,
+    summary: '',
+    image: '',
+    url: post.url,
+
+    // meta
+    json_metadata: '',
+    metadata: {
+      image: [],
+      tags: [],
+    },
+
+    // children
+    depth: post.depth,
+    children: post.children,
+    replies: post.replies,
+
+    state: {
+      createdAt: post.created,
+      // stats
+      vote_count: 0,
+      resteem_count: 0,
+      comment_count: 0,
+      bookmark_count: 0,
+      payout: '',
+      voters: [],
+      nsfw: false,
+      isPromoted: false,
+
+      // post reference
+      parent_ref: {
+        author: post.parent_author,
+        permlink: post.parent_permlink,
+      },
+      post_ref: {
+        author: post.author,
+        permlink: post.permlink,
+      },
+      title: post.title,
+
+      // user's actions related
+      voted: false,
+      downvoted: false,
+      bookmarked: false,
+      resteemed: false,
+      favorite: false,
+      commented: false,
+      votePercent: 0,
+
+      // author
+      avatar: '',
+      nickname: '',
+      reputation: post.author_reputation,
+      // comments
+      isComment: false,
+    },
+  };
+
+  try {
+    postData.metadata = JSON.parse(post.json_metadata);
+  } catch (error) {
+    postData.json_metadata = '{}';
+  }
+
+  const profile = {
+    post_count: 0,
+    metadata: {
+      profile: postData.metadata.about,
+    },
+    name: postData.metadata.name,
+    reputation: 0,
+  };
+
+  postData.state.nickname = get(profile, 'name');
+  // get active voters
+  postData.state.voters = _parseActiveVotes(post, username, postData);
+  // @test
+  postData.state.voters = [];
+
+  postData.state.isPromoted = false;
+  // thumbnail image
+  postData.image = postImage(postData.metadata, post.body);
+  postData.state.voters!.sort((a, b) => b.rshares - a.rshares);
+  postData.state.vote_count = postData.state.voters.length;
+
+  postData.state.avatar = getResizedAvatar(post.author, imageServer);
+  postData.body = renderPostBody(post.body, true);
+  postData.summary = postBodySummary(post, POST_SUMMARY_LENGTH);
+
+  if (username && postData.state.voters) {
+    postData.state.voted = isVoted(postData.state.voters, username);
+  } else {
+    postData.state.voted = false;
+  }
+
+  postData.state.comment_count = post.children;
+
+  return postData;
+};
+
+const _parseActiveVotes = (
+  post: Discussion,
+  username: string,
+  postData: PostData,
+) => {
+  const totalPayout =
+    parseFloat(post.pending_payout_value as string) +
+    parseFloat(post.total_payout_value as string) +
+    parseFloat(post.curator_payout_value as string);
+
+  postData.state.payout = totalPayout.toFixed(2);
+
+  const voteRshares = postData.state.voters.reduce(
+    (a, b) => a + parseFloat(b.rshares),
+    0,
+  );
+  const ratio = totalPayout / voteRshares || 0;
+
+  post.active_votes.forEach((value, index) => {
+    value.value = (value.rshares * ratio).toFixed(2);
+    postData.state.voters[index] = `${value.voter} ($${value.value})`;
+  });
+
+  return postData.state.voters;
+};
+
 export const parsePost = async (
   post: Discussion,
   username: string,
@@ -66,6 +202,7 @@ export const parsePost = async (
     // children
     depth: post.depth,
     children: post.children,
+    replies: [],
 
     state: {
       createdAt: post.created,
@@ -289,6 +426,7 @@ export const parseComment = async (comment: Discussion, username: string) => {
     // children
     depth: comment.depth,
     children: comment.children,
+    replies: [],
 
     // meta
     json_metadata: '',
@@ -343,8 +481,6 @@ export const parseComment = async (comment: Discussion, username: string) => {
   } catch (error) {
     commentData.json_metadata = '{}';
   }
-
-  const _profile = await fetchProfile(commentData.state.post_ref.author);
 
   const profile = {
     post_count: comment.post_count,

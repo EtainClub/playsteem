@@ -130,6 +130,7 @@ import {
   parsePost,
   filterNSFWPosts,
   parseComment,
+  parsePostWithComments,
 } from '~/utils/postParser';
 import { estimateVoteAmount } from '~/utils/estimateVoteAmount';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -865,47 +866,24 @@ export const fetchPostDetails = async (
 };
 
 //// fetch post details
-export const fetchPostDetails2 = async (
-  tag: string,
+export const fetchPostWithComments = async (
   author: string,
   permlink: string,
   username: string = null,
-  isPromoted = false,
-): Promise<PostData> => {
+): Promise<PostData[]> => {
   try {
-    const post = await client.database.call('get_content', [author, permlink]);
-    console.log('fetchPostDetails. post', post);
-
-    const postState = await client.call('condenser_api', 'get_state', [
-      post.url,
-    ]);
-    console.log('fetchPostDetails. post state', postState);
-
-    const postData = await parsePost(
-      post,
-      username,
-      IMAGE_SERVERS[0],
-      //      blockchainSettings.image,
-      isPromoted,
-    );
-
-    // build array
-    let _comments = [];
-    Object.keys(postState.content).forEach((key) => {
-      _comments.push(postState.content[key]);
+    const result = await client.call('bridge', 'get_discussion', [author, permlink]);
+    console.log('fetchPostWithComments. result', result);
+    let posts = [];
+    Object.keys(result).forEach(async (key) => {
+      posts[key] = parsePostWithComments(result[key], username, IMAGE_SERVERS[0]);
     });
-    console.log('raw comments', _comments);
-
-    const comments = await parsePosts(_comments, username, IMAGE_SERVERS[0]);
-
-    console.log('comment parsed', comments);
-
-    if (postData) return postData;
-    return null;
+    console.log('fetchPostWithComments. posts', posts);
+    return posts;
   } catch (error) {
-    console.log('failed to fetch post details', error);
-    return null;
+    console.log('fetchPostWithComments. failed to fetch', error);
   }
+  return [];
 };
 
 /// fetch a post

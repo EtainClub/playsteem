@@ -13,6 +13,7 @@ export enum PostsActionTypes {
   SET_TAG_LIST,
   SET_FILTER_INDEX,
   SET_POST_DETAILS,
+  SET_POST_WITH_COMMENTS,
   SET_TAG_AND_FILTER,
   BOOKMARK_POST,
   RESTEEM_POST,
@@ -109,6 +110,7 @@ export interface PostData {
   // children
   depth: number;
   children: number;
+  replies: string[];
 
   // state
   state: PostState;
@@ -199,6 +201,8 @@ export interface PostsState {
   postRef: PostRef;
   // post details
   postDetails: PostData;
+  // post with comments
+  postWithComments: PostData[];
   // fetched flag
   fetched: boolean;
   // need to fetch flag
@@ -336,6 +340,14 @@ interface SetPostDetailsAction {
   type: PostsActionTypes.SET_POST_DETAILS;
   payload: PostData;
 }
+// set post with comments
+interface SetPostWithCommentsAction {
+  type: PostsActionTypes.SET_POST_WITH_COMMENTS;
+  payload: {
+    contents: PostData[];
+    postRef: PostRef;
+  };
+}
 // voting
 interface UpVoteAction {
   type: PostsActionTypes.UPVOTE;
@@ -395,13 +407,13 @@ export interface PostsContextType {
     noFollowings?: boolean,
     appending?: boolean,
     author?: string,
-  ) => Promise<{fetchedPosts: PostData[]; fetchedAll: boolean}>;
+  ) => Promise<{ fetchedPosts: PostData[]; fetchedAll: boolean }>;
   // set posts type
   setPostsType: (postsType: PostsTypes) => void;
   // clear posts
   clearPosts: (postsType: PostsTypes) => void;
   // get post details
-  getPostDetails: (postRef: PostRef, username: string) => Promise<PostData>;
+  getPostDetails: (postRef: PostRef, username: string) => Promise<PostData[]>;
   // set post details
   setPostDetails: (post: PostData) => void;
   // upvote
@@ -439,7 +451,7 @@ export interface PostsContextType {
   fetchDatabaseState: (
     postRef: PostRef,
     username: string,
-  ) => Promise<{bookmarked: boolean}>;
+  ) => Promise<{ bookmarked: boolean }>;
   // fetch all bookmarks
   fetchBookmarks: (username: string) => Promise<any[]>;
   // update favorite author
@@ -495,6 +507,7 @@ export type PostsAction =
   | ClearPostsAction
   | AppendPostsAction
   | SetPostDetailsAction
+  | SetPostWithCommentsAction
   | UpVoteAction
   | UpVoteCommentAction
   | CommentAction

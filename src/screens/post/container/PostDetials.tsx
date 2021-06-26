@@ -69,6 +69,8 @@ const PostDetails = (props: Props): JSX.Element => {
     null,
   );
   const [comments, setComments] = useState<CommentData[]>(null);
+  const [replies, setReplies] = useState<string[]>([]);
+  const [contents, setContents] = useState<PostData[]>([]);
   const [submitted, setSubmitted] = useState(false);
   const [parentPost, setParentPost] = useState<PostData>(null);
   const [needFetching, setNeedFetching] = useState(false);
@@ -114,10 +116,15 @@ const PostDetails = (props: Props): JSX.Element => {
       getPostDetails(
         postsState.postRef,
         authState.currentCredentials.username,
-      ).then((details) => {
+      ).then((contents) => {
         console.log('need fetching details response');
+        // set contents
+        setContents(contents);
+        const details = contents[`${postsState.postRef.author}/${postsState.postRef.permlink}`];
         // set details
         setPostDetails(details);
+        // set replies (which are comments)
+        setReplies(details.replies);
         // set original details
         setOriginalPostDetails(details);
         // clear flag
@@ -142,7 +149,7 @@ const PostDetails = (props: Props): JSX.Element => {
     // check sanity
     if (!postsState.postRef.author) return;
     // fetch comments only if they exist
-    _fetchComments();
+    //    _fetchComments();
     // clear translation
     setTranslatedPostDetails(null);
     // clear comments
@@ -161,10 +168,14 @@ const PostDetails = (props: Props): JSX.Element => {
       setNeedFetching(true);
     } else {
       // get post details
-      details = await getPostDetails(
+      const contents = await getPostDetails(
         postsState.postRef,
         authState.currentCredentials.username,
       );
+      // set contents
+      setContents(contents);
+      details = contents[`${postsState.postRef.author}/${postsState.postRef.permlink}`];
+      setReplies(details.replies);
     }
 
     // set post details
@@ -187,10 +198,11 @@ const PostDetails = (props: Props): JSX.Element => {
   const _fetchParentPost = async (postRef: PostRef) => {
     console.log('_fetchParentPost. postRef', postRef);
     // get post details
-    const details = await getPostDetails(
+    const contents = await getPostDetails(
       postRef,
       authState.currentCredentials.username,
     );
+    const details = contents[`${postRef.author}/${postRef.permlink}`];
     // go up the tree to the root
     if (details.depth > 0) {
       await _fetchParentPost(details.state.parent_ref);
@@ -261,6 +273,7 @@ const PostDetails = (props: Props): JSX.Element => {
     setSubmitted(true);
     if (result) {
       // fetch comments
+      // @test if this is necessary
       _fetchComments();
       return true;
     }
@@ -365,6 +378,8 @@ const PostDetails = (props: Props): JSX.Element => {
       postsType={postsState.postsType}
       index={postIndex}
       comments={comments}
+      replies={replies}
+      contents={contents}
       commentY={commentY}
       hideHeader={hideHeader}
       toggleHideHeader={(value) => setHideHeader(value)}

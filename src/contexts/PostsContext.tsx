@@ -9,7 +9,7 @@ import {
   broadcastPost,
   broadcastPostUpdate,
   fetchPostDetails,
-  fetchPostDetails2,
+  fetchPostWithComments,
   fetchAccountState,
   fetchCommunityList,
   fetchCommunity,
@@ -180,6 +180,15 @@ const postsReducer = (state: PostsState, action: PostsAction) => {
       return {
         ...state,
         postDetails: action.payload,
+      };
+
+    case PostsActionTypes.SET_POST_WITH_COMMENTS:
+      return {
+        ...state,
+        postWithComments: action.payload.contents,
+        postRef: action.payload.postRef,
+        postDetails:
+          action.payload.contents[`${action.payload.postRef.author}/${action.payload.postRef.author}`]
       };
 
     case PostsActionTypes.BOOKMARK_POST:
@@ -476,26 +485,29 @@ const PostsProvider = ({ children }: Props) => {
   //// get post details
   const getPostDetails = async (postRef: PostRef, username: string) => {
     // fetch
-    const post = await fetchPostDetails(
-      postRef.author,
-      postRef.permlink,
-      username,
-    );
-    // const post = await fetchPostDetails2(
-    //   '',
+    // const post = await fetchPostDetails(
     //   postRef.author,
     //   postRef.permlink,
     //   username,
     // );
+    // fetch post detail and its comments (replies)
+    const postWithComments = await fetchPostWithComments(
+      postRef.author,
+      postRef.permlink,
+      username,
+    );
 
-    console.log('[getPostDetails] post', post);
-    if (post) {
+    console.log('[getPostDetails] post', postWithComments);
+    if (postWithComments) {
       // dispatch action
       dispatch({
-        type: PostsActionTypes.SET_POST_DETAILS,
-        payload: post,
+        type: PostsActionTypes.SET_POST_WITH_COMMENTS,
+        payload: {
+          contents: postWithComments,
+          postRef: postRef,
+        },
       });
-      return post;
+      return postWithComments;
     }
     setToastMessage(intl.formatMessage({ id: 'fetch_error' }));
     return null;
@@ -737,10 +749,10 @@ const PostsProvider = ({ children }: Props) => {
   ) => {
     //// get the firebase user doc ref
     // build doc id
-    const docId = `${postRef.author}${postRef.permlink}`;
+    const docId = `${postRef.author} ${postRef.permlink} `;
     // create a reference to the doc
     const docRef = firestore()
-      .doc(`users/${username}`)
+      .doc(`users / ${username} `)
       .collection('bookmarks')
       .doc(docId);
     // check sanity if the user already bookmarked this
@@ -777,10 +789,10 @@ const PostsProvider = ({ children }: Props) => {
   const fetchDatabaseState = async (postRef: PostRef, username: string) => {
     //// get the firebase user doc ref
     // build doc id
-    const docId = `${postRef.author}${postRef.permlink}`;
+    const docId = `${postRef.author} ${postRef.permlink} `;
     // create a reference to the doc
     const docRef = firestore()
-      .doc(`users/${username}`)
+      .doc(`users / ${username} `)
       .collection('bookmarks')
       .doc(docId);
     let bookmark = null;
@@ -809,7 +821,7 @@ const PostsProvider = ({ children }: Props) => {
     let bookmarks = [];
     // order by latest
     await firestore()
-      .doc(`users/${username}`)
+      .doc(`users / ${username} `)
       .collection('bookmarks')
       .orderBy('createdAt', 'desc')
       .get()
@@ -834,7 +846,7 @@ const PostsProvider = ({ children }: Props) => {
     console.log('[favoriteAuthor] author', author);
     // create a reference to the doc
     const docRef = firestore()
-      .doc(`users/${username}`)
+      .doc(`users / ${username} `)
       .collection('favorites')
       .doc(author);
 
@@ -848,7 +860,7 @@ const PostsProvider = ({ children }: Props) => {
 
           //// update the favorites collection
           // remove
-          firestore().doc(`favorites/${author}`).collection('followers').doc(`${username}`)
+          firestore().doc(`favorites / ${author} `).collection('followers').doc(`${username} `)
             .delete()
             .then(() => console.log('deleted the user in favorites collection'));
           return true;
@@ -873,7 +885,7 @@ const PostsProvider = ({ children }: Props) => {
         });
         //// update the favorites collection
         // get reference to the author of favorites collection
-        firestore().doc(`favorites/${author}`).collection('followers').doc(`${username}`).set({});
+        firestore().doc(`favorites / ${author} `).collection('followers').doc(`${username} `).set({});
 
 
         return true;
@@ -890,7 +902,7 @@ const PostsProvider = ({ children }: Props) => {
     // get user's favorite collection
     let favorites = [];
     await firestore()
-      .doc(`users/${username}`)
+      .doc(`users / ${username} `)
       .collection('favorites')
       .get()
       .then((snapshot) => {
@@ -923,9 +935,9 @@ const PostsProvider = ({ children }: Props) => {
     console.log('[isFavorite] username, author', username, author);
     // get user's favorite collection
     const result = await firestore()
-      .doc(`users/${username}`)
+      .doc(`users / ${username} `)
       .collection('favorites')
-      .doc(`${author}`)
+      .doc(`${author} `)
       .get();
     return result.exists;
   };

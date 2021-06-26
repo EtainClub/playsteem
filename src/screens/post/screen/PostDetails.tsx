@@ -41,6 +41,8 @@ interface Props {
   parentPost: PostData;
   index: number;
   comments: CommentData[];
+  replies: string[];
+  contents: PostData[];
   commentY: number;
   hideHeader: boolean;
   handleRefresh: () => void;
@@ -53,7 +55,7 @@ interface Props {
 }
 const PostDetailsScreen = (props: Props): JSX.Element => {
   //// props
-  const { post, comments, commentY, hideHeader } = props;
+  const { post, comments, replies, contents, commentY, hideHeader } = props;
   const { state } = post;
   const { nickname } = state;
   const { tags } = post.metadata;
@@ -195,11 +197,24 @@ const PostDetailsScreen = (props: Props): JSX.Element => {
               />
             </Block>
           </Block>
-          {comments && (
+          {/* {comments && (
             <Block style={{ marginBottom: 100 }}>
               <Comments postRef={post.state.post_ref} comments={comments} />
             </Block>
+          )} */}
+          {replies && (
+            <Block style={{ marginBottom: 100 }}>
+              {replies.map((postRef) => {
+                return (
+                  <Comment
+                    key={postRef}
+                    postRef={postRef}
+                    contents={contents}
+                  />);
+              })}
+            </Block>
           )}
+
         </ScrollView>
       </Block>
     </KeyboardAvoidingView>
