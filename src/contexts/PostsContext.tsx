@@ -59,6 +59,7 @@ const initialState: PostsState = {
   },
   // post details
   postDetails: INIT_POST_DATA,
+  postWithComments: [],
   // fetched flag
   fetched: false,
   //
@@ -183,12 +184,21 @@ const postsReducer = (state: PostsState, action: PostsAction) => {
       };
 
     case PostsActionTypes.SET_POST_WITH_COMMENTS:
+      const test = {
+        ...state,
+        postWithComments: action.payload.contents,
+        postRef: action.payload.postRef,
+        postDetails:
+          action.payload.contents[`${action.payload.postRef.author}/${action.payload.postRef.permlink}`]
+      };
+      console.log('SET_POST_WITH_COMMENTS. reducer postDetails',
+        action.payload.contents[`${action.payload.postRef.author}/${action.payload.postRef.permlink}`]);
       return {
         ...state,
         postWithComments: action.payload.contents,
         postRef: action.payload.postRef,
         postDetails:
-          action.payload.contents[`${action.payload.postRef.author}/${action.payload.postRef.author}`]
+          action.payload.contents[`${action.payload.postRef.author}/${action.payload.postRef.permlink}`]
       };
 
     case PostsActionTypes.BOOKMARK_POST:

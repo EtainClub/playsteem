@@ -38,9 +38,10 @@ interface Props {
 }
 
 const CommentContainer = (props: Props): JSX.Element => {
+  console.log('CommentContainer');
+
   //// props
   const _comment = props.contents[`${props.postRef}`];
-  console.log('CommentContainer. _comment', _comment);
   //// language
   const intl = useIntl();
   //// contexts

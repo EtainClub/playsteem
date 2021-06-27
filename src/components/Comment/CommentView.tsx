@@ -112,7 +112,6 @@ const CommentView = (props: Props): JSX.Element => {
           )}
         </Block>
         {showChildComments && comment.replies.map((postRef) => {
-          console.log('CommentView. comment replies postRef', postRef);
           return (
             <Comment
               key={postRef}

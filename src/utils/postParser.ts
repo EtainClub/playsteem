@@ -123,9 +123,6 @@ export const parsePostWithComments = (
   postData.state.nickname = get(profile, 'name');
   // get active voters
   postData.state.voters = _parseActiveVotes(post, username, postData);
-
-  console.log('parse post with comments. voters', postData.state.voters);
-
   postData.state.isPromoted = false;
   // thumbnail image
   postData.image = postImage(postData.metadata, post.body);

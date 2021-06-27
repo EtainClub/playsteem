@@ -873,12 +873,10 @@ export const fetchPostWithComments = async (
 ): Promise<PostData[]> => {
   try {
     const result = await client.call('bridge', 'get_discussion', [author, permlink]);
-    console.log('fetchPostWithComments. result', result);
     let posts = [];
     Object.keys(result).forEach(async (key) => {
       posts[key] = parsePostWithComments(result[key], username, IMAGE_SERVERS[0]);
     });
-    console.log('fetchPostWithComments. posts', posts);
     return posts;
   } catch (error) {
     console.log('fetchPostWithComments. failed to fetch', error);

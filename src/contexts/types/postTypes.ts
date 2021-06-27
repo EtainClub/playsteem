@@ -143,6 +143,7 @@ export const INIT_POST_DATA = {
   // children
   depth: 0,
   children: 0,
+  replies: [],
 
   // stats
   state: {

@@ -15,7 +15,8 @@ import axios from 'axios';
 // screens
 import { PostDetailsScreen } from '../screen/PostDetails';
 // dsteem api
-import { fetchComments } from '~/providers/steem/dsteemApi';
+import { fetchComments, fetchRawPost } from '~/providers/steem/dsteemApi';
+import { parsePost, parsePostWithComments } from '~/utils/postParser';
 import { argonTheme } from '~/constants/argonTheme';
 import { navigate } from '~/navigation/service';
 import {
@@ -33,7 +34,7 @@ import {
   SettingsContext,
 } from '~/contexts';
 import { generateCommentPermlink, makeJsonMetadataComment } from '~/utils/editor';
-import { TARGET_BLOCKCHAIN } from '~/constants/blockchain';
+import { TARGET_BLOCKCHAIN, IMAGE_SERVERS } from '~/constants/blockchain';
 
 interface Props {
   navigation: any;
@@ -68,9 +69,9 @@ const PostDetails = (props: Props): JSX.Element => {
   const [translatedPostDetails, setTranslatedPostDetails] = useState<PostData>(
     null,
   );
-  const [comments, setComments] = useState<CommentData[]>(null);
-  const [replies, setReplies] = useState<string[]>([]);
-  const [contents, setContents] = useState<PostData[]>([]);
+  const [comments, setComments] = useState(null);
+  const [replies, setReplies] = useState<string[]>(null);
+  const [contents, setContents] = useState<PostData[]>(null);
   const [submitted, setSubmitted] = useState(false);
   const [parentPost, setParentPost] = useState<PostData>(null);
   const [needFetching, setNeedFetching] = useState(false);
@@ -111,7 +112,7 @@ const PostDetails = (props: Props): JSX.Element => {
   //// event: need to fetch details
   useEffect(() => {
     if (needFetching) {
-      //    console.log('[postDetails] event: need to fetching');
+      console.log('[postDetails] event: need to fetching');
       // get post details
       getPostDetails(
         postsState.postRef,
@@ -153,7 +154,7 @@ const PostDetails = (props: Props): JSX.Element => {
     // clear translation
     setTranslatedPostDetails(null);
     // clear comments
-    setComments(null);
+    //    setComments(null);
     // clear the previous post
     setPostDetails(null);
     // remove the parent post
@@ -214,22 +215,22 @@ const PostDetails = (props: Props): JSX.Element => {
     setParentPost(details);
   };
 
-  const _fetchComments = async () => {
-    // fetch comments on this post
-    const _comments = await fetchComments(
-      postsState.postRef.author,
-      postsState.postRef.permlink,
-      authState.currentCredentials.username,
-    );
-    console.log('_fetchComments', _comments);
+  // const _fetchComments = async () => {
+  //   // fetch comments on this post
+  //   const _comments = await fetchComments(
+  //     postsState.postRef.author,
+  //     postsState.postRef.permlink,
+  //     authState.currentCredentials.username,
+  //   );
+  //   console.log('_fetchComments', _comments);
 
-    setComments(_comments);
-  };
+  //   setComments(_comments);
+  // };
 
   const _onRefresh = async () => {
     // get fresh post details
     await _fetchPostDetailsEntry(true);
-    console.log('[PostDetails] refreshed, comments', comments);
+    console.log('[PostDetails] refreshed, contents', contents);
   };
 
   const _onSubmitComment = async (comment: string): Promise<boolean> => {
@@ -256,9 +257,22 @@ const PostDetails = (props: Props): JSX.Element => {
     // set submitted flag
     setSubmitted(true);
     if (result) {
-      // fetch comments
-      // @test if this is necessary
-      // _fetchComments();
+      //// update comments
+      // add to replies
+      let _replies = replies;
+      _replies.push(`${username}/${permlink}`);
+      setReplies(_replies);
+      // fetch the comment? or build?
+      const _rawComment = await fetchRawPost(username, permlink);
+      console.log('posted. raw comment', _rawComment);
+      const _post = await parsePost(_rawComment, username, IMAGE_SERVERS[0]);
+      console.log('posted. new comment', _post);
+      // add the post to contents
+      let _contents = contents;
+      _contents[`${username}/${permlink}`] = _post;
+      setContents(_contents);
+      // This is required to re-render the comment component, why???
+      setComments(_contents);
       return true;
     }
     return false;
