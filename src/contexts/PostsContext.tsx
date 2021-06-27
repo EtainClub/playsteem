@@ -759,10 +759,10 @@ const PostsProvider = ({ children }: Props) => {
   ) => {
     //// get the firebase user doc ref
     // build doc id
-    const docId = `${postRef.author} ${postRef.permlink} `;
+    const docId = `${postRef.author}${postRef.permlink}`;
     // create a reference to the doc
     const docRef = firestore()
-      .doc(`users / ${username} `)
+      .doc(`users/${username}`)
       .collection('bookmarks')
       .doc(docId);
     // check sanity if the user already bookmarked this
@@ -799,10 +799,10 @@ const PostsProvider = ({ children }: Props) => {
   const fetchDatabaseState = async (postRef: PostRef, username: string) => {
     //// get the firebase user doc ref
     // build doc id
-    const docId = `${postRef.author} ${postRef.permlink} `;
+    const docId = `${postRef.author}${postRef.permlink}`;
     // create a reference to the doc
     const docRef = firestore()
-      .doc(`users / ${username} `)
+      .doc(`users/${username}`)
       .collection('bookmarks')
       .doc(docId);
     let bookmark = null;
@@ -831,7 +831,7 @@ const PostsProvider = ({ children }: Props) => {
     let bookmarks = [];
     // order by latest
     await firestore()
-      .doc(`users / ${username} `)
+      .doc(`users/${username}`)
       .collection('bookmarks')
       .orderBy('createdAt', 'desc')
       .get()
@@ -856,7 +856,7 @@ const PostsProvider = ({ children }: Props) => {
     console.log('[favoriteAuthor] author', author);
     // create a reference to the doc
     const docRef = firestore()
-      .doc(`users / ${username} `)
+      .doc(`users/${username}`)
       .collection('favorites')
       .doc(author);
 
@@ -870,7 +870,7 @@ const PostsProvider = ({ children }: Props) => {
 
           //// update the favorites collection
           // remove
-          firestore().doc(`favorites / ${author} `).collection('followers').doc(`${username} `)
+          firestore().doc(`favorites/${author}`).collection('followers').doc(`${username}`)
             .delete()
             .then(() => console.log('deleted the user in favorites collection'));
           return true;
@@ -895,7 +895,7 @@ const PostsProvider = ({ children }: Props) => {
         });
         //// update the favorites collection
         // get reference to the author of favorites collection
-        firestore().doc(`favorites / ${author} `).collection('followers').doc(`${username} `).set({});
+        firestore().doc(`favorites/${author}`).collection('followers').doc(`${username}`).set({});
 
 
         return true;
@@ -912,7 +912,7 @@ const PostsProvider = ({ children }: Props) => {
     // get user's favorite collection
     let favorites = [];
     await firestore()
-      .doc(`users / ${username} `)
+      .doc(`users/${username}`)
       .collection('favorites')
       .get()
       .then((snapshot) => {
@@ -945,7 +945,7 @@ const PostsProvider = ({ children }: Props) => {
     console.log('[isFavorite] username, author', username, author);
     // get user's favorite collection
     const result = await firestore()
-      .doc(`users / ${username} `)
+      .doc(`users/${username}`)
       .collection('favorites')
       .doc(`${author} `)
       .get();
