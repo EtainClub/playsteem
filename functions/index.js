@@ -107,6 +107,9 @@ exports.claimACTRequest = functions.https.onCall(async (context) => {
 // proxy for creating steem account
 exports.createAccountByACTRequest = functions.https.onCall(
   async (data, context) => {
+    // @test
+    return null;
+
     // get creator account
     const creator = functions.config().creator.account;
     const creatorWif = functions.config().creator.wif;
