@@ -146,6 +146,7 @@ const Profile = ({ navigation }): JSX.Element => {
 
   //// fetch bookmarks
   const _fetchBookmarks = async (username: string) => {
+    console.log('fetching bookmark');
     const bookmarks = await fetchBookmarks(username);
     // set bookmarks
     setBookmarks(bookmarks);

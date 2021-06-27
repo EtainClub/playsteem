@@ -45,7 +45,7 @@ export const parsePostWithComments = (
   // create a post data object
   const postData: PostData = {
     // post
-    id: post.id,
+    id: post.post_id,
     body: post.body,
     markdownBody: post.body,
     summary: '',
@@ -121,6 +121,13 @@ export const parsePostWithComments = (
   };
 
   postData.state.nickname = get(profile, 'name');
+
+  if (username && postData.state.voters) {
+    postData.state.voted = isVoted(post.active_votes, username);
+  } else {
+    postData.state.voted = false;
+  }
+
   // get active voters
   postData.state.voters = _parseActiveVotes(post, username, postData);
   postData.state.isPromoted = false;
@@ -131,12 +138,6 @@ export const parsePostWithComments = (
   postData.state.avatar = getResizedAvatar(post.author, imageServer);
   postData.body = renderPostBody(post.body, true);
   postData.summary = postBodySummary(post, POST_SUMMARY_LENGTH);
-
-  if (username && postData.state.voters) {
-    postData.state.voted = isVoted(postData.state.voters, username);
-  } else {
-    postData.state.voted = false;
-  }
 
   postData.state.comment_count = post.children;
 

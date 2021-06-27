@@ -252,7 +252,6 @@ const PostDetails = (props: Props): JSX.Element => {
       json_metadata: JSON.stringify(jsonMeta) || '',
       permlink: permlink,
     };
-
     const result = await submitPost(postingContent, password, true);
     // set submitted flag
     setSubmitted(true);
@@ -264,12 +263,12 @@ const PostDetails = (props: Props): JSX.Element => {
       setReplies(_replies);
       // fetch the comment? or build?
       const _rawComment = await fetchRawPost(username, permlink);
-      console.log('posted. raw comment', _rawComment);
       const _post = await parsePost(_rawComment, username, IMAGE_SERVERS[0]);
-      console.log('posted. new comment', _post);
       // add the post to contents
       let _contents = contents;
       _contents[`${username}/${permlink}`] = _post;
+      // // update the parent's replies
+      // _contents[`${postsState.postRef.author}/${postsState.postRef.permlink}`].replies.push(`${username}/${permlink}`);
       setContents(_contents);
       // This is required to re-render the comment component, why???
       setComments(_contents);

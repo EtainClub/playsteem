@@ -52,7 +52,6 @@ interface Props {
   toggleHideHeader: (value: boolean) => void;
 }
 const PostDetailsScreen = (props: Props): JSX.Element => {
-  console.log('PostDetailsScreen');
   //// props
   const { post, comments, replies, contents, commentY, hideHeader } = props;
   const { state } = post;
