@@ -119,9 +119,14 @@ const PostDetails = (props: Props): JSX.Element => {
         authState.currentCredentials.username,
       ).then((contents) => {
         console.log('need fetching details response');
+        const details = contents[`${postsState.postRef.author}/${postsState.postRef.permlink}`];
+
+        console.log('======postdetail container============. conetents', contents);
+        console.log('======postdetail container============. postref', postsState.postRef);
+        console.log('======postdetail container============. details', details);
+
         // set contents
         setContents(contents);
-        const details = contents[`${postsState.postRef.author}/${postsState.postRef.permlink}`];
         // set details
         setPostDetails(details);
         // set replies (which are comments)
@@ -192,6 +197,8 @@ const PostDetails = (props: Props): JSX.Element => {
         postsState.postRef,
         authState.currentCredentials.username,
       );
+
+      console.log('======test=====. details', details);
       if (bookmarked) details.state.bookmarked = bookmarked;
     }
   };

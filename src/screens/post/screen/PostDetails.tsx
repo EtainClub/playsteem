@@ -54,6 +54,8 @@ interface Props {
 const PostDetailsScreen = (props: Props): JSX.Element => {
   //// props
   const { post, comments, replies, contents, commentY, hideHeader } = props;
+  console.log('PostDetailsScreen. post', props.post);
+
   const { state } = post;
   const { nickname } = state;
   const { tags } = post.metadata;
@@ -195,11 +197,6 @@ const PostDetailsScreen = (props: Props): JSX.Element => {
               />
             </Block>
           </Block>
-          {/* {comments && (
-            <Block style={{ marginBottom: 100 }}>
-              <Comments postRef={post.state.post_ref} comments={comments} />
-            </Block>
-          )} */}
           {replies && (
             <Block style={{ marginBottom: 100 }}>
               {replies.map((postRef) => {

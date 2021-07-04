@@ -40,6 +40,14 @@ interface Props {
 const CommentContainer = (props: Props): JSX.Element => {
   //// props
   const _comment = props.contents[`${props.postRef}`];
+  console.log('======comment container============. _comment', _comment);
+
+  if (!_comment) return <View />;
+  console.log('======comment container============. _comment2', _comment);
+
+  // console.log('======comment container============. conetents', props.contents);
+  // console.log('======comment container============. postref', props.postRef);
+  // console.log('======comment container============. _comment', _comment);
   //// language
   const intl = useIntl();
   //// contexts
@@ -56,14 +64,14 @@ const CommentContainer = (props: Props): JSX.Element => {
   const [editMode, setEditMode] = useState(false);
   // reply text
   const [replyText, setReplyText] = useState('');
-  const [body, setBody] = useState(comment.body);
+  const [body, setBody] = useState(_comment.body);
   const [showOriginal, setShowOriginal] = useState(true);
-  const [originalBody, setOriginalBody] = useState(comment.body);
+  const [originalBody, setOriginalBody] = useState(_comment.body);
   const [translatedBody, setTranslatedBody] = useState(null);
   const [showChildComments, setShowChildComments] = useState(false);
 
   const formatedTime =
-    comment && getTimeFromNow(comment.state.createdAt);
+    comment && getTimeFromNow(_comment.state.createdAt);
 
   const _handleSubmitComment = async (_text: string) => {
     // check sanity
