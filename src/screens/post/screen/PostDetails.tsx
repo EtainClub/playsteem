@@ -54,7 +54,6 @@ interface Props {
 const PostDetailsScreen = (props: Props): JSX.Element => {
   //// props
   const { post, comments, replies, contents, commentY, hideHeader } = props;
-  console.log('PostDetailsScreen. post', props.post);
 
   const { state } = post;
   const { nickname } = state;

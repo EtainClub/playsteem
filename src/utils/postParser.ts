@@ -105,11 +105,18 @@ export const parsePostWithComments = (
     },
   };
 
-  try {
-    postData.metadata = JSON.parse(post.json_metadata);
-  } catch (error) {
-    postData.json_metadata = '{}';
-  }
+  // try {
+  //   console.log('parse post. post meta', post.json_metadata);
+  //   postData.metadata = JSON.parse(post.json_metadata);
+  //   console.log('parse post. metadata', postData.metadata);
+  // } catch (error) {
+  //   console.log('[parsePostWithComments] failed to parse metadata', error);
+  //   postData.json_metadata = '{}';
+  // }
+
+  // fetching post with the new api, the json_metadata is already parsed
+  // when trying to parse with this, json 'SyntaxError: Unexpected token o in JSON at position 1' error occurs
+  postData.metadata = post.json_metadata;
 
   const profile = {
     post_count: 0,

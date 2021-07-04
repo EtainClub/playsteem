@@ -40,14 +40,9 @@ interface Props {
 const CommentContainer = (props: Props): JSX.Element => {
   //// props
   const _comment = props.contents[`${props.postRef}`];
-  console.log('======comment container============. _comment', _comment);
-
+  // check if the comment exists
   if (!_comment) return <View />;
-  console.log('======comment container============. _comment2', _comment);
 
-  // console.log('======comment container============. conetents', props.contents);
-  // console.log('======comment container============. postref', props.postRef);
-  // console.log('======comment container============. _comment', _comment);
   //// language
   const intl = useIntl();
   //// contexts
@@ -71,7 +66,7 @@ const CommentContainer = (props: Props): JSX.Element => {
   const [showChildComments, setShowChildComments] = useState(false);
 
   const formatedTime =
-    comment && getTimeFromNow(_comment.state.createdAt);
+    _comment && getTimeFromNow(_comment.state.createdAt);
 
   const _handleSubmitComment = async (_text: string) => {
     // check sanity
