@@ -51,6 +51,7 @@ const PostDetails = (props: Props): JSX.Element => {
   const {
     postsState,
     submitPost,
+    getPostDetails0,
     getPostDetails,
     fetchDatabaseState,
     appendTag,
@@ -200,16 +201,15 @@ const PostDetails = (props: Props): JSX.Element => {
   const _fetchParentPost = async (postRef: PostRef) => {
     console.log('_fetchParentPost. postRef', postRef);
     // get post details
-    const contents = await getPostDetails(
+    const details = await getPostDetails0(
       postRef,
       authState.currentCredentials.username,
     );
-    const details = contents[`${postRef.author}/${postRef.permlink}`];
     // go up the tree to the root
     if (details.depth > 0) {
       await _fetchParentPost(details.state.parent_ref);
       console.log('_fetchParentPost. details', details);
-      return details;
+      return;
     }
     console.log('_fetchParentPost. parent details', details);
     // set parent post

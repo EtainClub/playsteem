@@ -492,6 +492,26 @@ const PostsProvider = ({ children }: Props) => {
     });
   };
 
+  //// get post details (previous version)
+  const getPostDetails0 = async (postRef: PostRef, username: string) => {
+    // fetch
+    const post = await fetchPostDetails(
+      postRef.author,
+      postRef.permlink,
+      username,
+    );
+    if (post) {
+      // dispatch action
+      dispatch({
+        type: PostsActionTypes.SET_POST_DETAILS,
+        payload: post,
+      });
+      return post;
+    }
+    setToastMessage(intl.formatMessage({ id: 'fetch_error' }));
+    return null;
+  };
+
   //// get post details
   const getPostDetails = async (postRef: PostRef, username: string) => {
     // fetch
@@ -987,6 +1007,7 @@ const PostsProvider = ({ children }: Props) => {
         setPostRef,
         setPostIndex,
         clearPosts,
+        getPostDetails0,
         getPostDetails,
         setPostDetails,
         setTagAndFilter,
