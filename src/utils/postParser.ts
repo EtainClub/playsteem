@@ -317,8 +317,10 @@ export const parsePost = async (
 };
 
 const isVoted = (activeVotes: any[], username: string) => {
+  console.log('isVoted. activeVotes', activeVotes);
   const result = activeVotes.find(
-    (element) => element.voter === username && element.percent > 0,
+    //    (element) => element.voter === username && element.percent > 0,
+    (element) => element.voter === username,
   );
   if (result) {
     return true;
