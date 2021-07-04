@@ -12,6 +12,7 @@ import { renderPostBody, postBodySummary } from './render-helpers';
 import { getResizedAvatar, getResizedImage } from './image';
 import { IMAGE_SERVERS } from '~/constants';
 import { PostState, PostData, CommentData, MetaData } from '~/contexts/types';
+import { debug } from 'react-native-reanimated';
 
 const POST_SUMMARY_LENGTH = 70;
 const webp = Platform.OS === 'ios' ? false : true;
@@ -34,6 +35,148 @@ export const parsePosts = async (
     return formattedPosts;
   }
   return null;
+};
+
+export const parsePostWithComments = (
+  post: Discussion,
+  username: string,
+  imageServer: string,
+) => {
+  // create a post data object
+  const postData: PostData = {
+    // post
+    id: post.post_id,
+    body: post.body,
+    markdownBody: post.body,
+    summary: '',
+    image: '',
+    url: post.url,
+
+    // meta
+    json_metadata: '',
+    metadata: {
+      image: [],
+      tags: [],
+    },
+
+    // children
+    depth: post.depth,
+    children: post.children,
+    replies: post.replies,
+
+    state: {
+      createdAt: post.created,
+      // stats
+      vote_count: 0,
+      resteem_count: 0,
+      comment_count: 0,
+      bookmark_count: 0,
+      payout: '',
+      voters: [],
+      nsfw: false,
+      isPromoted: false,
+
+      // post reference
+      parent_ref: {
+        author: post.parent_author,
+        permlink: post.parent_permlink,
+      },
+      post_ref: {
+        author: post.author,
+        permlink: post.permlink,
+      },
+      title: post.title,
+
+      // user's actions related
+      voted: false,
+      downvoted: false,
+      bookmarked: false,
+      resteemed: false,
+      favorite: false,
+      commented: false,
+      votePercent: 0,
+
+      // author
+      avatar: '',
+      nickname: '',
+      reputation: post.author_reputation,
+      // comments
+      isComment: false,
+    },
+  };
+
+  // try {
+  //   console.log('parse post. post meta', post.json_metadata);
+  //   postData.metadata = JSON.parse(post.json_metadata);
+  //   console.log('parse post. metadata', postData.metadata);
+  // } catch (error) {
+  //   console.log('[parsePostWithComments] failed to parse metadata', error);
+  //   postData.json_metadata = '{}';
+  // }
+
+  // fetching post with the new api, the json_metadata is already parsed
+  // when trying to parse with this, json 'SyntaxError: Unexpected token o in JSON at position 1' error occurs
+  postData.metadata = post.json_metadata;
+
+  const profile = {
+    post_count: 0,
+    metadata: {
+      profile: postData.metadata.about,
+    },
+    name: postData.metadata.name,
+    reputation: 0,
+  };
+
+  postData.state.nickname = get(profile, 'name');
+
+  if (username && postData.state.voters) {
+    postData.state.voted = isVoted(post.active_votes, username);
+  } else {
+    postData.state.voted = false;
+  }
+
+  // get active voters
+  postData.state.voters = _parseActiveVotes(post, username, postData);
+  postData.state.isPromoted = false;
+  // thumbnail image
+  postData.image = postImage(postData.metadata, post.body);
+  postData.state.vote_count = postData.state.voters.length;
+
+  postData.state.avatar = getResizedAvatar(post.author, imageServer);
+  postData.body = renderPostBody(post.body, true);
+  postData.summary = postBodySummary(post, POST_SUMMARY_LENGTH);
+
+  postData.state.comment_count = post.children;
+
+  return postData;
+};
+
+const _parseActiveVotes = (
+  post: Discussion,
+  username: string,
+  postData: PostData,
+) => {
+  const totalPayout =
+    parseFloat(post.pending_payout_value as string) +
+    parseFloat(post.curator_payout_value as string);
+
+  postData.state.payout = totalPayout.toFixed(2);
+
+  const voteRshares = post.active_votes.reduce(
+    (a, b) => a + parseFloat(b.rshares),
+    0,
+  );
+  const ratio = totalPayout / voteRshares || 0;
+
+  // sort
+  post.active_votes.sort((a, b) => b.rshares - a.rshares);
+
+  post.active_votes.forEach((value, index) => {
+    value.value = (value.rshares * ratio).toFixed(2);
+    postData.state.voters[index] = `${value.voter} ($${value.value})`;
+  });
+
+  return postData.state.voters;
 };
 
 export const parsePost = async (
@@ -66,6 +209,7 @@ export const parsePost = async (
     // children
     depth: post.depth,
     children: post.children,
+    replies: [],
 
     state: {
       createdAt: post.created,
@@ -174,7 +318,8 @@ export const parsePost = async (
 
 const isVoted = (activeVotes: any[], username: string) => {
   const result = activeVotes.find(
-    (element) => element.voter === username && element.percent > 0,
+    //    (element) => element.voter === username && element.percent > 0,
+    (element) => element.voter === username,
   );
   if (result) {
     return true;
@@ -289,6 +434,7 @@ export const parseComment = async (comment: Discussion, username: string) => {
     // children
     depth: comment.depth,
     children: comment.children,
+    replies: [],
 
     // meta
     json_metadata: '',
@@ -343,8 +489,6 @@ export const parseComment = async (comment: Discussion, username: string) => {
   } catch (error) {
     commentData.json_metadata = '{}';
   }
-
-  const _profile = await fetchProfile(commentData.state.post_ref.author);
 
   const profile = {
     post_count: comment.post_count,

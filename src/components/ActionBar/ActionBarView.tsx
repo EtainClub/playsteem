@@ -6,7 +6,6 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
-  TouchableWithoutFeedback,
 } from 'react-native';
 import { Block, Icon, Button, Text, theme } from 'galio-framework';
 // html render
@@ -240,25 +239,25 @@ const ActionBarView = (props: Props): JSX.Element => {
 
         {actionBarStyle.reply ? (
           <Block row>
-            <TouchableWithoutFeedback onPress={props.handlePressReply}>
+            <TouchableOpacity onPress={props.handlePressReply}>
               <Block row style={{ paddingRight: 10 }}>
                 <Text size={actionBarStyle.textSize}>
                   {intl.formatMessage({ id: 'reply' })}
                 </Text>
               </Block>
-            </TouchableWithoutFeedback>
+            </TouchableOpacity>
             {props.isUser && (
-              <TouchableWithoutFeedback onPress={props.handlePressEditComment}>
+              <TouchableOpacity onPress={props.handlePressEditComment}>
                 <Block row style={{ paddingRight: 10 }}>
                   <Text size={actionBarStyle.textSize}>
                     {intl.formatMessage({ id: 'edit' })}
                   </Text>
                 </Block>
-              </TouchableWithoutFeedback>
+              </TouchableOpacity>
             )}
           </Block>
         ) : (
-          <TouchableWithoutFeedback onPress={props.handlePressComments}>
+          <TouchableOpacity onPress={props.handlePressComments}>
             <Block row style={{ paddingRight: 10 }}>
               <Icon
                 size={actionBarStyle.iconSize}
@@ -271,10 +270,10 @@ const ActionBarView = (props: Props): JSX.Element => {
                 {postState.comment_count}
               </Text>
             </Block>
-          </TouchableWithoutFeedback>
+          </TouchableOpacity>
         )}
         {actionBarStyle.bookmark && (
-          <TouchableWithoutFeedback onPress={props.handlePressBookmark}>
+          <TouchableOpacity onPress={props.handlePressBookmark}>
             <Block row style={{ paddingRight: 5 }}>
               <Icon
                 size={actionBarStyle.iconSize}
@@ -284,7 +283,7 @@ const ActionBarView = (props: Props): JSX.Element => {
                 style={{ paddingHorizontal: 10 }}
               />
             </Block>
-          </TouchableWithoutFeedback>
+          </TouchableOpacity>
         )}
         {actionBarStyle.resteem && (
           <TouchableOpacity onPress={props.handlePressReblog}>
@@ -300,7 +299,7 @@ const ActionBarView = (props: Props): JSX.Element => {
           </TouchableOpacity>
         )}
         {actionBarStyle.share && (
-          <TouchableWithoutFeedback onPress={props.handlePressShare}>
+          <TouchableOpacity onPress={props.handlePressShare}>
             <Block row style={{ paddingRight: 5 }}>
               <Icon
                 size={actionBarStyle.iconSize}
@@ -310,10 +309,10 @@ const ActionBarView = (props: Props): JSX.Element => {
                 style={{ paddingHorizontal: 5 }}
               />
             </Block>
-          </TouchableWithoutFeedback>
+          </TouchableOpacity>
         )}
         {actionBarStyle.translation && (
-          <TouchableWithoutFeedback onPress={props.handlePressTranslation}>
+          <TouchableOpacity onPress={props.handlePressTranslation}>
             <Block row style={{ top: 0 }}>
               <Icon
                 size={18}
@@ -327,7 +326,7 @@ const ActionBarView = (props: Props): JSX.Element => {
                 style={{ paddingHorizontal: 5 }}
               />
             </Block>
-          </TouchableWithoutFeedback>
+          </TouchableOpacity>
         )}
         {actionBarStyle.read && (
           <Icon

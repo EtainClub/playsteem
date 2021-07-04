@@ -1,13 +1,13 @@
 //// react
-import React, {useState, useEffect, useContext} from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 //// react native
-import {View, Dimensions} from 'react-native';
+import { View, Dimensions } from 'react-native';
 //// language
-import {useIntl} from 'react-intl';
+import { useIntl } from 'react-intl';
 //// firebase
-import {firebase} from '@react-native-firebase/functions';
+import { firebase } from '@react-native-firebase/functions';
 // steem api
-import {fetchComments} from '~/providers/steem/dsteemApi';
+import { fetchComments } from '~/providers/steem/dsteemApi';
 //// UIs
 //// contexts
 import {
@@ -17,62 +17,56 @@ import {
   SettingsContext,
 } from '~/contexts';
 //// componetns
-import {Editor} from '~/components';
-import {CommentData, PostingContent, PostsTypes} from '~/contexts/types';
+import { Editor } from '~/components';
+import { PostData, PostingContent, PostsTypes } from '~/contexts/types';
 //// utils
-import {generateCommentPermlink, createPatch} from '~/utils/editor';
-import {getTimeFromNow} from '~/utils/time';
+import { generateCommentPermlink, createPatch } from '~/utils/editor';
+import { getTimeFromNow } from '~/utils/time';
 import {
   extractMetadata,
   generatePermlink,
   makeJsonMetadata,
 } from '~/utils/editor';
-const {height, width} = Dimensions.get('window');
+const { height, width } = Dimensions.get('window');
 //// view
-import {CommentView} from './CommentView';
+import { CommentView } from './CommentView';
 
 // component
 interface Props {
-  comment: CommentData;
-  //  handleSubmitComment: (message: string) => void;
-  //  updateComment: () => void;
-  fetchComments: () => void;
+  postRef: string;
+  contents: PostData[];
 }
+
 const CommentContainer = (props: Props): JSX.Element => {
   //// props
+  const _comment = props.contents[`${props.postRef}`];
+  // check if the comment exists
+  if (!_comment) return <View />;
+
   //// language
   const intl = useIntl();
   //// contexts
-  const {authState} = useContext(AuthContext);
-  const {setToastMessage, speakBody} = useContext(UIContext);
-  const {postsState, submitPost, flagPost, updatePost} = useContext(
+  const { authState } = useContext(AuthContext);
+  const { setToastMessage, speakBody } = useContext(UIContext);
+  const { postsState, submitPost, flagPost, updatePost } = useContext(
     PostsContext,
   );
-  const {settingsState} = useContext(SettingsContext);
+  const { settingsState } = useContext(SettingsContext);
   //// stats
+  const [comment, setComment] = useState(_comment);
   const [submitting, setSubmitting] = useState(false);
   const [showReply, setShowReply] = useState(false);
   const [editMode, setEditMode] = useState(false);
   // reply text
   const [replyText, setReplyText] = useState('');
-  // comment body
-  const [comment, setComment] = useState(null);
-  const [body, setBody] = useState(props.comment.body);
+  const [body, setBody] = useState(_comment.body);
   const [showOriginal, setShowOriginal] = useState(true);
-  const [originalBody, setOriginalBody] = useState(props.comment.body);
+  const [originalBody, setOriginalBody] = useState(_comment.body);
   const [translatedBody, setTranslatedBody] = useState(null);
   const [showChildComments, setShowChildComments] = useState(false);
 
-  //// reputation
-  const reputation = Math.floor(props.comment.state.reputation).toFixed(0);
-
-  //// event: mount
-  useEffect(() => {
-    setComment(props.comment);
-  }, []);
-
   const formatedTime =
-    props.comment && getTimeFromNow(props.comment.state.createdAt);
+    _comment && getTimeFromNow(_comment.state.createdAt);
 
   const _handleSubmitComment = async (_text: string) => {
     // check sanity
@@ -80,7 +74,7 @@ const CommentContainer = (props: Props): JSX.Element => {
 
     // set submitted flag
     setSubmitting(true);
-    const {username} = authState.currentCredentials;
+    const { username } = authState.currentCredentials;
     // extract meta
     const _meta = extractMetadata(_text);
     // split tags by space
@@ -111,8 +105,7 @@ const CommentContainer = (props: Props): JSX.Element => {
       authState.currentCredentials.password,
       true,
     );
-    // fetch comments
-    props.fetchComments();
+
     // clear submitted flag
     setSubmitting(false);
     // close reply form
@@ -139,7 +132,7 @@ const CommentContainer = (props: Props): JSX.Element => {
 
     if (!authState.loggedIn) {
       console.log('you need to log in to translate a post');
-      setToastMessage(intl.formatMessage({id: 'PostDetails.need_login'}));
+      setToastMessage(intl.formatMessage({ id: 'PostDetails.need_login' }));
       return;
     }
     const _showOriginal = !showOriginal;
@@ -189,13 +182,14 @@ const CommentContainer = (props: Props): JSX.Element => {
     } catch (error) {
       console.log('failed to translate', error);
       setToastMessage(
-        intl.formatMessage({id: 'PostDetails.translation_error'}),
+        intl.formatMessage({ id: 'PostDetails.translation_error' }),
       );
     }
   };
 
   //// fetch children comments
   const _handlePressChildren = async () => {
+    setComment(_comment);
     // toggle
     setShowChildComments(!showChildComments);
   };
@@ -218,10 +212,11 @@ const CommentContainer = (props: Props): JSX.Element => {
         comment && (
           <CommentView
             key={comment.id}
-            comment={props.comment}
+            contents={props.contents}
+            postRef={props.postRef}
             body={body}
             showChildComments={showChildComments}
-            reputation={reputation}
+            reputation={_comment.state.reputation}
             handlePressReply={_handlePressReply}
             handlePressEditComment={_handlePressEditComment}
             handlePressTranslation={_handlePressTranslation}
@@ -236,7 +231,7 @@ const CommentContainer = (props: Props): JSX.Element => {
           originalBody={body}
           depth={comment.depth}
           showCloseButton={true}
-          handleBodyChange={(text) => {}}
+          handleBodyChange={(text) => { }}
           handleCloseEditor={_closeEditor}
           handleSubmitComment={_handleSubmitComment}
         />
@@ -247,7 +242,7 @@ const CommentContainer = (props: Props): JSX.Element => {
           depth={comment.depth}
           showCloseButton={true}
           handleCloseEditor={_closeEditor}
-          handleBodyChange={(text) => {}}
+          handleBodyChange={(text) => { }}
           handleSubmitComment={_handleSubmitComment}
         />
       )}
@@ -255,4 +250,4 @@ const CommentContainer = (props: Props): JSX.Element => {
   );
 };
 
-export {CommentContainer};
+export { CommentContainer };

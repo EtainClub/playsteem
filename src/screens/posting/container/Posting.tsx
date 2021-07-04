@@ -407,19 +407,19 @@ const Posting = (props: Props): JSX.Element => {
       if (!originalPost) {
         //// request push notification to followers
         // post author and permlink      
-        const pushOptions = {
-          author: postingContent.author,
-          permlink: postingContent.permlink,
-        };
-        // request to send push
-        try {
-          firebase
-            .functions()
-            .httpsCallable('pushNewPostRequest')(pushOptions);
-          console.log('requested push message');
-        } catch (error) {
-          console.error('failed to request push for a new post.', error);
-        }
+        // const pushOptions = {
+        //   author: postingContent.author,
+        //   permlink: postingContent.permlink,
+        // };
+        // // request to send push
+        // try {
+        //   firebase
+        //     .functions()
+        //     .httpsCallable('pushNewPostRequest')(pushOptions);
+        //   console.log('requested push message');
+        // } catch (error) {
+        //   console.error('failed to request push for a new post.', error);
+        // }
         //// request to vote
         const voteOptions = {
           author: postingContent.author,
@@ -427,16 +427,18 @@ const Posting = (props: Props): JSX.Element => {
         };
         try {
           // request
-          const voteResult = await firebase
+          firebase
             .functions()
-            .httpsCallable('voteRequest')(voteOptions);
-          console.log('Posting. submitPost. vote Request result', voteResult.data);
-          if (voteResult.data) {
-            console.log('Posting. submitPost. vote Request result', voteResult.data);
-            setToastMessage(voteResult.data);
-          } else {
-            setToastMessage('Voting Requested!');
-          }
+            .httpsCallable('voteRequest')(voteOptions)
+            .then((result) => {
+              console.log('Posting. submitPost. vote Request result', result.data);
+              if (result.data) {
+                console.log('Posting. submitPost. vote Request result', result.data);
+                setToastMessage(result.data);
+              } else {
+                setToastMessage('Voting Requested!');
+              }
+            });
         } catch (error) {
           console.error('failed to request vote', error);
         }

@@ -15,7 +15,8 @@ import axios from 'axios';
 // screens
 import { PostDetailsScreen } from '../screen/PostDetails';
 // dsteem api
-import { fetchComments, fetchRecentComments } from '~/providers/steem/dsteemApi';
+import { fetchComments, fetchRawPost } from '~/providers/steem/dsteemApi';
+import { parsePost, parsePostWithComments } from '~/utils/postParser';
 import { argonTheme } from '~/constants/argonTheme';
 import { navigate } from '~/navigation/service';
 import {
@@ -33,7 +34,7 @@ import {
   SettingsContext,
 } from '~/contexts';
 import { generateCommentPermlink, makeJsonMetadataComment } from '~/utils/editor';
-import { TARGET_BLOCKCHAIN } from '~/constants/blockchain';
+import { TARGET_BLOCKCHAIN, IMAGE_SERVERS } from '~/constants/blockchain';
 
 interface Props {
   navigation: any;
@@ -50,6 +51,7 @@ const PostDetails = (props: Props): JSX.Element => {
   const {
     postsState,
     submitPost,
+    getPostDetails0,
     getPostDetails,
     fetchDatabaseState,
     appendTag,
@@ -68,7 +70,9 @@ const PostDetails = (props: Props): JSX.Element => {
   const [translatedPostDetails, setTranslatedPostDetails] = useState<PostData>(
     null,
   );
-  const [comments, setComments] = useState<CommentData[]>(null);
+  const [comments, setComments] = useState(null);
+  const [replies, setReplies] = useState<string[]>(null);
+  const [contents, setContents] = useState<PostData[]>(null);
   const [submitted, setSubmitted] = useState(false);
   const [parentPost, setParentPost] = useState<PostData>(null);
   const [needFetching, setNeedFetching] = useState(false);
@@ -109,15 +113,20 @@ const PostDetails = (props: Props): JSX.Element => {
   //// event: need to fetch details
   useEffect(() => {
     if (needFetching) {
-      //    console.log('[postDetails] event: need to fetching');
+      // console.log('[postDetails] event: need to fetching');
       // get post details
       getPostDetails(
         postsState.postRef,
         authState.currentCredentials.username,
-      ).then((details) => {
-        console.log('need fetching details response');
+      ).then((contents) => {
+        // console.log('need fetching details response');
+        const details = contents[`${postsState.postRef.author}/${postsState.postRef.permlink}`];
+        // set contents
+        setContents(contents);
         // set details
         setPostDetails(details);
+        // set replies (which are comments)
+        setReplies(details.replies);
         // set original details
         setOriginalPostDetails(details);
         // clear flag
@@ -142,11 +151,11 @@ const PostDetails = (props: Props): JSX.Element => {
     // check sanity
     if (!postsState.postRef.author) return;
     // fetch comments only if they exist
-    _fetchComments();
+    //    _fetchComments();
     // clear translation
     setTranslatedPostDetails(null);
     // clear comments
-    setComments(null);
+    //    setComments(null);
     // clear the previous post
     setPostDetails(null);
     // remove the parent post
@@ -161,10 +170,15 @@ const PostDetails = (props: Props): JSX.Element => {
       setNeedFetching(true);
     } else {
       // get post details
-      details = await getPostDetails(
+      const contents = await getPostDetails(
         postsState.postRef,
         authState.currentCredentials.username,
       );
+
+      // set contents
+      setContents(contents);
+      details = contents[`${postsState.postRef.author}/${postsState.postRef.permlink}`];
+      setReplies(details.replies);
     }
 
     // set post details
@@ -187,7 +201,7 @@ const PostDetails = (props: Props): JSX.Element => {
   const _fetchParentPost = async (postRef: PostRef) => {
     console.log('_fetchParentPost. postRef', postRef);
     // get post details
-    const details = await getPostDetails(
+    const details = await getPostDetails0(
       postRef,
       authState.currentCredentials.username,
     );
@@ -195,45 +209,29 @@ const PostDetails = (props: Props): JSX.Element => {
     if (details.depth > 0) {
       await _fetchParentPost(details.state.parent_ref);
       console.log('_fetchParentPost. details', details);
-      return details;
+      return;
     }
     console.log('_fetchParentPost. parent details', details);
     // set parent post
     setParentPost(details);
   };
 
-  const _fetchComments = async () => {
-    // fetch comments on this post
-    const _comments = await fetchComments(
-      postsState.postRef.author,
-      postsState.postRef.permlink,
-      authState.currentCredentials.username,
-    );
-    console.log('_fetchComments', _comments);
+  // const _fetchComments = async () => {
+  //   // fetch comments on this post
+  //   const _comments = await fetchComments(
+  //     postsState.postRef.author,
+  //     postsState.postRef.permlink,
+  //     authState.currentCredentials.username,
+  //   );
+  //   console.log('_fetchComments', _comments);
 
-    setComments(_comments);
-  };
-
-  // const _fetchRecentComments = async () => {
-  //   // get the first comment of the post
-  //   try {
-  //     const _lastComments = await fetchRecentComments(
-  //       postsState.postRef.author,
-  //       postsState.postRef.permlink,
-  //       50,
-  //       authState.currentCredentials.username,
-  //     );
-
-  //     console.log('_fetchComments. last comments', _lastComments);
-  //   } catch (error) {
-  //     console.log('failed to fetch recent comments');
-  //   }
+  //   setComments(_comments);
   // };
 
   const _onRefresh = async () => {
     // get fresh post details
     await _fetchPostDetailsEntry(true);
-    console.log('[PostDetails] refreshed, comments', comments);
+    // console.log('[PostDetails] refreshed, contents', contents);
   };
 
   const _onSubmitComment = async (comment: string): Promise<boolean> => {
@@ -255,13 +253,26 @@ const PostDetails = (props: Props): JSX.Element => {
       json_metadata: JSON.stringify(jsonMeta) || '',
       permlink: permlink,
     };
-
     const result = await submitPost(postingContent, password, true);
     // set submitted flag
     setSubmitted(true);
     if (result) {
-      // fetch comments
-      _fetchComments();
+      //// update comments
+      // add to replies
+      let _replies = replies;
+      _replies.push(`${username}/${permlink}`);
+      setReplies(_replies);
+      // fetch the comment? or build?
+      const _rawComment = await fetchRawPost(username, permlink);
+      const _post = await parsePost(_rawComment, username, IMAGE_SERVERS[0]);
+      // add the post to contents
+      let _contents = contents;
+      _contents[`${username}/${permlink}`] = _post;
+      // // update the parent's replies
+      // _contents[`${postsState.postRef.author}/${postsState.postRef.permlink}`].replies.push(`${username}/${permlink}`);
+      setContents(_contents);
+      // This is required to re-render the comment component, why???
+      setComments(_contents);
       return true;
     }
     return false;
@@ -365,6 +376,8 @@ const PostDetails = (props: Props): JSX.Element => {
       postsType={postsState.postsType}
       index={postIndex}
       comments={comments}
+      replies={replies}
+      contents={contents}
       commentY={commentY}
       hideHeader={hideHeader}
       toggleHideHeader={(value) => setHideHeader(value)}

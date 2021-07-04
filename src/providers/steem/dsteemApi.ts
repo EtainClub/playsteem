@@ -130,6 +130,7 @@ import {
   parsePost,
   filterNSFWPosts,
   parseComment,
+  parsePostWithComments,
 } from '~/utils/postParser';
 import { estimateVoteAmount } from '~/utils/estimateVoteAmount';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -644,11 +645,11 @@ export const updateFollow = async (
   following: string,
   action: string,
 ) => {
-  // verify the key
-  const { account } = await verifyPassword(follower, password);
-  if (!account) {
-    return null;
-  }
+  // // verify the key
+  // const { account } = await verifyPassword(follower, password);
+  // if (!account) {
+  //   return null;
+  // }
   // get privake key from password
   const privateKey = PrivateKey.from(password);
 
@@ -865,47 +866,22 @@ export const fetchPostDetails = async (
 };
 
 //// fetch post details
-export const fetchPostDetails2 = async (
-  tag: string,
+export const fetchPostWithComments = async (
   author: string,
   permlink: string,
   username: string = null,
-  isPromoted = false,
-): Promise<PostData> => {
+): Promise<PostData[]> => {
   try {
-    const post = await client.database.call('get_content', [author, permlink]);
-    console.log('fetchPostDetails. post', post);
-
-    const postState = await client.call('condenser_api', 'get_state', [
-      post.url,
-    ]);
-    console.log('fetchPostDetails. post state', postState);
-
-    const postData = await parsePost(
-      post,
-      username,
-      IMAGE_SERVERS[0],
-      //      blockchainSettings.image,
-      isPromoted,
-    );
-
-    // build array
-    let _comments = [];
-    Object.keys(postState.content).forEach((key) => {
-      _comments.push(postState.content[key]);
+    const result = await client.call('bridge', 'get_discussion', [author, permlink]);
+    let posts = [];
+    Object.keys(result).forEach(async (key) => {
+      posts[key] = parsePostWithComments(result[key], username, IMAGE_SERVERS[0]);
     });
-    console.log('raw comments', _comments);
-
-    const comments = await parsePosts(_comments, username, IMAGE_SERVERS[0]);
-
-    console.log('comment parsed', comments);
-
-    if (postData) return postData;
-    return null;
+    return posts;
   } catch (error) {
-    console.log('failed to fetch post details', error);
-    return null;
+    console.log('fetchPostWithComments. failed to fetch', error);
   }
+  return [];
 };
 
 /// fetch a post
@@ -946,44 +922,44 @@ export const fetchRawPost = async (
   }
 };
 
-// fetch last comments
-// get_replies_by_last_update
-export const fetchRecentComments = async (
-  startAuthor: string,
-  startPermlink: string,
-  limit: number = NUM_FETCH_COMMENTS + 1,
-  username: string = null,
-) => {
-  let results;
-  //const query = [startAuthor, startPermlink, limit];
-  //blurtcurator/re-ya-soy-un-delfin-i-am-already-a-dolphin-20210131t000152z
-  const query = [
-    'blurtcurator',
-    're-ya-soy-un-delfin-i-am-already-a-dolphin-20210131t000152z',
-    50,
-  ];
-  try {
-    // get all comments of depth 1
-    results = await client.database.call('get_replies_by_last_update', query);
-  } catch (error) {
-    console.log('failed to fetch comments', error);
-  }
+// // fetch last comments
+// // get_replies_by_last_update
+// export const fetchRecentComments = async (
+//   startAuthor: string,
+//   startPermlink: string,
+//   limit: number = NUM_FETCH_COMMENTS + 1,
+//   username: string = null,
+// ) => {
+//   let results;
+//   //const query = [startAuthor, startPermlink, limit];
+//   //blurtcurator/re-ya-soy-un-delfin-i-am-already-a-dolphin-20210131t000152z
+//   const query = [
+//     'blurtcurator',
+//     're-ya-soy-un-delfin-i-am-already-a-dolphin-20210131t000152z',
+//     50,
+//   ];
+//   try {
+//     // get all comments of depth 1
+//     results = await client.database.call('get_replies_by_last_update', query);
+//   } catch (error) {
+//     console.log('failed to fetch comments', error);
+//   }
 
-  console.log('[fetchRecentComments] results', results);
-  // return if no comments
-  if (!results) return null;
+//   console.log('[fetchRecentComments] results', results);
+//   // return if no comments
+//   if (!results) return null;
 
-  // setup comments of parent
-  const comments = [];
-  // loop over children
-  for (let i = 0; i < results.length; i++) {
-    // parse comment
-    const extComment = await parseComment(results[i], username);
-    comments.push(extComment);
-  }
+//   // setup comments of parent
+//   const comments = [];
+//   // loop over children
+//   for (let i = 0; i < results.length; i++) {
+//     // parse comment
+//     const extComment = await parseComment(results[i], username);
+//     comments.push(extComment);
+//   }
 
-  return comments;
-};
+//   return comments;
+// };
 
 // fetch comments
 export const fetchComments = async (
@@ -1017,45 +993,46 @@ export const fetchComments = async (
   return comments;
 };
 
-// fetch comments recursively
-export const fetchRecursiveComments = async (
-  author: string,
-  permlink: string,
-  username: string = null,
-) => {
-  let results;
-  try {
-    // get all comments of depth 1
-    results = await client.database.call('get_content_replies', [
-      author,
-      permlink,
-    ]);
-  } catch (error) {
-    console.log('failed to fetch comments', error);
-  }
 
-  // return if no comments
-  if (!results) return null;
+// // fetch comments recursively
+// export const fetchRecursiveComments = async (
+//   author: string,
+//   permlink: string,
+//   username: string = null,
+// ) => {
+//   let results;
+//   try {
+//     // get all comments of depth 1
+//     results = await client.database.call('get_content_replies', [
+//       author,
+//       permlink,
+//     ]);
+//   } catch (error) {
+//     console.log('failed to fetch comments', error);
+//   }
 
-  // setup comments of parent
-  const comments = [];
-  // loop over children
-  for (let i = 0; i < results.length; i++) {
-    // parse comment
-    const extComment = await parseComment(results[i], username);
-    comments.push(extComment);
+//   // return if no comments
+//   if (!results) return null;
 
-    // recursive call if a child exists
-    if (results[i].children > 0) {
-      const children = await fetchComments(
-        results[i].author,
-        results[i].permlink,
-      );
-      comments[i] = { ...comments[i], comments: children };
-    }
-  }
-  return comments;
-};
+//   // setup comments of parent
+//   const comments = [];
+//   // loop over children
+//   for (let i = 0; i < results.length; i++) {
+//     // parse comment
+//     const extComment = await parseComment(results[i], username);
+//     comments.push(extComment);
+
+//     // recursive call if a child exists
+//     if (results[i].children > 0) {
+//       const children = await fetchComments(
+//         results[i].author,
+//         results[i].permlink,
+//       );
+//       comments[i] = { ...comments[i], comments: children };
+//     }
+//   }
+//   return comments;
+// };
 
 //
 
@@ -1065,11 +1042,11 @@ export const broadcastPost = async (
   password: string,
   options?: any[],
 ) => {
-  // verify the key
-  const { account } = await verifyPassword(postingData.author, password);
-  if (!account) {
-    return null;
-  }
+  // // verify the key
+  // const { account } = await verifyPassword(postingData.author, password);
+  // if (!account) {
+  //   return null;
+  // }
   // build comment
   const opArray = [['comment', postingData]];
   // add options if exists
@@ -1111,10 +1088,10 @@ export const broadcastPostUpdate = async (
   // check validity of the password
   // verify the key
   // @todo check sanity of argument: exits? (it happend the empty post)
-  const { account } = await verifyPassword(postingContent.author, password);
-  if (!account) {
-    return { success: false, message: 'the password is invalid' };
-  }
+  // const { account } = await verifyPassword(postingContent.author, password);
+  // if (!account) {
+  //   return { success: false, message: 'the password is invalid' };
+  // }
 
   //// create a patch
   const text = originalBody;
@@ -1175,11 +1152,11 @@ export const broadcastPostUpdate = async (
 export const signImage = async (photo, username, password) => {
   // verify the user and password
   // @test
-  const { account } = await verifyPassword(username, password);
-  if (!account) {
-    console.log('[signImage] failed to verify password');
-    return null;
-  }
+  // const { account } = await verifyPassword(username, password);
+  // if (!account) {
+  //   console.log('[signImage] failed to verify password');
+  //   return null;
+  // }
 
 
   try {
@@ -1238,11 +1215,11 @@ export const reblog = async (
   author: string,
   permlink: string,
 ) => {
-  // verify the key
-  const { account } = await verifyPassword(username, password);
-  if (!account) {
-    return { success: false, message: 'the password is invalid' };
-  }
+  // // verify the key
+  // const { account } = await verifyPassword(username, password);
+  // if (!account) {
+  //   return { success: false, message: 'the password is invalid' };
+  // }
   // get privake key from password
   const privateKey = PrivateKey.from(password);
 
@@ -1278,11 +1255,11 @@ export const submitVote = async (
     permlink,
     weight: votingWeight * 100,
   };
-  // verify the key
-  const { account } = await verifyPassword(voter, password);
-  if (!account) {
-    return null;
-  }
+  // // verify the key
+  // const { account } = await verifyPassword(voter, password);
+  // if (!account) {
+  //   return null;
+  // }
 
   // get privake key from password
   const privateKey = PrivateKey.from(password);
@@ -1312,10 +1289,10 @@ export const broadcastProfileUpdate = async (
   params: {},
 ) => {
   // verify the key, require active or above
-  const { account } = await verifyPassword(username, password);
-  if (!account) {
-    return { success: false, message: 'the password is invalid' };
-  }
+  // const { account } = await verifyPassword(username, password);
+  // if (!account) {
+  //   return { success: false, message: 'the password is invalid' };
+  // }
 
   // get privake key from password wif
   const privateKey = PrivateKey.from(password);
@@ -1437,6 +1414,8 @@ export const fetchWalletData = async (username: string) => {
         rewardSteem: reward_steem_balance.split(' ')[0],
         rewardSBD: reward_sbd_balance.split(' ')[0],
         rewardVesting: reward_vesting_steem.split(' ')[0],
+        delegatedVestingShares: delegated_vesting_shares.split(' ')[0],
+        receivedVestingShares: received_vesting_shares.split(' ')[0],
         voteAmount: '0',
         votePower: String(voting_power),
         transactions: transfer_history
@@ -1587,6 +1566,186 @@ export const transferToVesting = async (
       else return TransactionReturnCodes.TRANSACTION_ERROR;
     } catch (error) {
       console.log('failed to transfer to vesting', error);
+      return TransactionReturnCodes.TRANSACTION_ERROR;
+    }
+  }
+  return TransactionReturnCodes.INVALID_PASSWORD;
+};
+
+//// power down
+export const withdrawVesting = async (
+  username: string,
+  password: string,
+  params: {
+    amount: string;
+  },
+): Promise<TransactionReturnCodes> => {
+  // get key type
+  const { account, keyType } = await verifyPassword(username, password);
+  // check sanity
+  if (!account) {
+    return TransactionReturnCodes.NO_ACCOUNT;
+  }
+  // check key level: active or higher
+  if (keyType < KeyTypes.ACTIVE) {
+    return TransactionReturnCodes.NEED_HIGHER_PASSWORD;
+  }
+  // get privake key from password wif
+  const privateKey = PrivateKey.from(password);
+  // transfer
+  if (privateKey) {
+    const args = [
+      [
+        'withdraw_vesting',
+        {
+          account: username,
+          amount: get(params, 'amount'),
+        },
+      ],
+    ];
+    console.log('withdrawVesting. username, args', username, args);
+    try {
+      const result = await client.broadcast.sendOperations(args, privateKey);
+      console.log('[withdrawVesting] result', result);
+      if (result) return TransactionReturnCodes.TRANSACTION_SUCCESS;
+      else return TransactionReturnCodes.TRANSACTION_ERROR;
+    } catch (error) {
+      console.log('failed to power down', error);
+      return TransactionReturnCodes.TRANSACTION_ERROR;
+    }
+  }
+  return TransactionReturnCodes.INVALID_PASSWORD;
+};
+
+export const delegateVestingShares = async (
+  from: string,
+  to: string,
+  amount: string,
+  password: string,
+) => {
+  // get key type
+  const { account, keyType } = await verifyPassword(from, password);
+  // check sanity
+  if (!account) {
+    return TransactionReturnCodes.NO_ACCOUNT;
+  }
+  // check key level: active or higher
+  if (keyType < KeyTypes.ACTIVE) {
+    return TransactionReturnCodes.NEED_HIGHER_PASSWORD;
+  }
+  // get privake key from password wif
+  const privateKey = PrivateKey.from(password);
+  if (privateKey) {
+    const args = [
+      [
+        'delegate_vesting_shares',
+        {
+          delegator: from,
+          delegatee: to,
+          vesting_shares: amount,
+        },
+      ],
+    ];
+
+    try {
+      const result = await client.broadcast.sendOperations(args, privateKey);
+      console.log('[delegateVestingShares] result', result);
+      if (result) return TransactionReturnCodes.TRANSACTION_SUCCESS;
+      else return TransactionReturnCodes.TRANSACTION_ERROR;
+    } catch (error) {
+      console.log('failed to power down', error);
+      return TransactionReturnCodes.TRANSACTION_ERROR;
+    }
+  }
+  return TransactionReturnCodes.INVALID_PASSWORD;
+};
+
+export const transferToSavings = async (
+  from: string,
+  to: string,
+  amount: string,
+  memo: string,
+  password: string,
+) => {
+  // get key type
+  const { account, keyType } = await verifyPassword(from, password);
+  // check sanity
+  if (!account) {
+    return TransactionReturnCodes.NO_ACCOUNT;
+  }
+  // check key level: active or higher
+  if (keyType < KeyTypes.ACTIVE) {
+    return TransactionReturnCodes.NEED_HIGHER_PASSWORD;
+  }
+  // get privake key from password wif
+  const privateKey = PrivateKey.from(password);
+  if (privateKey) {
+    const args = [
+      [
+        'transfer_to_savings',
+        {
+          from: from,
+          to: to,
+          amount: amount,
+          memo: memo,
+        },
+      ],
+    ];
+
+    try {
+      const result = await client.broadcast.sendOperations(args, privateKey);
+      console.log('[transferToSavings] result', result);
+      if (result) return TransactionReturnCodes.TRANSACTION_SUCCESS;
+      else return TransactionReturnCodes.TRANSACTION_ERROR;
+    } catch (error) {
+      console.log('failed to transer to savings', error);
+      return TransactionReturnCodes.TRANSACTION_ERROR;
+    }
+  }
+  return TransactionReturnCodes.INVALID_PASSWORD;
+};
+
+export const transferFromSavings = async (
+  from: string,
+  to: string,
+  amount: string,
+  password: string,
+  requestId: string,
+  memo?: string,
+) => {
+  // get key type
+  const { account, keyType } = await verifyPassword(from, password);
+  // check sanity
+  if (!account) {
+    return TransactionReturnCodes.NO_ACCOUNT;
+  }
+  // check key level: active or higher
+  if (keyType < KeyTypes.ACTIVE) {
+    return TransactionReturnCodes.NEED_HIGHER_PASSWORD;
+  }
+  // get privake key from password wif
+  const privateKey = PrivateKey.from(password);
+  if (privateKey) {
+    const args = [
+      [
+        'transfer_from_savings',
+        {
+          from: from,
+          to: to,
+          amount: amount,
+          memo: memo,
+          request_id: requestId,
+        },
+      ],
+    ];
+
+    try {
+      const result = await client.broadcast.sendOperations(args, privateKey);
+      console.log('[transferFromSavings] result', result);
+      if (result) return TransactionReturnCodes.TRANSACTION_SUCCESS;
+      else return TransactionReturnCodes.TRANSACTION_ERROR;
+    } catch (error) {
+      console.log('failed to transer to savings', error);
       return TransactionReturnCodes.TRANSACTION_ERROR;
     }
   }

@@ -9,7 +9,7 @@ import {
   broadcastPost,
   broadcastPostUpdate,
   fetchPostDetails,
-  fetchPostDetails2,
+  fetchPostWithComments,
   fetchAccountState,
   fetchCommunityList,
   fetchCommunity,
@@ -59,6 +59,7 @@ const initialState: PostsState = {
   },
   // post details
   postDetails: INIT_POST_DATA,
+  postWithComments: [],
   // fetched flag
   fetched: false,
   //
@@ -98,7 +99,7 @@ const postsReducer = (state: PostsState, action: PostsAction) => {
         communityList: action.payload,
       };
     case PostsActionTypes.SET_POSTS:
-      console.log('[postsReducer] set posts aciton. payload', action.payload);
+      // console.log('[postsReducer] set posts aciton. payload', action.payload);
       //// set posts to the posts type array
       return {
         // previous state
@@ -127,7 +128,7 @@ const postsReducer = (state: PostsState, action: PostsAction) => {
       return { ...state, retryCount: state.retryCount++ };
 
     case PostsActionTypes.SET_FETCHED:
-      console.log('[postsReducer] set fetched. payload', action.payload);
+      // console.log('[postsReducer] set fetched. payload', action.payload);
       return { ...state, fetched: action.payload };
 
     case PostsActionTypes.SET_NEED_FETCH:
@@ -137,7 +138,7 @@ const postsReducer = (state: PostsState, action: PostsAction) => {
       return { ...state, postRef: action.payload };
 
     case PostsActionTypes.CLEAR_POSTS:
-      console.log('[postsReducer] clearing posts. type', action.payload);
+      // console.log('[postsReducer] clearing posts. type', action.payload);
       return {
         ...state,
         // update the meta posts of the given posts type
@@ -180,6 +181,15 @@ const postsReducer = (state: PostsState, action: PostsAction) => {
       return {
         ...state,
         postDetails: action.payload,
+      };
+
+    case PostsActionTypes.SET_POST_WITH_COMMENTS:
+      return {
+        ...state,
+        postWithComments: action.payload.contents,
+        postRef: action.payload.postRef,
+        postDetails:
+          action.payload.contents[`${action.payload.postRef.author}/${action.payload.postRef.permlink}`]
       };
 
     case PostsActionTypes.BOOKMARK_POST:
@@ -473,22 +483,14 @@ const PostsProvider = ({ children }: Props) => {
     });
   };
 
-  //// get post details
-  const getPostDetails = async (postRef: PostRef, username: string) => {
+  //// get post details (previous version)
+  const getPostDetails0 = async (postRef: PostRef, username: string) => {
     // fetch
     const post = await fetchPostDetails(
       postRef.author,
       postRef.permlink,
       username,
     );
-    // const post = await fetchPostDetails2(
-    //   '',
-    //   postRef.author,
-    //   postRef.permlink,
-    //   username,
-    // );
-
-    console.log('[getPostDetails] post', post);
     if (post) {
       // dispatch action
       dispatch({
@@ -496,6 +498,37 @@ const PostsProvider = ({ children }: Props) => {
         payload: post,
       });
       return post;
+    }
+    setToastMessage(intl.formatMessage({ id: 'fetch_error' }));
+    return null;
+  };
+
+  //// get post details
+  const getPostDetails = async (postRef: PostRef, username: string) => {
+    // fetch
+    // const post = await fetchPostDetails(
+    //   postRef.author,
+    //   postRef.permlink,
+    //   username,
+    // );
+    // fetch post detail and its comments (replies)
+    const postWithComments = await fetchPostWithComments(
+      postRef.author,
+      postRef.permlink,
+      username,
+    );
+
+    // console.log('[getPostDetails] post', postWithComments);
+    if (postWithComments) {
+      // dispatch action
+      dispatch({
+        type: PostsActionTypes.SET_POST_WITH_COMMENTS,
+        payload: {
+          contents: postWithComments,
+          postRef: postRef,
+        },
+      });
+      return postWithComments;
     }
     setToastMessage(intl.formatMessage({ id: 'fetch_error' }));
     return null;
@@ -925,7 +958,7 @@ const PostsProvider = ({ children }: Props) => {
     const result = await firestore()
       .doc(`users/${username}`)
       .collection('favorites')
-      .doc(`${author}`)
+      .doc(`${author} `)
       .get();
     return result.exists;
   };
@@ -965,6 +998,7 @@ const PostsProvider = ({ children }: Props) => {
         setPostRef,
         setPostIndex,
         clearPosts,
+        getPostDetails0,
         getPostDetails,
         setPostDetails,
         setTagAndFilter,

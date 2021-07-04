@@ -1,4 +1,4 @@
-import {vestToSteem} from '~/providers/steem/dsteemApi';
+import { vestToSteem } from '~/providers/steem/dsteemApi';
 
 export const parseToken = (strVal: string) => {
   if (!strVal) {
@@ -24,7 +24,7 @@ export const parseSteemTransaction = (transaction) => {
 
   [result.textKey] = transaction[1].op;
   const opData = transaction[1].op[1];
-  const {timestamp} = transaction[1];
+  const { timestamp } = transaction[1];
 
   result.created = timestamp;
 
@@ -32,7 +32,7 @@ export const parseSteemTransaction = (transaction) => {
 
   switch (result.textKey) {
     case 'curation_reward':
-      const {reward} = opData;
+      const { reward } = opData;
       const {
         comment_author: commentAuthor,
         comment_permlink: commentPermlink,
@@ -52,15 +52,14 @@ export const parseSteemTransaction = (transaction) => {
         vesting_payout: vestingPayout,
       } = opData;
 
-      const {author, permlink} = opData;
+      const { author, permlink } = opData;
 
       sbdPayout = parseToken(sbdPayout).toFixed(3).replace(',', '.');
       steemPayout = parseToken(steemPayout).toFixed(3).replace(',', '.');
       vestingPayout = vestToSteem(parseToken(vestingPayout)).replace(',', '.');
 
-      result.value = `${sbdPayout > 0 ? `${sbdPayout} SBD` : ''} ${
-        steemPayout > 0 ? `${steemPayout} STEEM` : ''
-      } ${vestingPayout > 0 ? `${vestingPayout} SP` : ''}`;
+      result.value = `${sbdPayout > 0 ? `${sbdPayout} SBD` : ''} ${steemPayout > 0 ? `${steemPayout} STEEM` : ''
+        } ${vestingPayout > 0 ? `${vestingPayout} SP` : ''}`;
 
       result.details = author && permlink ? `@${author}/${permlink}` : null;
       if (result.textKey === 'comment_benefactor_reward') {
@@ -83,26 +82,25 @@ export const parseSteemTransaction = (transaction) => {
         '.',
       );
 
-      result.value = `${rewardSBD > 0 ? `${rewardSBD} SBD` : ''} ${
-        rewardSteem > 0 ? `${rewardSteem} STEEM` : ''
-      } ${rewardVests > 0 ? `${rewardVests} SP` : ''}`;
+      result.value = `${rewardSBD > 0 ? `${rewardSBD} SBD` : ''} ${rewardSteem > 0 ? `${rewardSteem} STEEM` : ''
+        } ${rewardVests > 0 ? `${rewardVests} SP` : ''}`;
 
       break;
     case 'transfer':
     case 'transfer_to_savings':
     case 'transfer_from_savings':
     case 'transfer_to_vesting':
-      const {amount, memo, from, to} = opData;
+      const { amount, memo, from, to } = opData;
 
       result.value = `${amount}`;
       result.iconType = 'font-awesome';
       result.icon = 'exchange';
-      result.details = from && to ? `@${from} to @${to}` : null;
+      result.details = from && to ? `@${from} ` : null;
       result.memo = memo || null;
       break;
     case 'withdraw_vesting':
-      const {acc} = opData;
-      let {vesting_shares: opVestingShares} = opData;
+      const { acc } = opData;
+      let { vesting_shares: opVestingShares } = opData;
 
       opVestingShares = parseToken(opVestingShares);
       result.value = `${vestToSteem(opVestingShares).replace(',', '.')} SP`;
@@ -111,7 +109,7 @@ export const parseSteemTransaction = (transaction) => {
       result.details = acc ? `@${acc}` : null;
       break;
     case 'fill_order':
-      const {current_pays: currentPays, open_pays: openPays} = opData;
+      const { current_pays: currentPays, open_pays: openPays } = opData;
 
       result.value = `${currentPays} = ${openPays}`;
       result.icon = 'reorder';
@@ -120,9 +118,9 @@ export const parseSteemTransaction = (transaction) => {
     case 'escrow_dispute':
     case 'escrow_release':
     case 'escrow_approve':
-      const {agent, escrow_id} = opData;
-      let {from: frome} = opData;
-      let {to: toe} = opData;
+      const { agent, escrow_id } = opData;
+      let { from: frome } = opData;
+      let { to: toe } = opData;
 
       result.value = `${escrow_id}`;
       result.icon = 'wb-iridescent';
@@ -130,7 +128,7 @@ export const parseSteemTransaction = (transaction) => {
       result.memo = agent || null;
       break;
     case 'delegate_vesting_shares':
-      const {delegator, delegatee, vesting_shares} = opData;
+      const { delegator, delegatee, vesting_shares } = opData;
 
       result.value = `${vesting_shares}`;
       result.icon = 'change-history';
@@ -138,14 +136,14 @@ export const parseSteemTransaction = (transaction) => {
         delegatee && delegator ? `@${delegator} to @${delegatee}` : null;
       break;
     case 'cancel_transfer_from_savings':
-      let {from: from_who, request_id: requestId} = opData;
+      let { from: from_who, request_id: requestId } = opData;
 
       result.value = `${0}`;
       result.icon = 'cancel';
       result.details = from_who ? `from @${from_who}, id: ${requestId}` : null;
       break;
     case 'fill_convert_request':
-      let {owner: who, requestid: requestedId, amount_out: amount_out} = opData;
+      let { owner: who, requestid: requestedId, amount_out: amount_out } = opData;
 
       result.value = `${amount_out}`;
       result.icon = 'hourglass-full';
@@ -199,7 +197,7 @@ export const parseBlurtTransaction = (transaction) => {
 
   [result.textKey] = transaction[1].op;
   const opData = transaction[1].op[1];
-  const {timestamp} = transaction[1];
+  const { timestamp } = transaction[1];
 
   result.created = timestamp;
 
@@ -207,7 +205,7 @@ export const parseBlurtTransaction = (transaction) => {
 
   switch (result.textKey) {
     case 'curation_reward':
-      const {reward} = opData;
+      const { reward } = opData;
       const {
         comment_author: commentAuthor,
         comment_permlink: commentPermlink,
@@ -226,14 +224,14 @@ export const parseBlurtTransaction = (transaction) => {
       result.value = opData.vesting_payout;
       break;
     case 'claim_reward_balance':
-      let {reward_blurt, reward_vests} = opData;
+      let { reward_blurt, reward_vests } = opData;
       result.value = reward_vests;
       break;
     case 'transfer':
     case 'transfer_to_savings':
     case 'transfer_from_savings':
     case 'transfer_to_vesting':
-      const {amount, memo, from, to} = opData;
+      const { amount, memo, from, to } = opData;
 
       result.value = `${amount}`;
       result.iconType = 'font-awesome';
@@ -244,7 +242,7 @@ export const parseBlurtTransaction = (transaction) => {
     case 'withdraw_vesting':
       break;
     case 'fill_order':
-      const {current_pays: currentPays, open_pays: openPays} = opData;
+      const { current_pays: currentPays, open_pays: openPays } = opData;
 
       result.value = `${currentPays} = ${openPays}`;
       result.icon = 'reorder';
@@ -253,9 +251,9 @@ export const parseBlurtTransaction = (transaction) => {
     case 'escrow_dispute':
     case 'escrow_release':
     case 'escrow_approve':
-      const {agent, escrow_id} = opData;
-      let {from: frome} = opData;
-      let {to: toe} = opData;
+      const { agent, escrow_id } = opData;
+      let { from: frome } = opData;
+      let { to: toe } = opData;
 
       result.value = `${escrow_id}`;
       result.icon = 'wb-iridescent';
@@ -263,7 +261,7 @@ export const parseBlurtTransaction = (transaction) => {
       result.memo = agent || null;
       break;
     case 'delegate_vesting_shares':
-      const {delegator, delegatee, vesting_shares} = opData;
+      const { delegator, delegatee, vesting_shares } = opData;
 
       result.value = `${vesting_shares}`;
       result.icon = 'change-history';
@@ -271,14 +269,14 @@ export const parseBlurtTransaction = (transaction) => {
         delegatee && delegator ? `@${delegator} to @${delegatee}` : null;
       break;
     case 'cancel_transfer_from_savings':
-      let {from: from_who, request_id: requestId} = opData;
+      let { from: from_who, request_id: requestId } = opData;
 
       result.value = `${0}`;
       result.icon = 'cancel';
       result.details = from_who ? `from @${from_who}, id: ${requestId}` : null;
       break;
     case 'fill_convert_request':
-      let {owner: who, requestid: requestedId, amount_out: amount_out} = opData;
+      let { owner: who, requestid: requestedId, amount_out: amount_out } = opData;
 
       result.value = `${amount_out}`;
       result.icon = 'hourglass-full';

@@ -1,21 +1,22 @@
 //// react
-import React, {useState, useEffect, useContext} from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 //// react native
-import {FlatList, StyleSheet} from 'react-native';
+import { FlatList, StyleSheet } from 'react-native';
 //// language
-import {useIntl} from 'react-intl';
+import { useIntl } from 'react-intl';
 //// ui
-import {Block, Icon, Button, Input, Text, theme} from 'galio-framework';
-import {argonTheme} from '~/constants';
-import {DropdownModal} from '~/components/DropdownModal';
-import {WalletData} from '~/contexts/types';
+import { Block, Icon, Button, Input, Text, theme } from 'galio-framework';
+import { argonTheme } from '~/constants';
+import { DropdownModal } from '~/components/DropdownModal';
+import { WalletData } from '~/contexts/types';
 
 //// utils
-import {get} from 'lodash';
-import {putComma} from '~/utils/stats';
-import {getTimeFromNow} from '~/utils/time';
-import {UIContext} from '~/contexts';
-import {PriceData} from '~/contexts/types';
+import { get } from 'lodash';
+import { putComma } from '~/utils/stats';
+import { getTimeFromNow } from '~/utils/time';
+import { UIContext } from '~/contexts';
+import { PriceData } from '~/contexts/types';
+import { vestToSteem } from '~/providers/steem';
 
 const BACKGROUND_COLORS = [
   argonTheme.COLORS.BORDER,
@@ -35,7 +36,7 @@ interface Props {
 }
 const WalletStatsView = (props: Props): JSX.Element => {
   //// props
-  const {price} = props;
+  const { price } = props;
   let {
     balance,
     balanceSBD,
@@ -47,10 +48,12 @@ const WalletStatsView = (props: Props): JSX.Element => {
     rewardVesting,
     transactions,
     votePower,
+    delegatedVestingShares,
+    receivedVestingShares,
   } = props.walletData;
   //// language
   const intl = useIntl();
-  const {setToastMessage} = useContext(UIContext);
+  const { setToastMessage } = useContext(UIContext);
   //// states
   const [powerIndex, setPowerIndex] = useState(0);
   const [steemIndex, setSteemIndex] = useState(0);
@@ -60,29 +63,33 @@ const WalletStatsView = (props: Props): JSX.Element => {
   const [reloading, setReloading] = useState(false);
   //// constants
   const powerOptions = [
-    intl.formatMessage({id: 'Wallet.dropdown_powerdown'}),
-    intl.formatMessage({id: 'Wallet.dropdown_delegate'}),
+    intl.formatMessage({ id: 'Wallet.dropdown_powerdown' }),
+    intl.formatMessage({ id: 'Wallet.dropdown_delegate' }),
   ];
   const steemOptions = [
-    intl.formatMessage({id: 'Wallet.dropdown_transfer'}),
-    intl.formatMessage({id: 'Wallet.dropdown_powerup'}),
-    intl.formatMessage({id: 'Wallet.dropdown_transfer2savings'}),
+    intl.formatMessage({ id: 'Wallet.dropdown_transfer' }),
+    intl.formatMessage({ id: 'Wallet.dropdown_powerup' }),
+    intl.formatMessage({ id: 'Wallet.dropdown_transfer2savings' }),
   ];
   const sbdOptions = [
-    intl.formatMessage({id: 'Wallet.dropdown_transfer'}),
-    intl.formatMessage({id: 'Wallet.dropdown_transfer2savings'}),
+    intl.formatMessage({ id: 'Wallet.dropdown_transfer' }),
+    intl.formatMessage({ id: 'Wallet.dropdown_transfer2savings' }),
   ];
 
-  const savingsOptions = [intl.formatMessage({id: 'Wallet.dropdown_withdraw'})];
+  const savingsOptions = [intl.formatMessage({ id: 'Wallet.dropdown_withdraw' })];
 
   // put commas in reward
   balance = putComma(parseFloat(balance).toFixed(3));
   balanceSBD = putComma(parseFloat(balanceSBD).toFixed(3));
   power = putComma(parseFloat(power).toFixed(3));
+  // delegatedVestingShares = putComma(parseFloat(delegatedVestingShares).toFixed(3));
+  // receivedVestingShares = putComma(parseFloat(receivedVestingShares).toFixed(3));
+  const delegatedVesting = parseFloat(receivedVestingShares) - parseFloat(delegatedVestingShares);
+  const delegatedVestingText = delegatedVesting > 0 ? '+' + putComma(vestToSteem(delegatedVesting)) : putComma(vestToSteem(delegatedVesting));
   savingsSteem = putComma(savingsSteem);
   savingsSBD = putComma(savingsSBD);
   let needToClaim = false;
-  let rewardText = intl.formatMessage({id: 'Wallet.claim_reward_prefix'});
+  let rewardText = intl.formatMessage({ id: 'Wallet.claim_reward_prefix' });
   if (
     parseFloat(rewardSteem) > 0 ||
     parseFloat(rewardSBD) > 0 ||
@@ -104,7 +111,7 @@ const WalletStatsView = (props: Props): JSX.Element => {
     setReloading(false);
   };
 
-  const _renderItem = ({item, index}) => {
+  const _renderItem = ({ item, index }) => {
     let value = get(item, 'value', '');
     //const value = parseFloat(get(item, 'value', '')).toFixed(2);
     const op = get(item, 'textKey', '');
@@ -120,17 +127,17 @@ const WalletStatsView = (props: Props): JSX.Element => {
         <Block row>
           <Icon
             size={20}
-            style={{width: 30}}
+            style={{ width: 30 }}
             color={argonTheme.COLORS.ERROR}
             name={item.icon}
             family={item.iconType}
           />
           <Text
-            style={{marginHorizontal: 5, textAlign: 'left'}}
+            style={{ marginHorizontal: 5, textAlign: 'left' }}
             color="#525F7F"
             size={12}>
             {!hideOp &&
-              intl.formatMessage({id: `Wallet.${get(item, 'textKey')}`})}{' '}
+              intl.formatMessage({ id: `Wallet.${get(item, 'textKey')}` })}{' '}
             {value}
             {description}
           </Text>
@@ -141,8 +148,8 @@ const WalletStatsView = (props: Props): JSX.Element => {
   };
 
   const _renderDropdownRow = (option, index, isSelect) => (
-    <Block style={{backgroundColor: argonTheme.COLORS.DEFAULT}}>
-      <Text color="white" style={{margin: 5}}>
+    <Block style={{ backgroundColor: argonTheme.COLORS.DEFAULT }}>
+      <Text color="white" style={{ margin: 5 }}>
         {option}
       </Text>
     </Block>
@@ -236,26 +243,35 @@ const WalletStatsView = (props: Props): JSX.Element => {
           {props.isUser ? (
             <Block row middle space="between">
               <Text>STEEM POWER</Text>
-              <Block row middle>
-                <DropdownModal
-                  key={powerIndex}
-                  defaultText={`${power} STEEM`}
-                  dropdownButtonStyle={styles.dropdownButtonStyle}
-                  selectedOptionIndex={-1}
-                  rowTextStyle={styles.rowTextStyle}
-                  style={styles.dropdown}
-                  dropdownStyle={styles.dropdownStyle}
-                  textStyle={styles.dropdownText}
-                  options={powerOptions}
-                  onSelect={_onSelectPowerOption}
-                />
+              <Block>
+                <Block row middle>
+                  <DropdownModal
+                    key={powerIndex}
+                    defaultText={`${power} STEEM`}
+                    dropdownButtonStyle={styles.dropdownButtonStyle}
+                    selectedOptionIndex={-1}
+                    rowTextStyle={styles.rowTextStyle}
+                    style={styles.dropdown}
+                    dropdownStyle={styles.dropdownStyle}
+                    textStyle={styles.dropdownText}
+                    options={powerOptions}
+                    onSelect={_onSelectPowerOption}
+                  />
+                </Block>
+                <Text>   ({delegatedVestingText} STEEM)</Text>
               </Block>
             </Block>
           ) : (
-            <Block row space="between">
-              <Text color={argonTheme.COLORS.FACEBOOK}>STEEM POWER</Text>
-              <Text color={argonTheme.COLORS.ERROR}>{`${power} STEEM`}</Text>
+            <Block>
+              <Block row space="between">
+                <Text color={argonTheme.COLORS.FACEBOOK}>STEEM POWER</Text>
+                <Text color={argonTheme.COLORS.ERROR}>{`${power} STEEM`}</Text>
+              </Block>
+              <Block right>
+                <Text>({delegatedVestingText} STEEM)</Text>
+              </Block>
             </Block>
+
           )}
           {props.isUser ? (
             <Block row middle space="between">
@@ -283,13 +299,13 @@ const WalletStatsView = (props: Props): JSX.Element => {
           )}
 
           <Block row space="between">
-            <Text>{intl.formatMessage({id: 'voting_power'})}</Text>
+            <Text>{intl.formatMessage({ id: 'voting_power' })}</Text>
             <Text>{parseInt(votePower) / 100}%</Text>
           </Block>
 
           {props.isUser && (
             <Block row space="between">
-              <Text>{intl.formatMessage({id: 'steem_price'})}</Text>
+              <Text>{intl.formatMessage({ id: 'steem_price' })}</Text>
               <Block middle row>
                 {price ? <Text>{price.steem.usd.toFixed(3)}</Text> : null}
                 {price ? (
@@ -302,7 +318,7 @@ const WalletStatsView = (props: Props): JSX.Element => {
           )}
           {props.isUser && (
             <Block row space="between">
-              <Text>{intl.formatMessage({id: 'sbd_price'})}</Text>
+              <Text>{intl.formatMessage({ id: 'sbd_price' })}</Text>
               <Block middle row>
                 {price ? <Text>{price.sbd.usd.toFixed(3)}</Text> : null}
                 {price ? (
@@ -321,7 +337,7 @@ const WalletStatsView = (props: Props): JSX.Element => {
               color={argonTheme.COLORS.ERROR}
               onPress={props.handlePressClaim}
               loading={props.claiming}>
-              {intl.formatMessage({id: 'Wallet.claim_reward'})}
+              {intl.formatMessage({ id: 'Wallet.claim_reward' })}
             </Button>
           </Block>
         ) : null}
@@ -342,7 +358,7 @@ const WalletStatsView = (props: Props): JSX.Element => {
   );
 };
 
-export {WalletStatsView};
+export { WalletStatsView };
 
 const styles = StyleSheet.create({
   transaction: {
