@@ -550,6 +550,9 @@ const PostsProvider = ({ children }: Props) => {
     postsType: PostsTypes,
     username?: string,
   ) => {
+    // // @test
+    // console.log('setTagAndFilter. tag, filter',
+    //   postsState.tagList[tagIndex][1], postsState.filterList[filterIndex]);
     // dispatch action
     dispatch({
       type: PostsActionTypes.SET_TAG_AND_FILTER,

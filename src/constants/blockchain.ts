@@ -31,6 +31,8 @@ export const PRICE_ENDPOINT =
 
 export const BENEFICIARY_WEIGHT = 500;
 
+export const VOTING_DELAY_MILLS = 5.1 * 60 * 1000; // 5.1 minutes delayed
+
 // max number of tags
 export const MAX_NUM_TAGS = 8;
 

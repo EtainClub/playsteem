@@ -183,6 +183,7 @@ const SettingsContainer = (props: Props): JSX.Element => {
         [SettingUITypes.BENEFICIARY]: false,
         [SettingUITypes.FOLLOW]: false,
         [SettingUITypes.REBLOG]: false,
+        [SettingUITypes.NEW_POST]: false,
       };
       try {
         // check if the push is object
@@ -226,7 +227,7 @@ const SettingsContainer = (props: Props): JSX.Element => {
           dndTimes.endTime,
         );
         // switch
-        _switchStates = { ..._switchStates, [SettingUITypes.DND_TIMES]: true };
+        _switchStates = { ..._switchStates, [SettingUITypes.DND_TIMES]: false };
       }
 
       // now set switch states

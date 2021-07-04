@@ -25,7 +25,7 @@ import { Block } from 'galio-framework';
 import { Beneficiary } from '~/components';
 import { BeneficiaryItem } from '~/components/Beneficiary/BeneficiaryContainer';
 //// constants
-import { BENEFICIARY_WEIGHT, MAX_NUM_TAGS, MAX_TAGS_HISTORY, POSTING_POSTFIX } from '~/constants';
+import { BENEFICIARY_WEIGHT, MAX_NUM_TAGS, MAX_TAGS_HISTORY, POSTING_POSTFIX, VOTING_DELAY_MILLS } from '~/constants';
 // types
 import { PostRef, PostsState, PostsTypes } from '~/contexts/types';
 //// utils
@@ -426,19 +426,21 @@ const Posting = (props: Props): JSX.Element => {
           permlink: postingContent.permlink,
         };
         try {
-          // request
-          firebase
-            .functions()
-            .httpsCallable('voteRequest')(voteOptions)
-            .then((result) => {
-              console.log('Posting. submitPost. vote Request result', result.data);
-              if (result.data) {
+          // request to vote with delaying time
+          setTimeout(() => {
+            firebase
+              .functions()
+              .httpsCallable('voteRequest')(voteOptions)
+              .then((result) => {
                 console.log('Posting. submitPost. vote Request result', result.data);
-                setToastMessage(result.data);
-              } else {
-                setToastMessage('Voting Requested!');
-              }
-            });
+                if (result.data) {
+                  console.log('Posting. submitPost. vote Request result', result.data);
+                  setToastMessage(result.data);
+                } else {
+                  setToastMessage('Voting Requested!');
+                }
+              });
+          }, VOTING_DELAY_MILLS);
         } catch (error) {
           console.error('failed to request vote', error);
         }
