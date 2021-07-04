@@ -270,7 +270,7 @@ exports.createAccountRequest = functions.https.onCall(async (data, context) => {
 //// request to vote
 exports.voteRequest = functions.https.onCall(async (data, context) => {
   const TIME_24H_MILLS = 24 * 3600 * 1000;
-
+  const VOTING_DELAY_MILLS = 5.1 * 60 * 1000; // 5.1 minutes delayed
   let votingWeight = 1;
   const votingWeightRef = admin.firestore().collection('settings').doc('voting');
   await votingWeightRef.get().then((doc) => {
@@ -318,6 +318,18 @@ exports.voteRequest = functions.https.onCall(async (data, context) => {
         permlink: permlink,
         weight: votingWeight
       });
+
+      // // set timer to vote
+      // setTimeout(() => {
+      //   _votePost({
+      //     voter: creator,
+      //     postingWif: postingWif,
+      //     author: author,
+      //     permlink: permlink,
+      //     weight: votingWeight
+      //   });
+      // }, VOTING_DELAY_MILLS);
+
     } else {
       const currentTime = new Date().getTime();
       console.log('current time', currentTime);
@@ -342,6 +354,15 @@ exports.voteRequest = functions.https.onCall(async (data, context) => {
       } else {
         // vote right away
         // voteRightAway() -> update the lastVotingAt (if not exist, create one)
+        // setTimeout(() => {
+        //   _votePost({
+        //     voter: creator,
+        //     postingWif: postingWif,
+        //     author: author,
+        //     permlink: permlink,
+        //     weight: votingWeight
+        //   });
+        // }, VOTING_DELAY_MILLS);
         _votePost({
           voter: creator,
           postingWif: postingWif,

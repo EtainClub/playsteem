@@ -99,7 +99,7 @@ const postsReducer = (state: PostsState, action: PostsAction) => {
         communityList: action.payload,
       };
     case PostsActionTypes.SET_POSTS:
-      console.log('[postsReducer] set posts aciton. payload', action.payload);
+      // console.log('[postsReducer] set posts aciton. payload', action.payload);
       //// set posts to the posts type array
       return {
         // previous state
@@ -128,7 +128,7 @@ const postsReducer = (state: PostsState, action: PostsAction) => {
       return { ...state, retryCount: state.retryCount++ };
 
     case PostsActionTypes.SET_FETCHED:
-      console.log('[postsReducer] set fetched. payload', action.payload);
+      // console.log('[postsReducer] set fetched. payload', action.payload);
       return { ...state, fetched: action.payload };
 
     case PostsActionTypes.SET_NEED_FETCH:
@@ -138,7 +138,7 @@ const postsReducer = (state: PostsState, action: PostsAction) => {
       return { ...state, postRef: action.payload };
 
     case PostsActionTypes.CLEAR_POSTS:
-      console.log('[postsReducer] clearing posts. type', action.payload);
+      // console.log('[postsReducer] clearing posts. type', action.payload);
       return {
         ...state,
         // update the meta posts of the given posts type
@@ -184,15 +184,6 @@ const postsReducer = (state: PostsState, action: PostsAction) => {
       };
 
     case PostsActionTypes.SET_POST_WITH_COMMENTS:
-      const test = {
-        ...state,
-        postWithComments: action.payload.contents,
-        postRef: action.payload.postRef,
-        postDetails:
-          action.payload.contents[`${action.payload.postRef.author}/${action.payload.postRef.permlink}`]
-      };
-      console.log('SET_POST_WITH_COMMENTS. reducer postDetails',
-        action.payload.contents[`${action.payload.postRef.author}/${action.payload.postRef.permlink}`]);
       return {
         ...state,
         postWithComments: action.payload.contents,
@@ -527,7 +518,7 @@ const PostsProvider = ({ children }: Props) => {
       username,
     );
 
-    console.log('[getPostDetails] post', postWithComments);
+    // console.log('[getPostDetails] post', postWithComments);
     if (postWithComments) {
       // dispatch action
       dispatch({

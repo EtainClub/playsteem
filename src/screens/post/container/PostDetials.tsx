@@ -113,13 +113,13 @@ const PostDetails = (props: Props): JSX.Element => {
   //// event: need to fetch details
   useEffect(() => {
     if (needFetching) {
-      console.log('[postDetails] event: need to fetching');
+      // console.log('[postDetails] event: need to fetching');
       // get post details
       getPostDetails(
         postsState.postRef,
         authState.currentCredentials.username,
       ).then((contents) => {
-        console.log('need fetching details response');
+        // console.log('need fetching details response');
         const details = contents[`${postsState.postRef.author}/${postsState.postRef.permlink}`];
         // set contents
         setContents(contents);
@@ -231,7 +231,7 @@ const PostDetails = (props: Props): JSX.Element => {
   const _onRefresh = async () => {
     // get fresh post details
     await _fetchPostDetailsEntry(true);
-    console.log('[PostDetails] refreshed, contents', contents);
+    // console.log('[PostDetails] refreshed, contents', contents);
   };
 
   const _onSubmitComment = async (comment: string): Promise<boolean> => {

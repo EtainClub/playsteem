@@ -64,7 +64,7 @@ const CommentView = (props: Props): JSX.Element => {
             nickname={comment.state.post_ref.author}
             avatar={comment.state.avatar}
             avatarSize={30}
-            reputation={reputation}
+            reputation={reputation.toString().split('.')[0]}
             textSize={12}
             truncate={false}
           />
