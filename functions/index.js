@@ -565,7 +565,7 @@ const _votePost = async ({ voter, postingWif, author, permlink, weight }) => {
     try {
       const result = await client.broadcast.vote(vote, privateKey);
       if (result) {
-        console.log('voted');
+        console.log('voted for', author);
         // update the lastVotingAt of the author
         // get user
         const userRef = admin.firestore().doc(`users/${author}`);
