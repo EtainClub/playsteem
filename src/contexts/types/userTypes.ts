@@ -1,5 +1,5 @@
-import {PostRef} from './postTypes';
-import {BlockchainGlobalProps} from '~/providers/steem/dsteemApi';
+import { PostRef } from './postTypes';
+import { BlockchainGlobalProps } from '~/providers/steem/dsteemApi';
 
 //// action types
 export enum UserActionTypes {
@@ -78,6 +78,10 @@ export interface WalletData {
   votePower?: string;
   // transaction history
   transactions: any[];
+  // received_vesting_shares
+  receivedVestingShares: string;
+  // delegated_vesting_shares
+  delegatedVestingShares: string;
 }
 
 //// price data

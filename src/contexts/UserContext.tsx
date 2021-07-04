@@ -1,6 +1,6 @@
-import React, {useReducer, createContext, useContext} from 'react';
+import React, { useReducer, createContext, useContext } from 'react';
 //// language
-import {useIntl} from 'react-intl';
+import { useIntl } from 'react-intl';
 import {
   fetchGlobalProps,
   getAccount,
@@ -15,8 +15,8 @@ import {
   fetchFollowings,
   fetchFollowers,
 } from '~/providers/steem/dsteemApi';
-import {estimateVoteAmount} from '~/utils/estimateVoteAmount';
-import {parseSteemTransaction} from '~/utils/parseTransaction';
+import { estimateVoteAmount } from '~/utils/estimateVoteAmount';
+import { parseSteemTransaction } from '~/utils/parseTransaction';
 
 import {
   PostRef,
@@ -25,7 +25,7 @@ import {
   UserActionTypes,
   UserAction,
 } from './types';
-import {UIContext} from './UIContext';
+import { UIContext } from './UIContext';
 
 // initial state
 const initialState = {
@@ -72,10 +72,12 @@ const initialState = {
     voteAmount: '0',
     votePower: '0',
     transactions: [],
+    receivedVestingShares: '0',
+    delegatedVestingShares: '0',
   },
   price: {
-    steem: {usd: 0, change24h: 0},
-    sbd: {usd: 0, change24h: 0},
+    steem: { usd: 0, change24h: 0 },
+    sbd: { usd: 0, change24h: 0 },
   },
   followings: [],
   followers: [],
@@ -94,29 +96,29 @@ const userReducer = (state: UserState, action: UserAction) => {
   switch (action.type) {
     case UserActionTypes.SET_GLOBAL_PROPS:
       console.log('[UserContext|userReducer] set global props', state, action);
-      return {...state, globalProps: action.payload};
+      return { ...state, globalProps: action.payload };
     case UserActionTypes.SET_VOTE_AMOUNT:
       return {
         ...state,
         profileData: {
           ...state.profileData,
-          profile: {...state.profileData.profile, voteAmount: action.payload},
+          profile: { ...state.profileData.profile, voteAmount: action.payload },
         },
       };
     case UserActionTypes.FOLLOW:
       return state;
     case UserActionTypes.SET_WALLET_DATA:
-      return {...state, walletData: action.payload};
+      return { ...state, walletData: action.payload };
     case UserActionTypes.SET_PRICE:
-      return {...state, price: action.payload};
+      return { ...state, price: action.payload };
     case UserActionTypes.SET_FOLLOWINGS:
-      return {...state, followings: action.payload};
+      return { ...state, followings: action.payload };
     case UserActionTypes.SET_FOLLOWERS:
-      return {...state, followers: action.payload};
+      return { ...state, followers: action.payload };
     case UserActionTypes.SET_PROFILE_DATA:
-      return {...state, profileData: action.payload};
+      return { ...state, profileData: action.payload };
     case UserActionTypes.SET_NOTIFICATIONS:
-      return {...state, notificationData: action.payload};
+      return { ...state, notificationData: action.payload };
     default:
       return state;
   }
@@ -127,14 +129,14 @@ type Props = {
   children: React.ReactNode;
 };
 // user provider
-const UserProvider = ({children}: Props) => {
+const UserProvider = ({ children }: Props) => {
   // useReducer hook
   const [userState, dispatch] = useReducer(userReducer, initialState);
   console.log('[user provider] state', userState);
   //// language
   const intl = useIntl();
   //// toast message function from UI contexts
-  const {setToastMessage} = useContext(UIContext);
+  const { setToastMessage } = useContext(UIContext);
 
   const testState = userState;
   //////// action creator
@@ -150,7 +152,7 @@ const UserProvider = ({children}: Props) => {
         payload: globalProps,
       });
     } else {
-      setToastMessage(intl.formatMessage({id: 'fetch_error'}));
+      setToastMessage(intl.formatMessage({ id: 'fetch_error' }));
       return null;
     }
 
@@ -262,14 +264,14 @@ const UserProvider = ({children}: Props) => {
   const getPrice = async () => {
     const priceData = await fetchPrice();
     console.log('[getPrice] price', priceData);
-    const {steem} = priceData;
+    const { steem } = priceData;
     const sbd = priceData['steem-dollars'];
     if (priceData) {
       dispatch({
         type: UserActionTypes.SET_PRICE,
         payload: {
-          steem: {usd: steem.usd, change24h: steem.usd_24h_change},
-          sbd: {usd: sbd.usd, change24h: sbd.usd_24h_change},
+          steem: { usd: steem.usd, change24h: steem.usd_24h_change },
+          sbd: { usd: sbd.usd, change24h: sbd.usd_24h_change },
         },
       });
       return priceData;
@@ -290,7 +292,7 @@ const UserProvider = ({children}: Props) => {
     const result = await updateFollow(follower, password, following, action);
     console.log('[updateFollowState] transaction result', result);
     if (result) return result;
-    setToastMessage(intl.formatMessage({id: 'update_error'}));
+    setToastMessage(intl.formatMessage({ id: 'update_error' }));
     return null;
   };
 
@@ -301,7 +303,7 @@ const UserProvider = ({children}: Props) => {
     followings = await _getFollowings(follower, followings);
 
     if (!followings) {
-      setToastMessage(intl.formatMessage({id: 'fetch_error'}));
+      setToastMessage(intl.formatMessage({ id: 'fetch_error' }));
       return [];
     }
     // append the user to the list
@@ -320,7 +322,7 @@ const UserProvider = ({children}: Props) => {
     let followers: string[] = [];
     followers = await _getFollowers(username, followers);
     if (!followers) {
-      setToastMessage(intl.formatMessage({id: 'fetch_error'}));
+      setToastMessage(intl.formatMessage({ id: 'fetch_error' }));
       return [];
     }
     // append the user to the list
@@ -415,4 +417,4 @@ const _getFollowings = async (
   return followings;
 };
 
-export {UserContext, UserProvider};
+export { UserContext, UserProvider };
